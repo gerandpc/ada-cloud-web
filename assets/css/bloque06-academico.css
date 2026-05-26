@@ -1,0 +1,93 @@
+
+/* ===== BLOQUE 06 - ESTRUCTURA ACADÉMICA ===== */
+
+.academic-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 24px 0;
+}
+
+.academic-tab {
+  padding: 11px 16px;
+  border: 1px solid var(--ada-secondary);
+  background: white;
+  color: var(--ada-primary);
+  border-radius: 999px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.academic-tab.active,
+.academic-tab:hover {
+  background: var(--ada-primary);
+  color: white;
+}
+
+.academic-section {
+  display: none;
+}
+
+.academic-section.active {
+  display: block;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.helper-text {
+  color: var(--ada-muted);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.inline-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--ada-soft);
+  color: var(--ada-primary);
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.academic-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.summary-box {
+  background: white;
+  border: 1px solid var(--ada-border);
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.summary-box strong {
+  display: block;
+  color: var(--ada-primary);
+  font-size: 28px;
+}
+
+.summary-box span {
+  color: var(--ada-muted);
+  font-weight: bold;
+}
+
+@media (max-width: 900px) {
+  .academic-summary {
+    grid-template-columns: repeat(2, minmax(160px, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .academic-summary {
+    grid-template-columns: 1fr;
+  }
+}
