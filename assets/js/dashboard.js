@@ -64,17 +64,7 @@ const roleConfig = {
 function aplicarTemaPorRol(rol) {
   const config = roleConfig[rol] || roleConfig.alumno;
 
-  document.body.classList.remove(
-    "role-loading",
-    "role-admin",
-    "role-directivo",
-    "role-secretaria",
-    "role-docente",
-    "role-preceptor",
-    "role-familia",
-    "role-alumno"
-  );
-
+  document.body.classList.remove("role-loading", "role-admin", "role-directivo", "role-secretaria", "role-docente", "role-preceptor", "role-familia", "role-alumno");
   document.body.classList.add(config.className);
 
   if (rolVisual) rolVisual.textContent = config.label;
@@ -89,9 +79,7 @@ function aplicarTemaPorRol(rol) {
       item.setAttribute("aria-disabled", "true");
 
       if (item.tagName.toLowerCase() === "a") {
-        item.addEventListener("click", (event) => {
-          event.preventDefault();
-        });
+        item.addEventListener("click", (event) => event.preventDefault());
       }
     }
   });
@@ -109,9 +97,7 @@ async function cargarDashboard() {
 
   if (!session) {
     estadoSesion.textContent = "No hay sesión activa. Redirigiendo al login...";
-    setTimeout(() => {
-      window.location.href = "login.html";
-    }, 1000);
+    setTimeout(() => window.location.href = "login.html", 1000);
     return;
   }
 

@@ -1,4 +1,4 @@
-const roleConfigSimple = {
+const roleClassMap = {
   admin: "role-admin",
   directivo: "role-directivo",
   secretaria: "role-secretaria",
@@ -8,28 +8,31 @@ const roleConfigSimple = {
   alumno: "role-alumno"
 };
 
-async function aplicarTemaModulo() {
+async function obtenerSesionPerfil() {
   const { data: sessionData } = await supabaseClient.auth.getSession();
   const session = sessionData.session;
 
   if (!session) {
     window.location.href = "login.html";
-    return;
+    return null;
   }
 
   const { data: perfil, error } = await supabaseClient
     .from("profiles")
-    .select("rol")
+    .select("id, nombre, apellido, email, rol, activo")
     .eq("id", session.user.id)
     .single();
 
-  if (error || !perfil) {
+  if (error || !perfil || !perfil.activo) {
     console.error(error);
-    return;
+    window.location.href = "login.html";
+    return null;
   }
 
   document.body.classList.remove("role-loading");
-  document.body.classList.add(roleConfigSimple[perfil.rol] || "role-alumno");
+  document.body.classList.add(roleClassMap[perfil.rol] || "role-alumno");
+
+  return { session, perfil };
 }
 
-aplicarTemaModulo();
+obtenerSesionPerfil();
