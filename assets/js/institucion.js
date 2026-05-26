@@ -9,6 +9,55 @@ const provinciaInput = document.getElementById("provincia");
 
 let institucionActualId = null;
 
+function renderInstitucion(data) {
+  let contenedor = document.getElementById("vistaInstitucion");
+
+  if (!contenedor) {
+    contenedor = document.createElement("div");
+    contenedor.id = "vistaInstitucion";
+    contenedor.className = "panel-card";
+    formInstitucion.insertAdjacentElement("afterend", contenedor);
+  }
+
+  contenedor.innerHTML = `
+    <h2>Institución cargada</h2>
+    <div class="table-wrap">
+      <table class="ada-table">
+        <tbody>
+          <tr>
+            <th>Nombre</th>
+            <td>${data.nombre || "-"}</td>
+          </tr>
+          <tr>
+            <th>Nivel</th>
+            <td>${data.nivel || "-"}</td>
+          </tr>
+          <tr>
+            <th>Gestión</th>
+            <td>${data.gestion || "-"}</td>
+          </tr>
+          <tr>
+            <th>Localidad</th>
+            <td>${data.localidad || "-"}</td>
+          </tr>
+          <tr>
+            <th>Provincia</th>
+            <td>${data.provincia || "-"}</td>
+          </tr>
+          <tr>
+            <th>Descripción</th>
+            <td>${data.descripcion || "-"}</td>
+          </tr>
+          <tr>
+            <th>Estado</th>
+            <td>${data.activo ? '<span class="status-ok">Activa</span>' : '<span class="status-off">Inactiva</span>'}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
 async function cargarInstitucion() {
   await obtenerSesionPerfil();
 
@@ -37,7 +86,9 @@ async function cargarInstitucion() {
   gestionInput.value = data.gestion || "";
   localidadInput.value = data.localidad || "";
   provinciaInput.value = data.provincia || "";
+
   mensajeInstitucion.textContent = "Institución cargada.";
+  renderInstitucion(data);
 }
 
 formInstitucion.addEventListener("submit", async (event) => {
@@ -80,6 +131,7 @@ formInstitucion.addEventListener("submit", async (event) => {
 
   institucionActualId = response.data.id;
   mensajeInstitucion.textContent = "Institución guardada correctamente.";
+  renderInstitucion(response.data);
 });
 
 cargarInstitucion();
