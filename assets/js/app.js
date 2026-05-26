@@ -1,1 +1,1 @@
-console.log("ADA Cloud funcionando");
+console.log("ADA Cloud Web iniciado");
