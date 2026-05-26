@@ -5,24 +5,95 @@
   <title>Dashboard - ADA Cloud</title>
   <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body>
-  <main class="home">
-    <section class="hero">
-      <h1>Panel ADA Cloud</h1>
+<body class="dashboard-body">
 
-      <p id="estadoSesion">Verificando sesión...</p>
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <h2>ADA</h2>
+      <span>Cloud Web</span>
+    </div>
 
-      <div id="datosUsuario" style="display:none;">
-        <p><strong>Usuario:</strong> <span id="nombreUsuario"></span></p>
-        <p><strong>Email:</strong> <span id="emailUsuario"></span></p>
-        <p><strong>Rol:</strong> <span id="rolUsuario"></span></p>
+    <nav class="sidebar-nav">
+      <a href="#" class="active">Inicio</a>
+      <a href="#">Institución</a>
+      <a href="#">Usuarios</a>
+      <a href="#">Cursos</a>
+      <a href="#">Materias</a>
+      <a href="#">Documentos</a>
+      <a href="#">IA ADA</a>
+      <a href="#">Horarios</a>
+      <a href="#">Reportes</a>
+    </nav>
+
+    <button id="btnSalir" class="sidebar-logout">Cerrar sesión</button>
+  </aside>
+
+  <main class="dashboard-main">
+    <header class="dashboard-header">
+      <div>
+        <p class="eyebrow">Panel institucional</p>
+        <h1>Bienvenido a ADA Cloud</h1>
+        <p id="estadoSesion">Verificando sesión...</p>
       </div>
 
-      <div class="acciones-dashboard">
-        <a href="../index.html" class="btn-principal">Volver al inicio</a>
-        <button id="btnSalir" class="btn-secundario">Cerrar sesión</button>
+      <div id="datosUsuario" class="user-card" style="display:none;">
+        <strong id="nombreUsuario"></strong>
+        <span id="emailUsuario"></span>
+        <small id="rolUsuario"></small>
       </div>
+    </header>
+
+    <section class="dashboard-grid">
+      <article class="module-card">
+        <span class="module-icon">🏫</span>
+        <h3>Institución</h3>
+        <p>Datos generales, niveles, turnos y configuración institucional.</p>
+      </article>
+
+      <article class="module-card">
+        <span class="module-icon">👥</span>
+        <h3>Usuarios y roles</h3>
+        <p>Alta de directivos, docentes, alumnos, familias y preceptores.</p>
+      </article>
+
+      <article class="module-card">
+        <span class="module-icon">📚</span>
+        <h3>Cursos y materias</h3>
+        <p>Organización académica por curso, año, división y asignatura.</p>
+      </article>
+
+      <article class="module-card">
+        <span class="module-icon">📄</span>
+        <h3>Documentos</h3>
+        <p>Materiales, reglamentos, programas y archivos institucionales.</p>
+      </article>
+
+      <article class="module-card">
+        <span class="module-icon">🤖</span>
+        <h3>IA ADA</h3>
+        <p>Asistente inteligente por rol con acceso restringido a documentos.</p>
+      </article>
+
+      <article class="module-card">
+        <span class="module-icon">🗓️</span>
+        <h3>Horarios</h3>
+        <p>Disponibilidad docente, restricciones y generación de horarios.</p>
+      </article>
+
+      <article class="module-card">
+        <span class="module-icon">✍️</span>
+        <h3>Manuscritos</h3>
+        <p>Reconocimiento de imágenes, transcripción y conversión a archivos.</p>
+      </article>
+
+      <article class="module-card">
+        <span class="module-icon">📊</span>
+        <h3>Reportes</h3>
+        <p>Indicadores, seguimiento institucional y exportaciones.</p>
+      </article>
     </section>
+
+    <button class="chatbot-button">ADA IA</button>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
