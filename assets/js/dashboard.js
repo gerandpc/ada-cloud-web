@@ -15,21 +15,21 @@ const roleConfig = {
     label: "Administrador",
     title: "Panel administrador",
     description: "Acceso completo a todos los usuarios, módulos, permisos, reportes, IA, horarios y configuración institucional.",
-    modules: ["institucion", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "cursos", "materias", "documentos", "ia", "horarios", "manuscritos", "reportes"]
+    modules: ["institucion", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "ia", "horarios", "manuscritos", "reportes"]
   },
   directivo: {
     className: "role-directivo",
     label: "Directivo",
     title: "Panel directivo",
     description: "Gestión institucional, seguimiento pedagógico, reportes, documentos y decisiones escolares.",
-    modules: ["institucion", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "cursos", "materias", "documentos", "ia", "horarios", "reportes"]
+    modules: ["institucion", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "ia", "horarios", "reportes"]
   },
   secretaria: {
     className: "role-secretaria",
     label: "Secretaría",
     title: "Panel de secretaría",
     description: "Administración escolar, estudiantes, familias, docentes, cursos y documentación institucional.",
-    modules: ["institucion", "docentes", "alumnos", "familias", "cursos", "materias", "documentos", "reportes"]
+    modules: ["institucion", "docentes", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "reportes"]
   },
   docente: {
     className: "role-docente",
@@ -43,7 +43,7 @@ const roleConfig = {
     label: "Preceptoría",
     title: "Panel de preceptoría",
     description: "Seguimiento de estudiantes, asistencia, comunicaciones y alertas institucionales.",
-    modules: ["alumnos", "familias", "cursos", "documentos", "ia", "reportes"]
+    modules: ["alumnos", "familias", "asignaciones", "cursos", "documentos", "ia", "reportes"]
   },
   familia: {
     className: "role-familia",
@@ -64,7 +64,17 @@ const roleConfig = {
 function aplicarTemaPorRol(rol) {
   const config = roleConfig[rol] || roleConfig.alumno;
 
-  document.body.classList.remove("role-loading", "role-admin", "role-directivo", "role-secretaria", "role-docente", "role-preceptor", "role-familia", "role-alumno");
+  document.body.classList.remove(
+    "role-loading",
+    "role-admin",
+    "role-directivo",
+    "role-secretaria",
+    "role-docente",
+    "role-preceptor",
+    "role-familia",
+    "role-alumno"
+  );
+
   document.body.classList.add(config.className);
 
   if (rolVisual) rolVisual.textContent = config.label;
@@ -74,12 +84,18 @@ function aplicarTemaPorRol(rol) {
 
   document.querySelectorAll("[data-module]").forEach((item) => {
     const moduleName = item.getAttribute("data-module");
+
+    item.classList.remove("module-disabled");
+    item.removeAttribute("aria-disabled");
+
     if (!config.modules.includes(moduleName)) {
       item.classList.add("module-disabled");
       item.setAttribute("aria-disabled", "true");
 
       if (item.tagName.toLowerCase() === "a") {
-        item.addEventListener("click", (event) => event.preventDefault());
+        item.addEventListener("click", (event) => {
+          event.preventDefault();
+        });
       }
     }
   });
@@ -97,7 +113,9 @@ async function cargarDashboard() {
 
   if (!session) {
     estadoSesion.textContent = "No hay sesión activa. Redirigiendo al login...";
-    setTimeout(() => window.location.href = "login.html", 1000);
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 1000);
     return;
   }
 
