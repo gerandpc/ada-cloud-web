@@ -1,10 +1,89 @@
+
 <!DOCTYPE html>
 <html lang="es">
-<head><meta charset="UTF-8"><title>Usuarios y roles - ADA Cloud</title><link rel="stylesheet" href="../assets/css/style.css"></head>
+<head>
+  <meta charset="UTF-8">
+  <title>Usuarios - ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque09-usuarios.css">
+</head>
 <body class="module-page role-loading">
   <main class="module-shell">
     <a href="dashboard.html" class="back-link">← Volver al panel</a>
-    <section class="module-view"><p class="eyebrow">Módulo ADA</p><h1>Usuarios y roles</h1><p>Gestión de usuarios, perfiles y permisos.</p><div class="module-placeholder"><strong>Bloque en construcción</strong><span>En el próximo paso conectaremos este módulo con Supabase y permisos por rol.</span></div></section>
+
+    <section class="module-view">
+      <p class="eyebrow">Bloque 09</p>
+      <h1>Alta y gestión de usuarios</h1>
+      <p>Creación segura de usuarios por rol mediante Supabase Edge Function.</p>
+
+      <div class="edge-warning">
+        <strong>Importante:</strong> para crear usuarios desde ADA necesitás desplegar la Edge Function 
+        <code>crear-usuario</code> y configurar la secret <code>SUPABASE_SERVICE_ROLE_KEY</code> en Supabase.
+        No se guarda ninguna clave privada en el frontend.
+      </div>
+
+      <div class="user-management-grid">
+        <section class="panel-card">
+          <h2>Nuevo usuario</h2>
+
+          <form id="formUsuario" class="ada-form">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" required placeholder="Ej. Juan">
+
+            <label for="apellido">Apellido</label>
+            <input type="text" id="apellido" required placeholder="Ej. Pérez">
+
+            <label for="email">Correo electrónico</label>
+            <input type="email" id="email" required placeholder="usuario@correo.com">
+
+            <label for="rol">Rol</label>
+            <select id="rol" required>
+              <option value="">Seleccionar rol</option>
+              <option value="admin">Admin</option>
+              <option value="directivo">Directivo</option>
+              <option value="secretaria">Secretaría</option>
+              <option value="docente">Docente</option>
+              <option value="preceptor">Preceptoría</option>
+              <option value="alumno">Alumno</option>
+              <option value="familia">Familia</option>
+            </select>
+
+            <label for="password">Contraseña inicial</label>
+            <input type="text" id="password" required placeholder="Ej. Ada2026*">
+
+            <div class="password-hint">
+              Recomendación: usar una contraseña inicial fuerte y pedir al usuario que la cambie luego.
+            </div>
+
+            <button type="submit" class="btn-primary">Crear usuario</button>
+            <p id="mensajeUsuario" class="form-message"></p>
+          </form>
+        </section>
+
+        <section class="panel-card">
+          <h2>Usuarios registrados</h2>
+
+          <div class="role-filter" id="roleFilter">
+            <button type="button" class="active" data-role="todos">Todos</button>
+            <button type="button" data-role="admin">Admin</button>
+            <button type="button" data-role="directivo">Directivos</button>
+            <button type="button" data-role="secretaria">Secretaría</button>
+            <button type="button" data-role="docente">Docentes</button>
+            <button type="button" data-role="preceptor">Preceptoría</button>
+            <button type="button" data-role="alumno">Alumnos</button>
+            <button type="button" data-role="familia">Familias</button>
+          </div>
+
+          <p id="mensajeListaUsuarios" class="form-message">Cargando usuarios...</p>
+          <div id="tablaUsuarios" class="table-wrap"></div>
+        </section>
+      </div>
+    </section>
   </main>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../assets/js/supabase-config.js"></script><script src="../assets/js/module-theme.js"></script>
-</body></html>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/module-theme.js"></script>
+  <script src="../assets/js/usuarios.js"></script>
+</body>
+</html>
