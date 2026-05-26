@@ -1,17 +1,9 @@
-const roleClassMap = {
-  admin: "role-admin",
-  directivo: "role-directivo",
-  secretaria: "role-secretaria",
-  docente: "role-docente",
-  preceptor: "role-preceptor",
-  familia: "role-familia",
-  alumno: "role-alumno"
-};
+
+const roleClassMap = { admin:"role-admin", directivo:"role-directivo", secretaria:"role-secretaria", docente:"role-docente", preceptor:"role-preceptor", familia:"role-familia", alumno:"role-alumno" };
 
 async function obtenerSesionPerfil() {
   const { data: sessionData } = await supabaseClient.auth.getSession();
   const session = sessionData.session;
-
   if (!session) {
     window.location.href = "login.html";
     return null;
@@ -34,5 +26,3 @@ async function obtenerSesionPerfil() {
 
   return { session, perfil };
 }
-
-obtenerSesionPerfil();
