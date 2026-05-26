@@ -4,23 +4,67 @@
   <meta charset="UTF-8">
   <title>Materias - ADA Cloud</title>
   <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque06-academico.css">
 </head>
 <body class="module-page role-loading">
   <main class="module-shell">
     <a href="dashboard.html" class="back-link">← Volver al panel</a>
+
     <section class="module-view">
-      <p class="eyebrow">Módulo ADA</p>
+      <p class="eyebrow">Estructura académica</p>
       <h1>Materias</h1>
-      <p>Materias, carga horaria y docentes asignados.</p>
-      <div class="module-placeholder">
-        <strong>Bloque en construcción</strong>
-        <span>Este módulo quedará conectado con Supabase y permisos reales en los próximos bloques.</span>
-      </div>
+      <p>Alta de materias asociadas a cursos, con carga horaria editable y tipo de materia.</p>
+
+      <section class="panel-card">
+        <h2>Nueva materia</h2>
+        <form id="formMateria" class="ada-form">
+          <div class="form-grid">
+            <div>
+              <label>Curso</label>
+              <select id="materiaCurso" required></select>
+            </div>
+            <div>
+              <label>Nombre de la materia</label>
+              <input type="text" id="materiaNombre" required placeholder="Ej. Laboratorio de Electrónica">
+            </div>
+            <div>
+              <label>Carga horaria semanal</label>
+              <input type="number" step="0.5" id="materiaCarga" placeholder="Ej. 4">
+              <p class="helper-text">Editable para materias técnico-profesionales, talleres y laboratorios.</p>
+            </div>
+            <div>
+              <label>Tipo de materia</label>
+              <select id="materiaTipo">
+                <option value="">Seleccionar</option>
+                <option>Formación general</option>
+                <option>Formación científico-tecnológica</option>
+                <option>Formación técnico-específica</option>
+                <option>Prácticas profesionalizantes</option>
+                <option>Taller</option>
+                <option>Laboratorio</option>
+                <option>Otra</option>
+              </select>
+            </div>
+            <div class="full">
+              <label>Descripción</label>
+              <textarea id="materiaDescripcion" placeholder="Detalle opcional"></textarea>
+            </div>
+          </div>
+          <button class="btn-primary" type="submit">Guardar materia</button>
+          <p id="msgMateria" class="form-message"></p>
+        </form>
+      </section>
+
+      <section class="panel-card">
+        <h2>Materias cargadas</h2>
+        <div id="tablaMaterias" class="table-wrap"></div>
+      </section>
     </section>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../assets/js/supabase-config.js"></script>
   <script src="../assets/js/module-theme.js"></script>
+  <script src="../assets/js/materias.js"></script>
 </body>
 </html>

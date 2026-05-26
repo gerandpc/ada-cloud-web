@@ -4,23 +4,109 @@
   <meta charset="UTF-8">
   <title>Cursos - ADA Cloud</title>
   <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque06-academico.css">
 </head>
 <body class="module-page role-loading">
   <main class="module-shell">
     <a href="dashboard.html" class="back-link">← Volver al panel</a>
+
     <section class="module-view">
-      <p class="eyebrow">Módulo ADA</p>
+      <p class="eyebrow">Estructura académica</p>
       <h1>Cursos</h1>
-      <p>Organización de cursos, divisiones, niveles y turnos.</p>
-      <div class="module-placeholder">
-        <strong>Bloque en construcción</strong>
-        <span>Este módulo quedará conectado con Supabase y permisos reales en los próximos bloques.</span>
+      <p>Configuración de niveles, años/grados, divisiones, modalidades y cursos.</p>
+
+      <div class="academic-summary">
+        <div class="summary-box"><strong id="countNiveles">0</strong><span>Niveles</span></div>
+        <div class="summary-box"><strong id="countAnios">0</strong><span>Años / grados</span></div>
+        <div class="summary-box"><strong id="countDivisiones">0</strong><span>Divisiones</span></div>
+        <div class="summary-box"><strong id="countCursos">0</strong><span>Cursos</span></div>
       </div>
+
+      <div class="academic-tabs">
+        <button class="academic-tab active" data-tab="niveles">Niveles</button>
+        <button class="academic-tab" data-tab="anios">Años / grados</button>
+        <button class="academic-tab" data-tab="divisiones">Divisiones</button>
+        <button class="academic-tab" data-tab="modalidades">Modalidades</button>
+        <button class="academic-tab" data-tab="cursos">Cursos</button>
+      </div>
+
+      <section id="tab-niveles" class="academic-section active panel-card">
+        <h2>Niveles</h2>
+        <form id="formNivel" class="ada-form">
+          <div class="form-grid">
+            <div><label>Nombre</label><input type="text" id="nivelNombre" required placeholder="Ej. Secundario Técnico"></div>
+            <div><label>Orden</label><input type="number" id="nivelOrden" placeholder="Ej. 4"></div>
+            <div class="full"><label>Descripción</label><textarea id="nivelDescripcion"></textarea></div>
+          </div>
+          <button class="btn-primary" type="submit">Guardar nivel</button>
+          <p id="msgNivel" class="form-message"></p>
+        </form>
+        <div id="tablaNiveles" class="table-wrap"></div>
+      </section>
+
+      <section id="tab-anios" class="academic-section panel-card">
+        <h2>Años / grados</h2>
+        <form id="formAnio" class="ada-form">
+          <div class="form-grid">
+            <div><label>Nivel</label><select id="anioNivel" required></select></div>
+            <div><label>Nombre</label><input type="text" id="anioNombre" required placeholder="Ej. 4° Año"></div>
+            <div><label>Número</label><input type="number" id="anioNumero" placeholder="Ej. 4"></div>
+            <div class="full"><label>Descripción</label><textarea id="anioDescripcion"></textarea></div>
+          </div>
+          <button class="btn-primary" type="submit">Guardar año/grado</button>
+          <p id="msgAnio" class="form-message"></p>
+        </form>
+        <div id="tablaAnios" class="table-wrap"></div>
+      </section>
+
+      <section id="tab-divisiones" class="academic-section panel-card">
+        <h2>Divisiones / letras</h2>
+        <form id="formDivision" class="ada-form">
+          <div class="form-grid">
+            <div><label>Letra / nombre</label><input type="text" id="divisionNombre" required placeholder="Ej. A"></div>
+            <div class="full"><label>Descripción</label><textarea id="divisionDescripcion"></textarea></div>
+          </div>
+          <button class="btn-primary" type="submit">Guardar división</button>
+          <p id="msgDivision" class="form-message"></p>
+        </form>
+        <div id="tablaDivisiones" class="table-wrap"></div>
+      </section>
+
+      <section id="tab-modalidades" class="academic-section panel-card">
+        <h2>Modalidades</h2>
+        <form id="formModalidad" class="ada-form">
+          <div class="form-grid">
+            <div><label>Nombre</label><input type="text" id="modalidadNombre" required placeholder="Ej. Electrónica"></div>
+            <div class="full"><label>Descripción</label><textarea id="modalidadDescripcion"></textarea></div>
+          </div>
+          <button class="btn-primary" type="submit">Guardar modalidad</button>
+          <p id="msgModalidad" class="form-message"></p>
+        </form>
+        <div id="tablaModalidades" class="table-wrap"></div>
+      </section>
+
+      <section id="tab-cursos" class="academic-section panel-card">
+        <h2>Cursos</h2>
+        <form id="formCurso" class="ada-form">
+          <div class="form-grid">
+            <div><label>Nivel</label><select id="cursoNivel" required></select></div>
+            <div><label>Año / grado</label><select id="cursoAnio" required></select></div>
+            <div><label>División</label><select id="cursoDivision" required></select></div>
+            <div><label>Modalidad</label><select id="cursoModalidad"></select><p class="helper-text">Opcional. En secundaria técnica puede asociarse a la letra.</p></div>
+            <div><label>Turno</label><select id="cursoTurno"><option value="">Seleccionar</option><option>Mañana</option><option>Tarde</option><option>Noche</option><option>Doble jornada</option></select></div>
+            <div><label>Nombre visible</label><input type="text" id="cursoNombre" placeholder="Se autocompleta, pero podés modificarlo"></div>
+          </div>
+          <button class="btn-primary" type="submit">Guardar curso</button>
+          <p id="msgCurso" class="form-message"></p>
+        </form>
+        <div id="tablaCursos" class="table-wrap"></div>
+      </section>
     </section>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../assets/js/supabase-config.js"></script>
   <script src="../assets/js/module-theme.js"></script>
+  <script src="../assets/js/cursos.js"></script>
 </body>
 </html>
