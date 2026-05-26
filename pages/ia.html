@@ -1,26 +1,41 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <title>IA ADA - ADA Cloud</title>
   <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloques07-08.css">
 </head>
 <body class="module-page role-loading">
   <main class="module-shell">
     <a href="dashboard.html" class="back-link">← Volver al panel</a>
     <section class="module-view">
-      <p class="eyebrow">Módulo ADA</p>
+      <p class="eyebrow">Preparación IA</p>
       <h1>IA ADA</h1>
-      <p>Asistente inteligente por rol, basado en documentos habilitados.</p>
-      <div class="module-placeholder">
-        <strong>Bloque en construcción</strong>
-        <span>Este módulo quedará conectado con Supabase y permisos reales en los próximos bloques.</span>
-      </div>
+      <p>Configuración preparatoria para el asistente tipo NotebookLM. La API key se conectará al final mediante backend seguro.</p>
+
+      <div class="info-warning"><strong>Importante:</strong> la API key de OpenAI no debe guardarse en JavaScript ni en el frontend. Al final se cargará como secreto en Supabase Edge Functions.</div>
+
+      <section class="panel-card"><h2>Configuración actual</h2><div id="iaConfigVista"></div></section>
+
+      <section class="panel-card">
+        <h2>Ajustes preparatorios</h2>
+        <form id="formIA" class="ada-form">
+          <div class="form-grid">
+            <div><label>Proveedor</label><input type="text" id="iaProveedor" placeholder="OpenAI"></div>
+            <div><label>Modelo sugerido</label><input type="text" id="iaModelo" placeholder="gpt-4.1-mini"></div>
+            <div class="full"><label>Instrucciones base</label><textarea id="iaInstrucciones"></textarea></div>
+          </div>
+          <button class="btn-primary" type="submit">Guardar configuración preparatoria</button>
+          <p id="msgIA" class="form-message"></p>
+        </form>
+      </section>
     </section>
   </main>
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../assets/js/supabase-config.js"></script>
   <script src="../assets/js/module-theme.js"></script>
+  <script src="../assets/js/ia-config.js"></script>
 </body>
 </html>

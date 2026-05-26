@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Asignaciones - ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloques07-08.css">
+</head>
+<body class="module-page role-loading">
+  <main class="module-shell">
+    <a href="dashboard.html" class="back-link">← Volver al panel</a>
+    <section class="module-view">
+      <p class="eyebrow">Bloque 07</p>
+      <h1>Asignaciones escolares</h1>
+      <p>Vinculación de docentes, alumnos y familias con materias, cursos y estudiantes.</p>
+
+      <div class="assignment-grid">
+        <section class="assignment-card">
+          <h2>Docente → Materia</h2>
+          <form id="formDocenteMateria" class="ada-form">
+            <label>Docente</label><select id="docenteSelect" required></select>
+            <label>Materia</label><select id="materiaSelect" required></select>
+            <button class="btn-primary" type="submit">Asignar docente</button>
+            <p id="msgDocenteMateria" class="form-message"></p>
+          </form>
+        </section>
+
+        <section class="assignment-card">
+          <h2>Alumno → Curso</h2>
+          <form id="formAlumnoCurso" class="ada-form">
+            <label>Alumno</label><select id="alumnoSelect" required></select>
+            <label>Curso</label><select id="cursoSelect" required></select>
+            <label>Ciclo lectivo</label><input type="text" id="cicloLectivo" placeholder="Ej. 2026">
+            <button class="btn-primary" type="submit">Asignar alumno</button>
+            <p id="msgAlumnoCurso" class="form-message"></p>
+          </form>
+        </section>
+
+        <section class="assignment-card">
+          <h2>Familia → Alumno</h2>
+          <form id="formFamiliaAlumno" class="ada-form">
+            <label>Familia</label><select id="familiaSelect" required></select>
+            <label>Alumno</label><select id="alumnoFamiliaSelect" required></select>
+            <label>Parentesco</label><input type="text" id="parentesco" placeholder="Madre, padre, tutor">
+            <button class="btn-primary" type="submit">Vincular familia</button>
+            <p id="msgFamiliaAlumno" class="form-message"></p>
+          </form>
+        </section>
+      </div>
+
+      <section class="panel-card">
+        <h2>Asignaciones cargadas</h2>
+        <h3>Docentes por materia</h3><div id="tablaDocenteMaterias" class="table-wrap"></div>
+        <h3>Alumnos por curso</h3><div id="tablaAlumnoCursos" class="table-wrap"></div>
+        <h3>Familias vinculadas</h3><div id="tablaFamiliaAlumnos" class="table-wrap"></div>
+      </section>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/module-theme.js"></script>
+  <script src="../assets/js/asignaciones.js"></script>
+</body>
+</html>
