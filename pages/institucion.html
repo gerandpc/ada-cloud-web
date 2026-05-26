@@ -8,19 +8,61 @@
 <body class="module-page role-loading">
   <main class="module-shell">
     <a href="dashboard.html" class="back-link">← Volver al panel</a>
+
     <section class="module-view">
       <p class="eyebrow">Módulo ADA</p>
       <h1>Institución</h1>
-      <p>Datos generales, niveles, turnos y configuración institucional.</p>
-      <div class="module-placeholder">
-        <strong>Bloque en construcción</strong>
-        <span>En el próximo paso conectaremos este módulo con Supabase, permisos reales y operaciones de alta, baja, modificación y consulta.</span>
-      </div>
+      <p>Configuración general de la institución educativa.</p>
+
+      <form id="formInstitucion" class="ada-form panel-card">
+        <h2>Datos institucionales</h2>
+
+        <div class="form-grid">
+          <div>
+            <label for="nombre">Nombre de la institución</label>
+            <input type="text" id="nombre" required placeholder="Ej. Colegio ADA">
+          </div>
+
+          <div>
+            <label for="nivel">Nivel educativo</label>
+            <input type="text" id="nivel" placeholder="Inicial, Primario, Secundario, Superior">
+          </div>
+
+          <div>
+            <label for="gestion">Gestión</label>
+            <select id="gestion">
+              <option value="">Seleccionar</option>
+              <option value="Estatal">Estatal</option>
+              <option value="Privada">Privada</option>
+              <option value="Social / Cooperativa">Social / Cooperativa</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="localidad">Localidad</label>
+            <input type="text" id="localidad" placeholder="Localidad">
+          </div>
+
+          <div>
+            <label for="provincia">Provincia</label>
+            <input type="text" id="provincia" placeholder="Provincia">
+          </div>
+
+          <div class="full">
+            <label for="descripcion">Descripción</label>
+            <textarea id="descripcion" placeholder="Descripción institucional breve"></textarea>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary">Guardar institución</button>
+        <p id="mensajeInstitucion" class="form-message"></p>
+      </form>
     </section>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../assets/js/supabase-config.js"></script>
   <script src="../assets/js/module-theme.js"></script>
+  <script src="../assets/js/institucion.js"></script>
 </body>
 </html>

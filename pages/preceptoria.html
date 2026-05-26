@@ -5,16 +5,24 @@
   <title>Preceptoría - ADA Cloud</title>
   <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body class="module-page role-loading">
+<body class="module-page role-loading" data-page-role="preceptor">
   <main class="module-shell">
     <a href="dashboard.html" class="back-link">← Volver al panel</a>
+
     <section class="module-view">
-      <p class="eyebrow">Módulo ADA</p>
-      <h1>Preceptoría</h1>
-      <p>Asistencia, seguimiento de estudiantes, alertas y comunicación cotidiana.</p>
+      <p class="eyebrow">Gestión de usuarios</p>
+      <h1 id="tituloModulo">Preceptoría</h1>
+      <p id="descripcionModulo">Usuarios de preceptoría vinculados al acompañamiento cotidiano y asistencia.</p>
+
+      <div class="panel-card">
+        <h2>Usuarios registrados</h2>
+        <p id="mensajeUsuarios" class="form-message">Cargando usuarios...</p>
+        <div id="tablaUsuarios" class="table-wrap"></div>
+      </div>
+
       <div class="module-placeholder">
-        <strong>Bloque en construcción</strong>
-        <span>En el próximo paso conectaremos este módulo con Supabase, permisos reales y operaciones de alta, baja, modificación y consulta.</span>
+        <strong>Alta de usuarios</strong>
+        <span>La creación de usuarios nuevos se hará en un próximo bloque mediante una Edge Function segura, para no exponer claves privadas en el frontend.</span>
       </div>
     </section>
   </main>
@@ -22,5 +30,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../assets/js/supabase-config.js"></script>
   <script src="../assets/js/module-theme.js"></script>
+  <script src="../assets/js/usuarios-rol.js"></script>
 </body>
 </html>
