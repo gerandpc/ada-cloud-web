@@ -6,41 +6,165 @@
   <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body class="dashboard-body role-loading">
+
   <aside class="sidebar">
-    <div class="sidebar-logo"><h2>ADA</h2><span id="rolVisual">Cloud Web</span></div>
+    <div class="sidebar-logo">
+      <h2>ADA</h2>
+      <span id="rolVisual">Cloud Web</span>
+    </div>
+
     <nav class="sidebar-nav">
       <a href="dashboard.html" class="active">Inicio</a>
+
+      <div class="sidebar-section-title">Gestión institucional</div>
       <a href="institucion.html" data-module="institucion">Institución</a>
-      <a href="usuarios.html" data-module="usuarios">Usuarios</a>
+      <a href="directivos.html" data-module="directivos">Directivos</a>
+      <a href="secretaria.html" data-module="secretaria">Secretaría</a>
+      <a href="docentes.html" data-module="docentes">Docentes</a>
+      <a href="preceptoria.html" data-module="preceptoria">Preceptoría</a>
+      <a href="alumnos.html" data-module="alumnos">Alumnos</a>
+      <a href="familias.html" data-module="familias">Familias</a>
+
+      <div class="sidebar-section-title">Académico</div>
       <a href="cursos.html" data-module="cursos">Cursos</a>
       <a href="materias.html" data-module="materias">Materias</a>
       <a href="documentos.html" data-module="documentos">Documentos</a>
+
+      <div class="sidebar-section-title">Inteligencia ADA</div>
       <a href="ia.html" data-module="ia">IA ADA</a>
       <a href="horarios.html" data-module="horarios">Horarios</a>
       <a href="manuscritos.html" data-module="manuscritos">Manuscritos</a>
       <a href="reportes.html" data-module="reportes">Reportes</a>
     </nav>
+
     <button id="btnSalir" class="sidebar-logout">Cerrar sesión</button>
   </aside>
+
   <main class="dashboard-main">
     <header class="dashboard-header">
-      <div><p class="eyebrow">Panel institucional</p><h1>Bienvenido a ADA Cloud</h1><p id="estadoSesion">Verificando sesión...</p></div>
-      <div id="datosUsuario" class="user-card" style="display:none;"><strong id="nombreUsuario"></strong><span id="emailUsuario"></span><small id="rolUsuario"></small></div>
+      <div>
+        <p class="eyebrow">Panel institucional</p>
+        <h1>Bienvenido a ADA Cloud</h1>
+        <p id="estadoSesion">Verificando sesión...</p>
+      </div>
+
+      <div id="datosUsuario" class="user-card" style="display:none;">
+        <strong id="nombreUsuario"></strong>
+        <span id="emailUsuario"></span>
+        <small id="rolUsuario"></small>
+      </div>
     </header>
-    <section class="role-banner"><div><strong id="tituloRol">Cargando perfil...</strong><p id="descripcionRol">ADA ajustará colores, módulos y permisos según el tipo de usuario.</p></div><span class="role-pill" id="rolePill">ROL</span></section>
-    <section class="dashboard-grid">
-      <a href="institucion.html" class="module-card" data-module="institucion"><span class="module-icon">🏫</span><h3>Institución</h3><p>Datos generales, niveles, turnos y configuración institucional.</p></a>
-      <a href="usuarios.html" class="module-card" data-module="usuarios"><span class="module-icon">👥</span><h3>Usuarios y roles</h3><p>Alta de directivos, docentes, alumnos, familias y preceptores.</p></a>
-      <a href="cursos.html" class="module-card" data-module="cursos"><span class="module-icon">📚</span><h3>Cursos</h3><p>Organización académica por curso, año, división y turno.</p></a>
-      <a href="materias.html" class="module-card" data-module="materias"><span class="module-icon">📘</span><h3>Materias</h3><p>Asignaturas, docentes asociados y carga académica.</p></a>
-      <a href="documentos.html" class="module-card" data-module="documentos"><span class="module-icon">📄</span><h3>Documentos</h3><p>Materiales, reglamentos, programas y archivos institucionales.</p></a>
-      <a href="ia.html" class="module-card" data-module="ia"><span class="module-icon">🤖</span><h3>IA ADA</h3><p>Asistente inteligente por rol con acceso restringido a documentos.</p></a>
-      <a href="horarios.html" class="module-card" data-module="horarios"><span class="module-icon">🗓️</span><h3>Horarios</h3><p>Disponibilidad docente, restricciones y generación de horarios.</p></a>
-      <a href="manuscritos.html" class="module-card" data-module="manuscritos"><span class="module-icon">✍️</span><h3>Manuscritos</h3><p>Reconocimiento de imágenes, transcripción y conversión a archivos.</p></a>
-      <a href="reportes.html" class="module-card" data-module="reportes"><span class="module-icon">📊</span><h3>Reportes</h3><p>Indicadores, seguimiento institucional y exportaciones.</p></a>
+
+    <section class="role-banner">
+      <div>
+        <strong id="tituloRol">Cargando perfil...</strong>
+        <p id="descripcionRol">ADA ajustará colores, módulos y permisos según el tipo de usuario.</p>
+      </div>
+      <span class="role-pill" id="rolePill">ROL</span>
     </section>
+
+    <section class="dashboard-group">
+      <h2>Gestión de usuarios y roles</h2>
+      <div class="dashboard-grid">
+        <a href="directivos.html" class="module-card" data-module="directivos">
+          <span class="module-icon">🧭</span>
+          <h3>Directivos</h3>
+          <p>Gestión del equipo directivo, permisos institucionales y seguimiento general.</p>
+        </a>
+
+        <a href="secretaria.html" class="module-card" data-module="secretaria">
+          <span class="module-icon">🗂️</span>
+          <h3>Secretaría</h3>
+          <p>Administración escolar, documentación, inscripciones y datos institucionales.</p>
+        </a>
+
+        <a href="docentes.html" class="module-card" data-module="docentes">
+          <span class="module-icon">👩‍🏫</span>
+          <h3>Docentes</h3>
+          <p>Docentes, materias asignadas, cursos, disponibilidad y seguimiento académico.</p>
+        </a>
+
+        <a href="preceptoria.html" class="module-card" data-module="preceptoria">
+          <span class="module-icon">🧩</span>
+          <h3>Preceptoría</h3>
+          <p>Asistencia, seguimiento de estudiantes, alertas y comunicación cotidiana.</p>
+        </a>
+
+        <a href="alumnos.html" class="module-card" data-module="alumnos">
+          <span class="module-icon">🎒</span>
+          <h3>Alumnos</h3>
+          <p>Gestión de estudiantes, cursos, materias, legajos y accesos a ADA Tutor.</p>
+        </a>
+
+        <a href="familias.html" class="module-card" data-module="familias">
+          <span class="module-icon">👨‍👩‍👧</span>
+          <h3>Familias</h3>
+          <p>Vinculación familiar, estudiantes asociados, comunicaciones y reportes.</p>
+        </a>
+      </div>
+    </section>
+
+    <section class="dashboard-group">
+      <h2>Módulos institucionales</h2>
+      <div class="dashboard-grid">
+        <a href="institucion.html" class="module-card" data-module="institucion">
+          <span class="module-icon">🏫</span>
+          <h3>Institución</h3>
+          <p>Datos generales, niveles, turnos y configuración institucional.</p>
+        </a>
+
+        <a href="cursos.html" class="module-card" data-module="cursos">
+          <span class="module-icon">📚</span>
+          <h3>Cursos</h3>
+          <p>Organización académica por curso, año, división y turno.</p>
+        </a>
+
+        <a href="materias.html" class="module-card" data-module="materias">
+          <span class="module-icon">📘</span>
+          <h3>Materias</h3>
+          <p>Asignaturas, docentes asociados y carga académica.</p>
+        </a>
+
+        <a href="documentos.html" class="module-card" data-module="documentos">
+          <span class="module-icon">📄</span>
+          <h3>Documentos</h3>
+          <p>Materiales, reglamentos, programas y archivos institucionales.</p>
+        </a>
+      </div>
+    </section>
+
+    <section class="dashboard-group">
+      <h2>Funciones inteligentes</h2>
+      <div class="dashboard-grid">
+        <a href="ia.html" class="module-card" data-module="ia">
+          <span class="module-icon">🤖</span>
+          <h3>IA ADA</h3>
+          <p>Asistente inteligente por rol con acceso restringido a documentos.</p>
+        </a>
+
+        <a href="horarios.html" class="module-card" data-module="horarios">
+          <span class="module-icon">🗓️</span>
+          <h3>Horarios</h3>
+          <p>Disponibilidad docente, restricciones y generación de horarios.</p>
+        </a>
+
+        <a href="manuscritos.html" class="module-card" data-module="manuscritos">
+          <span class="module-icon">✍️</span>
+          <h3>Manuscritos</h3>
+          <p>Reconocimiento de imágenes, transcripción y conversión a archivos.</p>
+        </a>
+
+        <a href="reportes.html" class="module-card" data-module="reportes">
+          <span class="module-icon">📊</span>
+          <h3>Reportes</h3>
+          <p>Indicadores, seguimiento institucional y exportaciones.</p>
+        </a>
+      </div>
+    </section>
+
     <button class="chatbot-button" id="btnAdaIA">ADA IA</button>
   </main>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../assets/js/supabase-config.js"></script>
   <script src="../assets/js/dashboard.js"></script>
