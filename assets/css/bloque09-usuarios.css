@@ -1,0 +1,76 @@
+
+/* ===== BLOQUE 09 - USUARIOS ===== */
+
+.user-management-grid {
+  display: grid;
+  grid-template-columns: minmax(320px, 420px) 1fr;
+  gap: 22px;
+  align-items: start;
+}
+
+.role-filter {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 14px 0 18px;
+}
+
+.role-filter button {
+  border: 1px solid var(--ada-secondary);
+  background: white;
+  color: var(--ada-primary);
+  border-radius: 999px;
+  padding: 9px 13px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.role-filter button.active,
+.role-filter button:hover {
+  background: var(--ada-primary);
+  color: white;
+}
+
+.user-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-mini {
+  border: 1px solid var(--ada-secondary);
+  background: white;
+  color: var(--ada-primary);
+  padding: 7px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-mini:hover {
+  background: var(--ada-soft);
+}
+
+.password-hint {
+  background: var(--ada-soft);
+  border: 1px solid var(--ada-secondary);
+  color: var(--ada-primary);
+  padding: 12px;
+  border-radius: 14px;
+  font-size: 14px;
+}
+
+.edge-warning {
+  margin-top: 18px;
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid #fed7aa;
+  background: #fff7ed;
+  color: #9a3412;
+}
+
+@media (max-width: 1050px) {
+  .user-management-grid {
+    grid-template-columns: 1fr;
+  }
+}
