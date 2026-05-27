@@ -3,39 +3,46 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>IA ADA - ADA Cloud</title>
+  <title>ADA IA - ADA Cloud</title>
   <link rel="stylesheet" href="../assets/css/style.css">
-  <link rel="stylesheet" href="../assets/css/bloques07-08.css">
+  <link rel="stylesheet" href="../assets/css/bloques12-13.css">
 </head>
 <body class="module-page role-loading">
   <main class="module-shell">
     <a href="dashboard.html" class="back-link">← Volver al panel</a>
+
     <section class="module-view">
-      <p class="eyebrow">Preparación IA</p>
-      <h1>IA ADA</h1>
-      <p>Configuración preparatoria para el asistente tipo NotebookLM. La API key se conectará al final mediante backend seguro.</p>
+      <p class="eyebrow">Bloque 13</p>
+      <h1>ADA IA</h1>
+      <p>Asistente base preparado para responder solo con documentos habilitados. La API key real se conectará al final.</p>
 
-      <div class="info-warning"><strong>Importante:</strong> la API key de OpenAI no debe guardarse en JavaScript ni en el frontend. Al final se cargará como secreto en Supabase Edge Functions.</div>
+      <div class="ai-layout">
+        <aside class="ai-sidebar">
+          <h2>Contexto habilitado</h2>
+          <div id="aiStatus" class="ai-status">Verificando configuración IA...</div>
 
-      <section class="panel-card"><h2>Configuración actual</h2><div id="iaConfigVista"></div></section>
-
-      <section class="panel-card">
-        <h2>Ajustes preparatorios</h2>
-        <form id="formIA" class="ada-form">
-          <div class="form-grid">
-            <div><label>Proveedor</label><input type="text" id="iaProveedor" placeholder="OpenAI"></div>
-            <div><label>Modelo sugerido</label><input type="text" id="iaModelo" placeholder="gpt-4.1-mini"></div>
-            <div class="full"><label>Instrucciones base</label><textarea id="iaInstrucciones"></textarea></div>
+          <h3>Documentos disponibles para IA</h3>
+          <div id="docContextList" class="doc-context-list">
+            <p class="helper-text">Cargando documentos...</p>
           </div>
-          <button class="btn-primary" type="submit">Guardar configuración preparatoria</button>
-          <p id="msgIA" class="form-message"></p>
-        </form>
-      </section>
+        </aside>
+
+        <section class="ai-chat">
+          <h2>Chat ADA IA</h2>
+          <div id="aiMessages" class="ai-messages"></div>
+
+          <form id="aiForm" class="ai-form">
+            <textarea id="aiQuestion" placeholder="Escribí una pregunta para ADA IA..." required></textarea>
+            <button class="btn-primary" type="submit">Enviar</button>
+          </form>
+        </section>
+      </div>
     </section>
   </main>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../assets/js/supabase-config.js"></script>
   <script src="../assets/js/module-theme.js"></script>
-  <script src="../assets/js/ia-config.js"></script>
+  <script src="../assets/js/ada-ia.js"></script>
 </body>
 </html>
