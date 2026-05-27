@@ -1,26 +1,223 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <title>Horarios - ADA Cloud</title>
   <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque14-horarios.css">
 </head>
 <body class="module-page role-loading">
   <main class="module-shell">
     <a href="dashboard.html" class="back-link">← Volver al panel</a>
+
     <section class="module-view">
-      <p class="eyebrow">Módulo ADA</p>
-      <h1>Horarios</h1>
-      <p>Disponibilidad docente, restricciones y generación inteligente.</p>
-      <div class="module-placeholder">
-        <strong>Bloque en construcción</strong>
-        <span>Este módulo quedará conectado con Supabase y permisos reales en los próximos bloques.</span>
+      <p class="eyebrow">Bloque 14</p>
+      <h1>Horarios docentes</h1>
+      <p>Gestión de disponibilidad, franjas, aulas, restricciones y detección inicial de conflictos.</p>
+
+      <div class="schedule-tabs">
+        <button class="schedule-tab active" data-tab="franjas">Franjas</button>
+        <button class="schedule-tab" data-tab="aulas">Aulas</button>
+        <button class="schedule-tab" data-tab="disponibilidad">Disponibilidad docente</button>
+        <button class="schedule-tab" data-tab="restricciones">Restricciones</button>
+        <button class="schedule-tab" data-tab="clases">Asignar clase</button>
+        <button class="schedule-tab" data-tab="conflictos">Conflictos</button>
       </div>
+
+      <section id="tab-franjas" class="schedule-section active">
+        <div class="schedule-layout">
+          <section class="panel-card">
+            <h2>Nueva franja horaria</h2>
+            <form id="formFranja" class="ada-form">
+              <label>Nombre</label>
+              <input type="text" id="franjaNombre" required placeholder="Ej. 6° hora mañana">
+
+              <label>Hora inicio</label>
+              <input type="time" id="franjaInicio" required>
+
+              <label>Hora fin</label>
+              <input type="time" id="franjaFin" required>
+
+              <label>Turno</label>
+              <select id="franjaTurno">
+                <option value="">Seleccionar</option>
+                <option>Mañana</option>
+                <option>Tarde</option>
+                <option>Noche</option>
+                <option>Doble jornada</option>
+              </select>
+
+              <button class="btn-primary" type="submit">Guardar franja</button>
+              <p id="msgFranja" class="form-message"></p>
+            </form>
+          </section>
+
+          <section class="panel-card">
+            <h2>Franjas cargadas</h2>
+            <div id="tablaFranjas" class="table-wrap"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="tab-aulas" class="schedule-section">
+        <div class="schedule-layout">
+          <section class="panel-card">
+            <h2>Nueva aula</h2>
+            <form id="formAula" class="ada-form">
+              <label>Nombre</label>
+              <input type="text" id="aulaNombre" required placeholder="Ej. Aula 1 / Laboratorio Electrónica">
+
+              <label>Tipo</label>
+              <input type="text" id="aulaTipo" placeholder="Aula común, laboratorio, taller">
+
+              <label>Capacidad</label>
+              <input type="number" id="aulaCapacidad" placeholder="Ej. 30">
+
+              <label>Ubicación</label>
+              <input type="text" id="aulaUbicacion" placeholder="Ej. Planta baja">
+
+              <button class="btn-primary" type="submit">Guardar aula</button>
+              <p id="msgAula" class="form-message"></p>
+            </form>
+          </section>
+
+          <section class="panel-card">
+            <h2>Aulas cargadas</h2>
+            <div id="tablaAulas" class="table-wrap"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="tab-disponibilidad" class="schedule-section">
+        <div class="schedule-layout">
+          <section class="panel-card">
+            <h2>Cargar disponibilidad docente</h2>
+            <form id="formDisponibilidad" class="ada-form">
+              <label>Docente</label>
+              <select id="dispDocente" required></select>
+
+              <label>Día</label>
+              <select id="dispDia" required></select>
+
+              <label>Franja</label>
+              <select id="dispFranja" required></select>
+
+              <label>Estado</label>
+              <select id="dispDisponible">
+                <option value="true">Disponible</option>
+                <option value="false">No disponible</option>
+              </select>
+
+              <label>Observación</label>
+              <textarea id="dispObservacion"></textarea>
+
+              <button class="btn-primary" type="submit">Guardar disponibilidad</button>
+              <p id="msgDisponibilidad" class="form-message"></p>
+            </form>
+          </section>
+
+          <section class="panel-card">
+            <h2>Disponibilidad cargada</h2>
+            <div id="tablaDisponibilidad" class="table-wrap"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="tab-restricciones" class="schedule-section">
+        <div class="schedule-layout">
+          <section class="panel-card">
+            <h2>Nueva restricción docente</h2>
+            <form id="formRestriccion" class="ada-form">
+              <label>Docente</label>
+              <select id="restrDocente" required></select>
+
+              <label>Tipo</label>
+              <select id="restrTipo">
+                <option>Disponibilidad limitada</option>
+                <option>No superponer sedes</option>
+                <option>Evitar última hora</option>
+                <option>Preferencia de turno</option>
+                <option>Otra</option>
+              </select>
+
+              <label>Prioridad</label>
+              <select id="restrPrioridad">
+                <option value="alta">Alta</option>
+                <option value="media" selected>Media</option>
+                <option value="baja">Baja</option>
+              </select>
+
+              <label>Descripción</label>
+              <textarea id="restrDescripcion" required></textarea>
+
+              <button class="btn-primary" type="submit">Guardar restricción</button>
+              <p id="msgRestriccion" class="form-message"></p>
+            </form>
+          </section>
+
+          <section class="panel-card">
+            <h2>Restricciones cargadas</h2>
+            <div id="tablaRestricciones" class="table-wrap"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="tab-clases" class="schedule-section">
+        <div class="schedule-layout">
+          <section class="panel-card">
+            <h2>Asignar clase al horario</h2>
+            <form id="formClase" class="ada-form">
+              <label>Docente</label>
+              <select id="claseDocente" required></select>
+
+              <label>Materia</label>
+              <select id="claseMateria" required></select>
+
+              <label>Curso</label>
+              <select id="claseCurso" required></select>
+
+              <label>Día</label>
+              <select id="claseDia" required></select>
+
+              <label>Franja</label>
+              <select id="claseFranja" required></select>
+
+              <label>Aula</label>
+              <select id="claseAula"></select>
+
+              <label>Ciclo lectivo</label>
+              <input type="text" id="claseCiclo" placeholder="Ej. 2026">
+
+              <label>Observación</label>
+              <textarea id="claseObservacion"></textarea>
+
+              <button class="btn-primary" type="submit">Guardar clase</button>
+              <p id="msgClase" class="form-message"></p>
+            </form>
+          </section>
+
+          <section class="panel-card">
+            <h2>Clases asignadas</h2>
+            <div id="tablaClases" class="table-wrap"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="tab-conflictos" class="schedule-section">
+        <section class="panel-card">
+          <h2>Detección de conflictos</h2>
+          <p class="helper-text">ADA revisa superposición de docente, curso y aula en el mismo día y franja.</p>
+          <button class="btn-primary" id="btnAnalizarConflictos">Analizar conflictos</button>
+          <div id="resultadoConflictos"></div>
+        </section>
+      </section>
     </section>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../assets/js/supabase-config.js"></script>
   <script src="../assets/js/module-theme.js"></script>
+  <script src="../assets/js/horarios.js"></script>
 </body>
 </html>
