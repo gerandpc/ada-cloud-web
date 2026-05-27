@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Importar usuarios - ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque10-importacion.css">
+</head>
+<body class="module-page role-loading">
+  <main class="module-shell">
+    <a href="dashboard.html" class="back-link">← Volver al panel</a>
+    <section class="module-view">
+      <p class="eyebrow">Bloque 10</p>
+      <h1>Importación masiva de usuarios</h1>
+      <p>Carga institucional de usuarios desde CSV, creando cuentas en Supabase Auth y perfiles en ADA.</p>
+      <div class="csv-help">
+        <strong>Formato requerido:</strong> <code>nombre,apellido,email,rol,password</code><br>
+        Roles válidos: <code>admin</code>, <code>directivo</code>, <code>secretaria</code>, <code>docente</code>, <code>preceptor</code>, <code>alumno</code>, <code>familia</code>.
+      </div>
+      <div class="import-layout">
+        <section class="panel-card">
+          <h2>CSV de usuarios</h2>
+          <form id="formImportacion" class="ada-form">
+            <label for="archivoCsv">Subir archivo CSV</label>
+            <input type="file" id="archivoCsv" accept=".csv,text/csv">
+            <label for="csvText">O pegar contenido CSV</label>
+            <textarea id="csvText" class="csv-box" placeholder="nombre,apellido,email,rol,password&#10;Juan,Docente,docente1@ada.com,docente,Ada2026*"></textarea>
+            <div class="import-actions">
+              <button type="button" class="btn-secondary" id="btnEjemplo">Cargar ejemplo</button>
+              <button type="button" class="btn-secondary" id="btnValidar">Validar CSV</button>
+              <button type="submit" class="btn-primary" id="btnImportar">Importar usuarios</button>
+            </div>
+            <p id="mensajeImportacion" class="form-message"></p>
+          </form>
+        </section>
+        <section class="panel-card">
+          <h2>Resultado de importación</h2>
+          <div class="import-summary">
+            <div class="import-stat"><strong id="statTotal">0</strong><span>Total</span></div>
+            <div class="import-stat"><strong id="statValidos">0</strong><span>Válidos</span></div>
+            <div class="import-stat"><strong id="statCreados">0</strong><span>Creados</span></div>
+            <div class="import-stat"><strong id="statErrores">0</strong><span>Errores</span></div>
+          </div>
+          <div id="tablaResultados" class="table-wrap"><p class="helper-text">Todavía no hay resultados.</p></div>
+        </section>
+      </div>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/module-theme.js"></script>
+  <script src="../assets/js/importar-usuarios.js"></script>
+</body>
+</html>
