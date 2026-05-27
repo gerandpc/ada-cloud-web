@@ -1,0 +1,51 @@
+
+/* ===== BLOQUE 11 - STORAGE DOCUMENTOS ===== */
+
+.upload-box {
+  border: 2px dashed var(--ada-secondary);
+  background: var(--ada-soft);
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.upload-box label {
+  color: var(--ada-primary);
+}
+
+.file-info {
+  margin-top: 10px;
+  color: var(--ada-muted);
+  font-size: 14px;
+}
+
+.doc-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.storage-pill {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #1e3a8a;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.url-pill {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #f0fdf4;
+  color: #15803d;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.progress-line {
+  margin-top: 12px;
+  font-weight: bold;
+  color: var(--ada-primary);
+}
