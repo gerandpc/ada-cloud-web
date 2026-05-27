@@ -6,41 +6,114 @@
   <title>Documentos - ADA Cloud</title>
   <link rel="stylesheet" href="../assets/css/style.css">
   <link rel="stylesheet" href="../assets/css/bloques07-08.css">
+  <link rel="stylesheet" href="../assets/css/bloque11-storage.css">
 </head>
 <body class="module-page role-loading">
   <main class="module-shell">
     <a href="dashboard.html" class="back-link">← Volver al panel</a>
+
     <section class="module-view">
-      <p class="eyebrow">Bloque 08</p>
-      <h1>Documentos y permisos</h1>
-      <p>Registro de materiales institucionales, permisos por rol, curso, materia y preparación para ADA IA.</p>
+      <p class="eyebrow">Bloque 11</p>
+      <h1>Documentos y materiales</h1>
+      <p>Carga real de archivos en Supabase Storage, con permisos por rol, curso y materia.</p>
 
       <section class="panel-card">
         <h2>Nuevo documento / material</h2>
+
         <form id="formDocumento" class="ada-form">
           <div class="form-grid">
-            <div><label>Título</label><input type="text" id="docTitulo" required placeholder="Ej. Reglamento institucional 2026"></div>
-            <div><label>Tipo de documento</label><select id="docTipo"><option value="">Seleccionar</option><option>Reglamento</option><option>Programa</option><option>Material de clase</option><option>Trabajo práctico</option><option>Informe</option><option>Comunicación</option><option>Otro</option></select></div>
-            <div class="full"><label>Descripción</label><textarea id="docDescripcion"></textarea></div>
-            <div><label>URL del archivo</label><input type="url" id="docUrl" placeholder="https://..."><p class="helper-text">Por ahora registramos URL/path. La subida real a Storage va en un bloque posterior.</p></div>
-            <div><label>Storage path</label><input type="text" id="docStoragePath" placeholder="documentos/reglamento.pdf"></div>
+            <div>
+              <label>Título</label>
+              <input type="text" id="docTitulo" required placeholder="Ej. Reglamento institucional 2026">
+            </div>
+
+            <div>
+              <label>Tipo de documento</label>
+              <select id="docTipo">
+                <option value="">Seleccionar</option>
+                <option>Reglamento</option>
+                <option>Programa</option>
+                <option>Material de clase</option>
+                <option>Trabajo práctico</option>
+                <option>Informe</option>
+                <option>Comunicación</option>
+                <option>Otro</option>
+              </select>
+            </div>
+
+            <div class="full">
+              <label>Descripción</label>
+              <textarea id="docDescripcion"></textarea>
+            </div>
+
+            <div class="full upload-box">
+              <label>Subir archivo a ADA Storage</label>
+              <input type="file" id="docArchivo">
+              <p id="fileInfo" class="file-info">Podés subir PDF, Word, Excel, imágenes u otros materiales institucionales.</p>
+            </div>
+
+            <div>
+              <label>URL externa opcional</label>
+              <input type="url" id="docUrl" placeholder="https://...">
+              <p class="helper-text">Usar solo si el documento está alojado fuera de ADA.</p>
+            </div>
+
+            <div>
+              <label>Storage path</label>
+              <input type="text" id="docStoragePath" placeholder="Se completa automáticamente al subir archivo">
+            </div>
           </div>
 
           <div class="document-permissions">
-            <div><label>Roles habilitados</label><select id="docRoles" multiple class="multi-select"><option value="admin">Admin</option><option value="directivo">Directivo</option><option value="secretaria">Secretaría</option><option value="docente">Docente</option><option value="preceptor">Preceptoría</option><option value="alumno">Alumno</option><option value="familia">Familia</option></select></div>
-            <div><label>Cursos habilitados</label><select id="docCursos" multiple class="multi-select"></select></div>
-            <div><label>Materias habilitadas</label><select id="docMaterias" multiple class="multi-select"></select></div>
+            <div>
+              <label>Roles habilitados</label>
+              <select id="docRoles" multiple class="multi-select">
+                <option value="admin">Admin</option>
+                <option value="directivo">Directivo</option>
+                <option value="secretaria">Secretaría</option>
+                <option value="docente">Docente</option>
+                <option value="preceptor">Preceptoría</option>
+                <option value="alumno">Alumno</option>
+                <option value="familia">Familia</option>
+              </select>
+            </div>
+
+            <div>
+              <label>Cursos habilitados</label>
+              <select id="docCursos" multiple class="multi-select"></select>
+            </div>
+
+            <div>
+              <label>Materias habilitadas</label>
+              <select id="docMaterias" multiple class="multi-select"></select>
+            </div>
           </div>
 
-          <label class="checkbox-line"><input type="checkbox" id="docIA"> Usable por ADA IA</label>
-          <label class="checkbox-line"><input type="checkbox" id="docDescargable" checked> Puede descargarse</label>
-          <label class="checkbox-line"><input type="checkbox" id="docVisibleGeneral"> Visible general institucional</label>
+          <label class="checkbox-line">
+            <input type="checkbox" id="docIA">
+            Usable por ADA IA
+          </label>
+
+          <label class="checkbox-line">
+            <input type="checkbox" id="docDescargable" checked>
+            Puede descargarse
+          </label>
+
+          <label class="checkbox-line">
+            <input type="checkbox" id="docVisibleGeneral">
+            Visible general institucional
+          </label>
+
           <button class="btn-primary" type="submit">Guardar documento</button>
           <p id="msgDocumento" class="form-message"></p>
+          <p id="uploadProgress" class="progress-line"></p>
         </form>
       </section>
 
-      <section class="panel-card"><h2>Documentos registrados</h2><div id="tablaDocumentos" class="table-wrap"></div></section>
+      <section class="panel-card">
+        <h2>Documentos registrados</h2>
+        <div id="tablaDocumentos" class="table-wrap"></div>
+      </section>
     </section>
   </main>
 
