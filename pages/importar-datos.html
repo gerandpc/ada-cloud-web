@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Importación institucional - ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque16-importacion-institucional.css">
+</head>
+<body class="module-page role-loading">
+  <main class="module-shell">
+    <a href="dashboard.html" class="back-link">← Volver al panel</a>
+
+    <section class="module-view">
+      <p class="eyebrow">Bloque 16</p>
+      <h1>Importación institucional masiva</h1>
+      <p>Carga masiva de usuarios, cursos, materias y asignaciones desde CSV institucionales.</p>
+
+      <div class="importer-help">
+        <strong>Idea central:</strong> una escuela puede traer sus datos desde Excel guardado como CSV. 
+        Primero se importan usuarios y estructura académica. Luego se importan asignaciones.
+      </div>
+
+      <div class="importer-layout">
+        <section class="panel-card">
+          <h2>Datos a importar</h2>
+
+          <form id="formImportador" class="ada-form">
+            <label>Tipo de importación</label>
+            <select id="tipoImportacion" required>
+              <option value="usuarios">Usuarios / personal / alumnos / familias</option>
+              <option value="cursos">Cursos, niveles, años, divisiones y modalidades</option>
+              <option value="materias">Materias por curso</option>
+              <option value="alumno_curso">Asignar alumnos a cursos</option>
+              <option value="docente_materia">Asignar docentes a materias</option>
+              <option value="familia_alumno">Vincular familias con alumnos</option>
+            </select>
+
+            <label>Subir archivo CSV</label>
+            <input type="file" id="archivoCsv" accept=".csv,text/csv">
+
+            <label>O pegar contenido CSV</label>
+            <textarea id="csvText" class="importer-box"></textarea>
+
+            <div class="importer-actions">
+              <button type="button" class="btn-secondary" id="btnEjemplo">Cargar ejemplo</button>
+              <button type="button" class="btn-secondary" id="btnValidar">Validar CSV</button>
+              <button type="submit" class="btn-primary">Importar</button>
+            </div>
+
+            <p id="mensajeImportador" class="form-message"></p>
+          </form>
+
+          <div class="template-list">
+            <strong>Plantillas incluidas en el ZIP:</strong>
+            <span><code>plantilla_usuarios_institucional.csv</code></span>
+            <span><code>plantilla_cursos.csv</code></span>
+            <span><code>plantilla_materias.csv</code></span>
+            <span><code>plantilla_alumno_curso.csv</code></span>
+            <span><code>plantilla_docente_materia.csv</code></span>
+            <span><code>plantilla_familia_alumno.csv</code></span>
+          </div>
+        </section>
+
+        <section class="panel-card">
+          <h2>Resultado</h2>
+
+          <div class="importer-summary">
+            <div class="importer-stat"><strong id="statTotal">0</strong><span>Total</span></div>
+            <div class="importer-stat"><strong id="statValidos">0</strong><span>Válidos</span></div>
+            <div class="importer-stat"><strong id="statCreados">0</strong><span>Procesados</span></div>
+            <div class="importer-stat"><strong id="statErrores">0</strong><span>Errores</span></div>
+          </div>
+
+          <div id="tablaResultados" class="table-wrap">
+            <p class="helper-text">Todavía no hay resultados.</p>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/module-theme.js"></script>
+  <script src="../assets/js/importar-datos.js"></script>
+</body>
+</html>
