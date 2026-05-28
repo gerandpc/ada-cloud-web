@@ -1,0 +1,13 @@
+/* BLOQUE 15 - ASISTENCIA */
+.attendance-tabs{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0}
+.attendance-tab{padding:11px 16px;border:1px solid var(--ada-secondary);background:white;color:var(--ada-primary);border-radius:999px;font-weight:bold;cursor:pointer}
+.attendance-tab.active,.attendance-tab:hover{background:var(--ada-primary);color:white}
+.attendance-section{display:none}.attendance-section.active{display:block}
+.attendance-layout{display:grid;grid-template-columns:minmax(320px,430px) 1fr;gap:22px;align-items:start}
+.estado-pill{display:inline-block;padding:6px 10px;border-radius:999px;font-weight:bold;font-size:12px}
+.estado-presente{background:#dcfce7;color:#166534}.estado-ausente{background:#fee2e2;color:#991b1b}.estado-tarde{background:#fef3c7;color:#92400e}.estado-justificado{background:#dbeafe;color:#1e40af}.estado-retirado{background:#f3e8ff;color:#6b21a8}
+.student-attendance-row{display:grid;grid-template-columns:1.4fr 180px 1fr;gap:12px;align-items:center;padding:12px;border-bottom:1px solid var(--ada-border)}
+.student-attendance-row strong{color:var(--ada-primary)}.attendance-list{border:1px solid var(--ada-border);border-radius:18px;overflow:hidden;background:white}
+.follow-card{border:1px solid var(--ada-border);border-radius:18px;padding:16px;background:white;margin-bottom:12px}.follow-card h3{color:var(--ada-primary);margin:0 0 8px}
+.alert-box{border-radius:16px;padding:16px;margin-top:12px}.alert-green{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}.alert-yellow{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412}.alert-red{background:#fef2f2;border:1px solid #fecaca;color:#991b1b}
+@media(max-width:1050px){.attendance-layout{grid-template-columns:1fr}.student-attendance-row{grid-template-columns:1fr}}
