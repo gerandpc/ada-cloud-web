@@ -1,0 +1,24 @@
+/* BLOQUE 20 - VISTAS DOCENTE Y PRECEPTOR */
+.role-hero{background:linear-gradient(135deg,var(--ada-primary),#818cf8);color:white;border-radius:26px;padding:28px;margin-bottom:22px;box-shadow:0 18px 40px rgba(30,58,138,.18)}
+.role-hero h1{margin:0 0 8px;font-size:36px}.role-hero p{margin:0;opacity:.95}
+.role-grid{display:grid;grid-template-columns:repeat(4,minmax(160px,1fr));gap:14px;margin:20px 0}
+.role-card{background:white;border:1px solid var(--ada-border);border-radius:20px;padding:18px;box-shadow:0 12px 28px rgba(15,23,42,.06)}
+.role-card strong{display:block;font-size:30px;color:var(--ada-primary)}
+.role-card span{color:var(--ada-muted);font-weight:bold}
+.role-section-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+.role-list{display:grid;gap:10px}
+.role-item{background:white;border:1px solid var(--ada-border);border-radius:16px;padding:14px}
+.role-item h3{margin:0 0 6px;color:var(--ada-primary)}
+.role-item p{margin:4px 0;color:var(--ada-muted)}
+.quick-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.role-tabs{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0}
+.role-tab{padding:11px 16px;border:1px solid var(--ada-secondary);background:white;color:var(--ada-primary);border-radius:999px;font-weight:bold;cursor:pointer}
+.role-tab.active,.role-tab:hover{background:var(--ada-primary);color:white}
+.role-section{display:none}.role-section.active{display:block}
+.alerta-preceptor{border-radius:16px;padding:14px;margin:10px 0;font-weight:bold}
+.alerta-ok{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}
+.alerta-media{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412}
+.alerta-alta{background:#fef2f2;border:1px solid #fecaca;color:#991b1b}
+.role-badge{display:inline-block;padding:5px 9px;border-radius:999px;background:var(--ada-soft);color:var(--ada-primary);font-weight:bold;font-size:12px}
+@media(max-width:1100px){.role-grid{grid-template-columns:repeat(2,minmax(160px,1fr))}.role-section-grid{grid-template-columns:1fr}}
+@media(max-width:650px){.role-grid{grid-template-columns:1fr}.role-hero h1{font-size:28px}}
