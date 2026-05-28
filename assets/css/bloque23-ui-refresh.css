@@ -225,3 +225,120 @@ input:focus,textarea:focus,select:focus{border-color:var(--ada-primary);box-shad
   .portal-grid,.role-grid,.reports-grid,.comms-grid,.importer-summary,.excel-summary{grid-template-columns:1fr}
   .portal-hero,.role-hero,.comms-hero,.report-hero,.dashboard-hero{padding:22px;border-radius:24px}
 }
+
+
+/* ============================================================
+   ADA Cloud Web - FIX Roles + Logout global
+   Colores pedidos:
+   admin oscuro, directivos rojo, secretaria celeste,
+   familia verde, docentes naranja, preceptoría marrón claro,
+   alumno multicolor.
+   ============================================================ */
+
+body.role-admin{
+  --ada-primary:#0f172a !important;
+  --ada-primary-2:#334155 !important;
+  --ada-primary-soft:#e2e8f0 !important;
+  --ada-secondary:#64748b !important;
+  --ada-soft:#f1f5f9 !important;
+}
+
+body.role-directivo{
+  --ada-primary:#b91c1c !important;
+  --ada-primary-2:#ef4444 !important;
+  --ada-primary-soft:#fee2e2 !important;
+  --ada-secondary:#f87171 !important;
+  --ada-soft:#fff1f2 !important;
+}
+
+body.role-secretaria{
+  --ada-primary:#0284c7 !important;
+  --ada-primary-2:#38bdf8 !important;
+  --ada-primary-soft:#e0f2fe !important;
+  --ada-secondary:#7dd3fc !important;
+  --ada-soft:#f0f9ff !important;
+}
+
+body.role-familia{
+  --ada-primary:#15803d !important;
+  --ada-primary-2:#22c55e !important;
+  --ada-primary-soft:#dcfce7 !important;
+  --ada-secondary:#86efac !important;
+  --ada-soft:#f0fdf4 !important;
+}
+
+body.role-docente{
+  --ada-primary:#ea580c !important;
+  --ada-primary-2:#fb923c !important;
+  --ada-primary-soft:#ffedd5 !important;
+  --ada-secondary:#fdba74 !important;
+  --ada-soft:#fff7ed !important;
+}
+
+body.role-preceptor{
+  --ada-primary:#92400e !important;
+  --ada-primary-2:#b45309 !important;
+  --ada-primary-soft:#fef3c7 !important;
+  --ada-secondary:#d6a35d !important;
+  --ada-soft:#fffbeb !important;
+}
+
+body.role-alumno{
+  --ada-primary:#7c3aed !important;
+  --ada-primary-2:#06b6d4 !important;
+  --ada-primary-soft:#ede9fe !important;
+  --ada-secondary:#f472b6 !important;
+  --ada-soft:#fdf4ff !important;
+  background:
+    radial-gradient(circle at 8% 8%, rgba(244,114,182,.20), transparent 25%),
+    radial-gradient(circle at 92% 10%, rgba(56,189,248,.22), transparent 26%),
+    radial-gradient(circle at 30% 100%, rgba(250,204,21,.18), transparent 30%),
+    radial-gradient(circle at 75% 85%, rgba(34,197,94,.16), transparent 26%),
+    linear-gradient(180deg, #fbf7ff, #eef8ff) !important;
+}
+
+body.role-alumno .portal-hero,
+body.role-alumno .role-hero,
+body.role-alumno .dashboard-hero{
+  background:
+    linear-gradient(135deg, #7c3aed 0%, #ec4899 32%, #06b6d4 66%, #22c55e 100%) !important;
+}
+
+/* Botón global cerrar sesión */
+.ada-global-logout{
+  position:fixed;
+  top:18px;
+  right:18px;
+  z-index:9998;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:11px 15px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.55);
+  color:#fff;
+  background:linear-gradient(135deg, var(--ada-primary), var(--ada-primary-2));
+  box-shadow:0 16px 34px rgba(15,23,42,.18);
+  font-weight:800;
+  cursor:pointer;
+  transition:all .22s ease;
+}
+
+.ada-global-logout:hover{
+  transform:translateY(-2px);
+  box-shadow:0 20px 38px rgba(15,23,42,.24);
+}
+
+.ada-global-logout::before{
+  content:"⏻";
+  font-size:15px;
+}
+
+@media(max-width:760px){
+  .ada-global-logout{
+    top:auto;
+    bottom:18px;
+    right:18px;
+    padding:12px 14px;
+  }
+}
