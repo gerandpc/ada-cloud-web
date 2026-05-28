@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mi espacio alumno - ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque19-portales.css">
+</head>
+<body class="module-page role-loading">
+  <main class="module-shell">
+    <a href="dashboard.html" class="back-link">← Volver al panel</a>
+
+    <section class="module-view">
+      <div class="portal-hero">
+        <p>ADA Alumno</p>
+        <h1 id="tituloAlumno">Mi espacio de aprendizaje</h1>
+        <p>Materias, asistencia, documentos habilitados y seguimiento visible.</p>
+        <div class="portal-actions">
+          <a class="btn-secondary" href="ia.html">Abrir ADA IA</a>
+          <a class="btn-secondary" href="documentos.html">Ver documentos</a>
+        </div>
+      </div>
+
+      <div class="portal-grid">
+        <div class="portal-card"><strong id="statMaterias">0</strong><span>Materias</span></div>
+        <div class="portal-card"><strong id="statAsistencias">0</strong><span>Registros</span></div>
+        <div class="portal-card"><strong id="statAusencias">0</strong><span>Ausencias</span></div>
+        <div class="portal-card"><strong id="statDocumentos">0</strong><span>Documentos</span></div>
+      </div>
+
+      <div id="alertaAlumno"></div>
+
+      <div class="portal-section-grid">
+        <section class="panel-card">
+          <h2>Mi curso</h2>
+          <div id="miCurso" class="portal-list"></div>
+        </section>
+
+        <section class="panel-card">
+          <h2>Mis materias</h2>
+          <div id="misMaterias" class="portal-list"></div>
+        </section>
+
+        <section class="panel-card">
+          <h2>Mi asistencia</h2>
+          <div id="miAsistencia" class="table-wrap"></div>
+        </section>
+
+        <section class="panel-card">
+          <h2>Seguimientos visibles</h2>
+          <div id="misSeguimientos" class="portal-list"></div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/module-theme.js"></script>
+  <script src="../assets/js/mi-espacio-alumno.js"></script>
+</body>
+</html>

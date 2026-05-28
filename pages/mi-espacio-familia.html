@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mi espacio familia - ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque19-portales.css">
+</head>
+<body class="module-page role-loading">
+  <main class="module-shell">
+    <a href="dashboard.html" class="back-link">← Volver al panel</a>
+
+    <section class="module-view">
+      <div class="portal-hero">
+        <p>ADA Familias</p>
+        <h1>Mi espacio familiar</h1>
+        <p>Seguimiento de hijos/as vinculados, asistencia, documentos y alertas institucionales.</p>
+        <div class="portal-actions">
+          <a class="btn-secondary" href="ia.html">Consultar ADA IA</a>
+          <a class="btn-secondary" href="documentos.html">Documentos habilitados</a>
+        </div>
+      </div>
+
+      <div class="portal-grid">
+        <div class="portal-card"><strong id="statHijos">0</strong><span>Hijos/as</span></div>
+        <div class="portal-card"><strong id="statRegistros">0</strong><span>Registros</span></div>
+        <div class="portal-card"><strong id="statAusencias">0</strong><span>Ausencias</span></div>
+        <div class="portal-card"><strong id="statSeguimientos">0</strong><span>Seguimientos</span></div>
+      </div>
+
+      <section class="panel-card">
+        <h2>Hijos/as vinculados</h2>
+        <div id="selectorHijos" class="child-selector"></div>
+      </section>
+
+      <div id="alertaFamilia"></div>
+
+      <div class="portal-section-grid">
+        <section class="panel-card">
+          <h2>Datos del estudiante</h2>
+          <div id="datosHijo" class="portal-list"></div>
+        </section>
+
+        <section class="panel-card">
+          <h2>Asistencia</h2>
+          <div id="asistenciaHijo" class="table-wrap"></div>
+        </section>
+
+        <section class="panel-card">
+          <h2>Seguimientos visibles</h2>
+          <div id="seguimientosHijo" class="portal-list"></div>
+        </section>
+
+        <section class="panel-card">
+          <h2>Documentos para familias</h2>
+          <div id="documentosFamilia" class="portal-list"></div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/module-theme.js"></script>
+  <script src="../assets/js/mi-espacio-familia.js"></script>
+</body>
+</html>
