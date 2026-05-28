@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mi espacio docente - ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque20-roles-operativos.css">
+</head>
+<body class="module-page role-loading">
+  <main class="module-shell">
+    <a href="dashboard.html" class="back-link">← Volver al panel</a>
+
+    <section class="module-view">
+      <div class="role-hero">
+        <p>ADA Docente</p>
+        <h1 id="tituloDocente">Mi espacio docente</h1>
+        <p>Materias, cursos, alumnos, asistencia, documentos y seguimiento pedagógico.</p>
+        <div class="quick-actions">
+          <a class="btn-secondary" href="asistencia.html">Cargar asistencia</a>
+          <a class="btn-secondary" href="documentos.html">Documentos</a>
+          <a class="btn-secondary" href="ia.html">ADA IA</a>
+        </div>
+      </div>
+
+      <div class="role-grid">
+        <div class="role-card"><strong id="statMaterias">0</strong><span>Materias</span></div>
+        <div class="role-card"><strong id="statCursos">0</strong><span>Cursos</span></div>
+        <div class="role-card"><strong id="statAlumnos">0</strong><span>Alumnos</span></div>
+        <div class="role-card"><strong id="statSeguimientos">0</strong><span>Seguimientos</span></div>
+      </div>
+
+      <div class="role-section-grid">
+        <section class="panel-card">
+          <h2>Mis materias y cursos</h2>
+          <div id="misMaterias" class="role-list"></div>
+        </section>
+
+        <section class="panel-card">
+          <h2>Mis alumnos</h2>
+          <div id="misAlumnos" class="table-wrap"></div>
+        </section>
+
+        <section class="panel-card">
+          <h2>Seguimientos recientes</h2>
+          <div id="seguimientosDocente" class="role-list"></div>
+        </section>
+
+        <section class="panel-card">
+          <h2>Documentos habilitados</h2>
+          <div id="documentosDocente" class="role-list"></div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/module-theme.js"></script>
+  <script src="../assets/js/mi-espacio-docente.js"></script>
+</body>
+</html>

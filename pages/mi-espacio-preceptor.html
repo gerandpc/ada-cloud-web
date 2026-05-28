@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Preceptoría - ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque20-roles-operativos.css">
+</head>
+<body class="module-page role-loading">
+  <main class="module-shell">
+    <a href="dashboard.html" class="back-link">← Volver al panel</a>
+
+    <section class="module-view">
+      <div class="role-hero">
+        <p>ADA Preceptoría</p>
+        <h1>Panel operativo de preceptoría</h1>
+        <p>Asistencia, alertas, alumnos, familias y seguimiento cotidiano.</p>
+        <div class="quick-actions">
+          <a class="btn-secondary" href="asistencia.html">Cargar asistencia</a>
+          <a class="btn-secondary" href="reportes.html">Reportes</a>
+          <a class="btn-secondary" href="ia.html">ADA IA</a>
+        </div>
+      </div>
+
+      <div class="role-grid">
+        <div class="role-card"><strong id="statCursos">0</strong><span>Cursos</span></div>
+        <div class="role-card"><strong id="statAlumnos">0</strong><span>Alumnos</span></div>
+        <div class="role-card"><strong id="statAusencias">0</strong><span>Ausencias</span></div>
+        <div class="role-card"><strong id="statAlertas">0</strong><span>Alertas</span></div>
+      </div>
+
+      <div class="role-tabs">
+        <button class="role-tab active" data-tab="cursos">Cursos</button>
+        <button class="role-tab" data-tab="alertas">Alertas</button>
+        <button class="role-tab" data-tab="seguimiento">Seguimiento</button>
+        <button class="role-tab" data-tab="familias">Familias</button>
+      </div>
+
+      <section id="tab-cursos" class="role-section active">
+        <section class="panel-card">
+          <h2>Cursos y alumnos</h2>
+          <div id="tablaCursosPreceptor" class="table-wrap"></div>
+        </section>
+      </section>
+
+      <section id="tab-alertas" class="role-section">
+        <section class="panel-card">
+          <h2>Alertas de asistencia</h2>
+          <div id="alertasPreceptor"></div>
+        </section>
+      </section>
+
+      <section id="tab-seguimiento" class="role-section">
+        <section class="panel-card">
+          <h2>Seguimientos recientes</h2>
+          <div id="seguimientosPreceptor" class="role-list"></div>
+        </section>
+      </section>
+
+      <section id="tab-familias" class="role-section">
+        <section class="panel-card">
+          <h2>Familias vinculadas</h2>
+          <div id="tablaFamiliasPreceptor" class="table-wrap"></div>
+        </section>
+      </section>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/module-theme.js"></script>
+  <script src="../assets/js/mi-espacio-preceptor.js"></script>
+</body>
+</html>
