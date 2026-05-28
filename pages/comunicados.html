@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Comunicados - ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque21-comunicados.css">
+</head>
+<body class="module-page role-loading">
+  <main class="module-shell">
+    <a href="dashboard.html" class="back-link">← Volver al panel</a>
+
+    <section class="module-view">
+      <p class="eyebrow">Bloque 21</p>
+      <h1>Comunicados institucionales</h1>
+      <p>Comunicaciones generales, por rol y por curso para toda la comunidad educativa.</p>
+
+      <div class="comms-grid">
+        <div class="comms-stat"><strong id="statTotal">0</strong><span>Total</span></div>
+        <div class="comms-stat"><strong id="statActivos">0</strong><span>Activos</span></div>
+        <div class="comms-stat"><strong id="statMios">0</strong><span>Disponibles</span></div>
+        <div class="comms-stat"><strong id="statLeidos">0</strong><span>Leídos</span></div>
+      </div>
+
+      <div class="comms-tabs">
+        <button class="comms-tab active" data-tab="mis">Mis comunicados</button>
+        <button class="comms-tab" data-tab="nuevo">Nuevo comunicado</button>
+        <button class="comms-tab" data-tab="gestion">Gestión</button>
+      </div>
+
+      <section id="tab-mis" class="comms-section active">
+        <section class="panel-card">
+          <h2>Comunicados disponibles</h2>
+          <div id="listaMisComunicados"></div>
+        </section>
+      </section>
+
+      <section id="tab-nuevo" class="comms-section">
+        <div class="comms-layout">
+          <section class="panel-card">
+            <h2>Crear comunicado</h2>
+            <form id="formComunicado" class="ada-form">
+              <label>Título</label>
+              <input type="text" id="comTitulo" required>
+
+              <label>Tipo</label>
+              <select id="comTipo">
+                <option>General</option>
+                <option>Académico</option>
+                <option>Administrativo</option>
+                <option>Convivencia</option>
+                <option>Urgente</option>
+                <option>Evento</option>
+              </select>
+
+              <label>Prioridad</label>
+              <select id="comPrioridad">
+                <option value="alta">Alta</option>
+                <option value="media" selected>Media</option>
+                <option value="baja">Baja</option>
+              </select>
+
+              <label>Contenido</label>
+              <textarea id="comContenido" required></textarea>
+
+              <div class="form-grid">
+                <div>
+                  <label>Visible desde</label>
+                  <input type="date" id="comDesde">
+                </div>
+                <div>
+                  <label>Visible hasta</label>
+                  <input type="date" id="comHasta">
+                </div>
+              </div>
+
+              <label>Roles destinatarios</label>
+              <select id="comRoles" multiple class="multi-select">
+                <option value="admin">Admin</option>
+                <option value="directivo">Directivo</option>
+                <option value="secretaria">Secretaría</option>
+                <option value="docente">Docente</option>
+                <option value="preceptor">Preceptoría</option>
+                <option value="alumno">Alumno</option>
+                <option value="familia">Familia</option>
+              </select>
+
+              <label>Cursos destinatarios</label>
+              <select id="comCursos" multiple class="multi-select"></select>
+
+              <label class="checkbox-line">
+                <input type="checkbox" id="comPublicado" checked>
+                Publicado
+              </label>
+
+              <button class="btn-primary" type="submit">Publicar comunicado</button>
+              <p id="msgComunicado" class="form-message"></p>
+            </form>
+          </section>
+
+          <section class="panel-card">
+            <h2>Recomendaciones</h2>
+            <div class="comms-card">
+              <h3>Destinatarios</h3>
+              <p>Podés elegir roles, cursos o ambas opciones. Si elegís curso, lo verán alumnos del curso, familias vinculadas y docentes asociados por materias.</p>
+            </div>
+            <div class="comms-card">
+              <h3>Prioridad</h3>
+              <p>Usá prioridad alta solo para avisos importantes o urgentes.</p>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section id="tab-gestion" class="comms-section">
+        <section class="panel-card">
+          <h2>Todos los comunicados</h2>
+          <div id="tablaGestionComunicados" class="table-wrap"></div>
+        </section>
+      </section>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/module-theme.js"></script>
+  <script src="../assets/js/comunicados.js"></script>
+</body>
+</html>
