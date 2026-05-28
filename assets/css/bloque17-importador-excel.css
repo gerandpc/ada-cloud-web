@@ -1,0 +1,14 @@
+/* BLOQUE 17 - IMPORTADOR EXCEL INSTITUCIONAL */
+.excel-layout{display:grid;grid-template-columns:minmax(320px,460px) 1fr;gap:22px;align-items:start}
+.excel-help{background:var(--ada-soft);border:1px solid var(--ada-secondary);color:var(--ada-primary);padding:14px;border-radius:16px;margin:16px 0}
+.sheet-order{display:grid;gap:8px;margin-top:12px}
+.sheet-order span{background:white;border:1px solid var(--ada-border);border-radius:12px;padding:10px}
+.excel-summary{display:grid;grid-template-columns:repeat(4,minmax(130px,1fr));gap:12px;margin:18px 0}
+.excel-stat{background:white;border:1px solid var(--ada-border);border-radius:16px;padding:16px}
+.excel-stat strong{display:block;font-size:28px;color:var(--ada-primary)}
+.excel-stat span{color:var(--ada-muted);font-weight:bold}
+.result-ok{color:#15803d;font-weight:bold}.result-error{color:#b91c1c;font-weight:bold}.result-pending{color:#92400e;font-weight:bold}.result-processing{color:#1d4ed8;font-weight:bold}
+.sheet-pill{display:inline-block;padding:5px 9px;border-radius:999px;background:var(--ada-soft);color:var(--ada-primary);font-weight:bold;font-size:12px}
+.preview-box{max-height:520px;overflow:auto;border:1px solid var(--ada-border);border-radius:16px;background:white}
+@media(max-width:1050px){.excel-layout{grid-template-columns:1fr}.excel-summary{grid-template-columns:repeat(2,minmax(130px,1fr))}}
+@media(max-width:600px){.excel-summary{grid-template-columns:1fr}}
