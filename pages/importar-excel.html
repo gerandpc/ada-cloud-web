@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Importador Excel institucional - ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque17-importador-excel.css">
+</head>
+<body class="module-page role-loading">
+  <main class="module-shell">
+    <a href="dashboard.html" class="back-link">← Volver al panel</a>
+
+    <section class="module-view">
+      <p class="eyebrow">Bloque 17</p>
+      <h1>Importador Excel institucional</h1>
+      <p>Subí un único Excel con varias hojas y ADA carga usuarios, cursos, materias y asignaciones en orden.</p>
+
+      <div class="excel-help">
+        <strong>Formato esperado:</strong> un archivo `.xlsx` con hojas llamadas
+        <code>Usuarios</code>, <code>Cursos</code>, <code>Materias</code>, <code>Alumno_Curso</code>, <code>Docente_Materia</code> y <code>Familia_Alumno</code>.
+      </div>
+
+      <div class="excel-layout">
+        <section class="panel-card">
+          <h2>Archivo Excel</h2>
+          <form id="formExcel" class="ada-form">
+            <label>Seleccionar archivo .xlsx</label>
+            <input type="file" id="archivoExcel" accept=".xlsx,.xls">
+
+            <div class="sheet-order">
+              <strong>Orden de procesamiento:</strong>
+              <span>1. Usuarios</span>
+              <span>2. Cursos</span>
+              <span>3. Materias</span>
+              <span>4. Alumno_Curso</span>
+              <span>5. Docente_Materia</span>
+              <span>6. Familia_Alumno</span>
+            </div>
+
+            <button type="button" class="btn-secondary" id="btnValidarExcel">Validar Excel</button>
+            <button type="submit" class="btn-primary">Importar Excel completo</button>
+            <p id="mensajeExcel" class="form-message"></p>
+          </form>
+        </section>
+
+        <section class="panel-card">
+          <h2>Resultado</h2>
+          <div class="excel-summary">
+            <div class="excel-stat"><strong id="statTotal">0</strong><span>Total</span></div>
+            <div class="excel-stat"><strong id="statValidos">0</strong><span>Válidos</span></div>
+            <div class="excel-stat"><strong id="statProcesados">0</strong><span>Procesados</span></div>
+            <div class="excel-stat"><strong id="statErrores">0</strong><span>Errores</span></div>
+          </div>
+          <div id="tablaResultados" class="preview-box">
+            <p class="helper-text" style="padding:16px;">Todavía no hay resultados.</p>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/module-theme.js"></script>
+  <script src="../assets/js/importar-excel.js"></script>
+</body>
+</html>
