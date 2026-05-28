@@ -1,0 +1,13 @@
+/* BLOQUE 10 - IMPORTACIÓN MASIVA */
+.import-layout{display:grid;grid-template-columns:minmax(320px,460px) 1fr;gap:22px;align-items:start}
+.csv-box{width:100%;min-height:260px;font-family:Consolas,monospace;font-size:14px;line-height:1.5}
+.import-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.import-summary{display:grid;grid-template-columns:repeat(4,minmax(130px,1fr));gap:12px;margin:18px 0}
+.import-stat{background:white;border:1px solid var(--ada-border);border-radius:16px;padding:16px}
+.import-stat strong{display:block;font-size:28px;color:var(--ada-primary)}
+.import-stat span{color:var(--ada-muted);font-weight:bold}
+.result-ok{color:#15803d;font-weight:bold}.result-error{color:#b91c1c;font-weight:bold}.result-pending{color:#92400e;font-weight:bold}
+.csv-help{background:var(--ada-soft);border:1px solid var(--ada-secondary);color:var(--ada-primary);padding:14px;border-radius:16px;margin-top:16px}
+.csv-help code{background:white;padding:2px 5px;border-radius:6px}
+@media(max-width:1050px){.import-layout{grid-template-columns:1fr}.import-summary{grid-template-columns:repeat(2,minmax(130px,1fr))}}
+@media(max-width:600px){.import-summary{grid-template-columns:1fr}}
