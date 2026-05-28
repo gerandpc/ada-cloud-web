@@ -4,23 +4,104 @@
   <meta charset="UTF-8">
   <title>Reportes - ADA Cloud</title>
   <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque18-reportes.css">
 </head>
 <body class="module-page role-loading">
   <main class="module-shell">
     <a href="dashboard.html" class="back-link">← Volver al panel</a>
     <section class="module-view">
-      <p class="eyebrow">Módulo ADA</p>
-      <h1>Reportes</h1>
-      <p>Indicadores, informes y exportaciones institucionales.</p>
-      <div class="module-placeholder">
-        <strong>Bloque en construcción</strong>
-        <span>Este módulo quedará conectado con Supabase y permisos reales en los próximos bloques.</span>
+      <p class="eyebrow">Bloque 18</p>
+      <h1>Reportes y exportaciones</h1>
+      <p>Reportes iniciales de asistencia, seguimiento, usuarios, documentos y estructura institucional.</p>
+
+      <div class="reports-grid">
+        <div class="report-stat"><strong id="statUsuarios">0</strong><span>Usuarios</span></div>
+        <div class="report-stat"><strong id="statCursos">0</strong><span>Cursos</span></div>
+        <div class="report-stat"><strong id="statMaterias">0</strong><span>Materias</span></div>
+        <div class="report-stat"><strong id="statDocumentos">0</strong><span>Documentos</span></div>
       </div>
+
+      <div class="report-tabs">
+        <button class="report-tab active" data-tab="asistencia">Asistencia</button>
+        <button class="report-tab" data-tab="seguimiento">Seguimiento</button>
+        <button class="report-tab" data-tab="usuarios">Usuarios</button>
+        <button class="report-tab" data-tab="documentos">Documentos</button>
+        <button class="report-tab" data-tab="estructura">Estructura académica</button>
+      </div>
+
+      <section id="tab-asistencia" class="report-section active">
+        <section class="panel-card">
+          <h2>Reporte de asistencia</h2>
+          <div class="report-filters">
+            <div><label>Curso</label><select id="filtroAsistenciaCurso"></select></div>
+            <div><label>Alumno</label><select id="filtroAsistenciaAlumno"></select></div>
+            <div><label>Desde</label><input type="date" id="filtroAsistenciaDesde"></div>
+            <div><label>Hasta</label><input type="date" id="filtroAsistenciaHasta"></div>
+          </div>
+          <div class="report-actions">
+            <button class="btn-primary" id="btnReporteAsistencia">Generar reporte</button>
+            <button class="btn-secondary" id="btnExportAsistencia">Exportar CSV</button>
+          </div>
+          <div id="resumenAsistencia" class="report-box"></div>
+          <div id="tablaAsistencia" class="table-wrap"></div>
+        </section>
+      </section>
+
+      <section id="tab-seguimiento" class="report-section">
+        <section class="panel-card">
+          <h2>Reporte de seguimiento</h2>
+          <div class="report-filters">
+            <div><label>Curso</label><select id="filtroSeguimientoCurso"></select></div>
+            <div><label>Alumno</label><select id="filtroSeguimientoAlumno"></select></div>
+            <div><label>Prioridad</label><select id="filtroSeguimientoPrioridad"><option value="">Todas</option><option value="alta">Alta</option><option value="media">Media</option><option value="baja">Baja</option></select></div>
+            <div><label>Tipo</label><input type="text" id="filtroSeguimientoTipo" placeholder="Académico, Asistencia..."></div>
+          </div>
+          <div class="report-actions">
+            <button class="btn-primary" id="btnReporteSeguimiento">Generar reporte</button>
+            <button class="btn-secondary" id="btnExportSeguimiento">Exportar CSV</button>
+          </div>
+          <div id="tablaSeguimiento" class="table-wrap"></div>
+        </section>
+      </section>
+
+      <section id="tab-usuarios" class="report-section">
+        <section class="panel-card">
+          <h2>Reporte de usuarios</h2>
+          <div class="report-actions">
+            <button class="btn-primary" id="btnReporteUsuarios">Generar reporte</button>
+            <button class="btn-secondary" id="btnExportUsuarios">Exportar CSV</button>
+          </div>
+          <div id="tablaUsuariosReporte" class="table-wrap"></div>
+        </section>
+      </section>
+
+      <section id="tab-documentos" class="report-section">
+        <section class="panel-card">
+          <h2>Reporte de documentos</h2>
+          <div class="report-actions">
+            <button class="btn-primary" id="btnReporteDocumentos">Generar reporte</button>
+            <button class="btn-secondary" id="btnExportDocumentos">Exportar CSV</button>
+          </div>
+          <div id="tablaDocumentosReporte" class="table-wrap"></div>
+        </section>
+      </section>
+
+      <section id="tab-estructura" class="report-section">
+        <section class="panel-card">
+          <h2>Reporte de estructura académica</h2>
+          <div class="report-actions">
+            <button class="btn-primary" id="btnReporteEstructura">Generar reporte</button>
+            <button class="btn-secondary" id="btnExportEstructura">Exportar CSV</button>
+          </div>
+          <div id="tablaEstructuraReporte" class="table-wrap"></div>
+        </section>
+      </section>
     </section>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../assets/js/supabase-config.js"></script>
   <script src="../assets/js/module-theme.js"></script>
+  <script src="../assets/js/reportes.js"></script>
 </body>
 </html>
