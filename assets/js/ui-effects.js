@@ -1,4 +1,3 @@
-
 // ADA Cloud Web - Bloque 23
 // Micro-interacciones visuales y helpers UI
 (function(){
@@ -20,9 +19,7 @@
     document.querySelectorAll("a[href]").forEach(link => {
       const href = link.getAttribute("href");
       if (!href) return;
-      if (href.endsWith(current)) {
-        link.classList.add("active");
-      }
+      if (href.endsWith(current)) link.classList.add("active");
     });
   }
 
@@ -32,11 +29,7 @@
     });
   }
 
-  function enableKeyboardFocus(){
-    document.body.classList.add("ui-ready");
-  }
-
-  function wireToastButtons(){
+  function wireToast(){
     window.adaToast = function(message){
       const toast = document.createElement("div");
       toast.className = "ada-toast";
@@ -54,13 +47,10 @@
     addAppearEffects();
     setActiveMenuLink();
     improveTables();
-    enableKeyboardFocus();
-    wireToastButtons();
+    wireToast();
+    document.body.classList.add("ui-ready");
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init);
-  } else {
-    init();
-  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
 })();
