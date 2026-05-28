@@ -1,7 +1,6 @@
 
-// ADA Cloud Web - Bloque 22
-// Seguridad de sesión, perfil activo y control de acceso por rol.
-// Este archivo debe cargarse después de supabase-config.js y antes del JS propio de cada página.
+// ADA Cloud Web - Seguridad estable + logout global
+// Cargar después de supabase-config.js y antes del JS propio de cada página.
 
 const ADA_ROLE_CLASS_MAP = {
   admin: "role-admin",
@@ -46,8 +45,7 @@ const ADA_PAGE_ACCESS = {
   "mi-espacio-docente.html": ["admin", "directivo", "docente"],
   "mi-espacio-preceptor.html": ["admin", "directivo", "preceptor"],
 
-  "manuscritos.html": ["admin", "directivo", "secretaria", "docente"],
-  "logout.html": ["admin", "directivo", "secretaria", "docente", "preceptor", "familia", "alumno"]
+  "manuscritos.html": ["admin", "directivo", "secretaria", "docente"]
 };
 
 const ADA_ROLE_HOME = {
@@ -61,8 +59,7 @@ const ADA_ROLE_HOME = {
 };
 
 function adaCurrentPageName() {
-  const path = window.location.pathname;
-  const page = path.substring(path.lastIndexOf("/") + 1);
+  const page = window.location.pathname.split("/").pop();
   return page || "dashboard.html";
 }
 
@@ -79,6 +76,32 @@ function adaApplyRoleTheme(rol) {
   );
 
   document.body.classList.add(ADA_ROLE_CLASS_MAP[rol] || "role-alumno");
+}
+
+async function adaLogout() {
+  try {
+    await supabaseClient.auth.signOut();
+  } catch (error) {
+    console.error("Error cerrando sesión:", error);
+  }
+
+  window.location.href = "login.html";
+}
+
+function adaInjectGlobalLogout(perfil) {
+  const page = adaCurrentPageName();
+
+  if (page === "login.html" || page === "index.html") return;
+  if (document.querySelector(".ada-global-logout")) return;
+
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "ada-global-logout";
+  btn.textContent = "Cerrar sesión";
+  btn.title = "Cerrar sesión";
+  btn.addEventListener("click", adaLogout);
+
+  document.body.appendChild(btn);
 }
 
 function adaShowAccessDenied(perfil, pagina) {
@@ -106,14 +129,9 @@ function adaShowAccessDenied(perfil, pagina) {
       </section>
     </main>
   `;
-}
 
-async function adaLogout() {
-  await supabaseClient.auth.signOut();
-  window.location.href = "login.html";
+  adaInjectGlobalLogout(perfil);
 }
-
-window.adaLogout = adaLogout;
 
 async function adaGetSessionAndProfile() {
   const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
@@ -156,6 +174,7 @@ async function adaGetSessionAndProfile() {
   }
 
   adaApplyRoleTheme(perfil.rol);
+  adaInjectGlobalLogout(perfil);
 
   return { session, perfil };
 }
@@ -175,11 +194,12 @@ async function adaRequirePageAccess(customAllowedRoles = null) {
   return contexto;
 }
 
-// Compatibilidad con archivos previos que llaman obtenerSesionPerfil()
+// Compatibilidad con módulos anteriores.
 async function obtenerSesionPerfil() {
   return await adaRequirePageAccess();
 }
 
+window.adaLogout = adaLogout;
 window.adaRequirePageAccess = adaRequirePageAccess;
 window.adaGetSessionAndProfile = adaGetSessionAndProfile;
 window.obtenerSesionPerfil = obtenerSesionPerfil;
