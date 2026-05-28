@@ -1,3 +1,7 @@
+
+// ADA Cloud Web - Bloque 22
+// Dashboard con seguridad por rol y accesos visuales.
+
 const estadoSesion = document.getElementById("estadoSesion");
 const datosUsuario = document.getElementById("datosUsuario");
 const nombreUsuario = document.getElementById("nombreUsuario");
@@ -11,71 +15,51 @@ const rolePill = document.getElementById("rolePill");
 
 const roleConfig = {
   admin: {
-    className: "role-admin",
     label: "Administrador",
     title: "Panel administrador",
-    description: "Acceso completo a todos los usuarios, módulos, permisos, reportes, IA, horarios y configuración institucional.",
-    modules: ["institucion", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "ia", "horarios", "manuscritos", "reportes"]
+    description: "Acceso completo a módulos, usuarios, estructura, reportes, seguridad, IA y configuración institucional.",
+    modules: ["institucion", "usuarios", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "ia", "horarios", "asistencia", "reportes", "comunicados", "importar", "manuscritos"]
   },
   directivo: {
-    className: "role-directivo",
     label: "Directivo",
     title: "Panel directivo",
-    description: "Gestión institucional, seguimiento pedagógico, reportes, documentos y decisiones escolares.",
-    modules: ["institucion", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "ia", "horarios", "reportes"]
+    description: "Gestión institucional, seguimiento pedagógico, reportes, comunicados, documentos e IA.",
+    modules: ["institucion", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "ia", "horarios", "asistencia", "reportes", "comunicados", "manuscritos"]
   },
   secretaria: {
-    className: "role-secretaria",
     label: "Secretaría",
     title: "Panel de secretaría",
-    description: "Administración escolar, estudiantes, familias, docentes, cursos y documentación institucional.",
-    modules: ["institucion", "docentes", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "reportes"]
+    description: "Administración escolar, usuarios, documentación, cursos, materias, asistencia y comunicados.",
+    modules: ["institucion", "usuarios", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "asistencia", "reportes", "comunicados"]
   },
   docente: {
-    className: "role-docente",
     label: "Docente",
     title: "Panel docente",
-    description: "Cursos, materias, materiales, asistencia, trabajos, IA docente y seguimiento pedagógico.",
-    modules: ["alumnos", "cursos", "materias", "documentos", "ia", "manuscritos", "reportes"]
+    description: "Espacio docente para cursos, alumnos, asistencia, documentos, comunicados e IA.",
+    modules: ["mi-docente", "alumnos", "cursos", "materias", "documentos", "ia", "asistencia", "reportes", "comunicados", "manuscritos"]
   },
   preceptor: {
-    className: "role-preceptor",
     label: "Preceptoría",
     title: "Panel de preceptoría",
-    description: "Seguimiento de estudiantes, asistencia, comunicaciones y alertas institucionales.",
-    modules: ["alumnos", "familias", "asignaciones", "cursos", "documentos", "ia", "reportes"]
+    description: "Seguimiento de estudiantes, asistencia, familias, comunicados, alertas y reportes.",
+    modules: ["mi-preceptor", "alumnos", "familias", "asignaciones", "cursos", "documentos", "ia", "asistencia", "reportes", "comunicados"]
   },
   familia: {
-    className: "role-familia",
     label: "Familia",
     title: "Panel familia",
-    description: "Acceso a comunicaciones, materiales habilitados, seguimiento y novedades del estudiante.",
-    modules: ["familias", "alumnos", "documentos", "ia", "reportes"]
+    description: "Acceso a hijos vinculados, asistencia, documentos, comunicados e IA.",
+    modules: ["mi-familia", "documentos", "ia", "comunicados"]
   },
   alumno: {
-    className: "role-alumno",
     label: "Alumno",
     title: "Panel alumno",
-    description: "Espacio de aprendizaje con materiales, actividades, asistencia inteligente y ADA Tutor.",
-    modules: ["alumnos", "materias", "documentos", "ia"]
+    description: "Espacio de aprendizaje con materias, documentos, comunicados y ADA IA.",
+    modules: ["mi-alumno", "documentos", "ia", "comunicados"]
   }
 };
 
-function aplicarTemaPorRol(rol) {
-  const config = roleConfig[rol] || roleConfig.alumno;
-
-  document.body.classList.remove(
-    "role-loading",
-    "role-admin",
-    "role-directivo",
-    "role-secretaria",
-    "role-docente",
-    "role-preceptor",
-    "role-familia",
-    "role-alumno"
-  );
-
-  document.body.classList.add(config.className);
+function aplicarDashboardPorRol(perfil) {
+  const config = roleConfig[perfil.rol] || roleConfig.alumno;
 
   if (rolVisual) rolVisual.textContent = config.label;
   if (tituloRol) tituloRol.textContent = config.title;
@@ -102,55 +86,22 @@ function aplicarTemaPorRol(rol) {
 }
 
 async function cargarDashboard() {
-  const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+  const contexto = await adaRequirePageAccess(["admin", "directivo", "secretaria", "docente", "preceptor", "familia", "alumno"]);
+  if (!contexto) return;
 
-  if (sessionError) {
-    estadoSesion.textContent = "Error al verificar la sesión.";
-    return;
-  }
+  const perfil = contexto.perfil;
 
-  const session = sessionData.session;
+  aplicarDashboardPorRol(perfil);
 
-  if (!session) {
-    estadoSesion.textContent = "No hay sesión activa. Redirigiendo al login...";
-    setTimeout(() => {
-      window.location.href = "login.html";
-    }, 1000);
-    return;
-  }
-
-  const user = session.user;
-
-  const { data: perfil, error: perfilError } = await supabaseClient
-    .from("profiles")
-    .select("nombre, apellido, email, rol, activo")
-    .eq("id", user.id)
-    .single();
-
-  if (perfilError) {
-    estadoSesion.textContent = "Sesión iniciada, pero no se encontró el perfil del usuario.";
-    console.error(perfilError);
-    return;
-  }
-
-  if (!perfil.activo) {
-    estadoSesion.textContent = "Usuario inactivo. Contactá al administrador.";
-    return;
-  }
-
-  aplicarTemaPorRol(perfil.rol);
-
-  estadoSesion.textContent = "Sesión iniciada correctamente.";
-  datosUsuario.style.display = "block";
-
-  nombreUsuario.textContent = `${perfil.nombre} ${perfil.apellido}`;
-  emailUsuario.textContent = perfil.email;
-  rolUsuario.textContent = perfil.rol;
+  if (estadoSesion) estadoSesion.textContent = "Sesión iniciada correctamente.";
+  if (datosUsuario) datosUsuario.style.display = "block";
+  if (nombreUsuario) nombreUsuario.textContent = `${perfil.nombre || ""} ${perfil.apellido || ""}`;
+  if (emailUsuario) emailUsuario.textContent = perfil.email || "";
+  if (rolUsuario) rolUsuario.textContent = perfil.rol || "";
 }
 
-btnSalir.addEventListener("click", async () => {
-  await supabaseClient.auth.signOut();
-  window.location.href = "login.html";
-});
+if (btnSalir) {
+  btnSalir.addEventListener("click", adaLogout);
+}
 
 cargarDashboard();
