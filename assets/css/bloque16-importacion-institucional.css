@@ -1,0 +1,15 @@
+/* BLOQUE 16 - IMPORTACIÓN INSTITUCIONAL */
+.importer-layout{display:grid;grid-template-columns:minmax(320px,460px) 1fr;gap:22px;align-items:start}
+.importer-box{width:100%;min-height:260px;font-family:Consolas,monospace;font-size:14px;line-height:1.5}
+.importer-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.importer-summary{display:grid;grid-template-columns:repeat(4,minmax(130px,1fr));gap:12px;margin:18px 0}
+.importer-stat{background:white;border:1px solid var(--ada-border);border-radius:16px;padding:16px}
+.importer-stat strong{display:block;font-size:28px;color:var(--ada-primary)}
+.importer-stat span{color:var(--ada-muted);font-weight:bold}
+.result-ok{color:#15803d;font-weight:bold}.result-error{color:#b91c1c;font-weight:bold}.result-pending{color:#92400e;font-weight:bold}.result-processing{color:#1d4ed8;font-weight:bold}
+.importer-help{background:var(--ada-soft);border:1px solid var(--ada-secondary);color:var(--ada-primary);padding:14px;border-radius:16px;margin-top:16px}
+.importer-help code{background:white;padding:2px 5px;border-radius:6px}
+.template-list{display:grid;gap:8px;margin-top:12px}
+.template-list button{text-align:left}
+@media(max-width:1050px){.importer-layout{grid-template-columns:1fr}.importer-summary{grid-template-columns:repeat(2,minmax(130px,1fr))}}
+@media(max-width:600px){.importer-summary{grid-template-columns:1fr}}
