@@ -51,21 +51,21 @@ body {
 }
 
 .role-docente {
-  --ada-primary: #ea580c;
-  --ada-primary-hover: #f97316;
+  --ada-primary: #7e22ce;
+  --ada-primary-hover: #9333ea;
+  --ada-secondary: #e9d5ff;
+  --ada-soft: #faf5ff;
+  --ada-sidebar: #3b0764;
+  --ada-gradient: linear-gradient(135deg, #f3e8ff, #f8fafc);
+}
+
+.role-preceptor {
+  --ada-primary: #c2410c;
+  --ada-primary-hover: #ea580c;
   --ada-secondary: #fed7aa;
   --ada-soft: #fff7ed;
   --ada-sidebar: #431407;
   --ada-gradient: linear-gradient(135deg, #ffedd5, #f8fafc);
-}
-
-.role-preceptor {
-  --ada-primary: #a16207;
-  --ada-primary-hover: #ca8a04;
-  --ada-secondary: #fde68a;
-  --ada-soft: #fffbeb;
-  --ada-sidebar: #713f12;
-  --ada-gradient: linear-gradient(135deg, #fef3c7, #f8fafc);
 }
 
 .role-familia {
@@ -84,39 +84,6 @@ body {
   --ada-soft: #eef2ff;
   --ada-sidebar: #111827;
   --ada-gradient: linear-gradient(135deg, #dbeafe 0%, #f3e8ff 35%, #dcfce7 70%, #fff7ed 100%);
-}
-
-
-/* Protección visual: mientras se valida sesión/rol no se muestra contenido sensible */
-body.role-loading {
-  min-height: 100vh;
-  background: var(--ada-bg);
-}
-
-body.role-loading > * {
-  opacity: 0;
-  pointer-events: none;
-}
-
-body.role-loading::before {
-  content: "Verificando acceso a ADA...";
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--ada-gradient);
-  color: var(--ada-primary);
-  font-weight: 800;
-  font-size: 18px;
-}
-
-/* Los módulos no habilitados por rol se ocultan, no quedan visibles en gris */
-.sidebar-submenu a.module-disabled,
-.module-card.module-disabled,
-[data-module][hidden] {
-  display: none !important;
 }
 
 /* Home y login */
@@ -729,4 +696,66 @@ body.role-loading::before {
   .form-grid {
     grid-template-columns: 1fr;
   }
+}
+
+
+/* ============================================================
+   CIERRE ADA - seguridad visual por rol
+   ============================================================ */
+body.role-loading .dashboard-main,
+body.role-loading .sidebar,
+body.role-loading .module-shell,
+body.role-loading .module-view,
+body.role-loading .portal-main,
+body.role-loading .role-portal,
+body.role-loading .app-shell {
+  visibility: hidden !important;
+}
+
+body.role-loading::before {
+  content: "Verificando sesión y permisos...";
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f6fb;
+  color: #1e293b;
+  font-weight: 700;
+  z-index: 99999;
+}
+
+.ada-hidden-by-role,
+[hidden].ada-hidden-by-role {
+  display: none !important;
+}
+
+.sidebar-submenu a.ada-hidden-by-role,
+.module-card.ada-hidden-by-role {
+  display: none !important;
+}
+
+.access-denied-card {
+  max-width: 760px;
+  margin: 40px auto;
+  border: 1px solid var(--ada-secondary);
+}
+
+/* Docente: naranja institucional */
+body.role-docente {
+  --ada-primary: #ea580c !important;
+  --ada-primary-hover: #f97316 !important;
+  --ada-secondary: #fdba74 !important;
+  --ada-soft: #fff7ed !important;
+  --ada-sidebar: #431407 !important;
+  --ada-gradient: linear-gradient(135deg, #ffedd5, #fff7ed) !important;
+  background: linear-gradient(180deg, #fff7ed, #ffedd5) !important;
+}
+
+body.role-docente .dashboard-main,
+body.role-docente .module-shell,
+body.role-docente .module-view,
+body.role-docente .portal-main,
+body.role-docente .role-portal {
+  background: linear-gradient(180deg, #fff7ed, #ffedd5) !important;
 }
