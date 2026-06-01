@@ -84,6 +84,35 @@
     </section>
 
     <section class="dashboard-group">
+      <h2>Mi espacio</h2>
+      <div class="dashboard-grid">
+        <a href="mi-espacio-docente.html" class="module-card" data-module="mi-docente">
+          <span class="module-icon">👩‍🏫</span>
+          <h3>Mi espacio docente</h3>
+          <p>Cursos, materias, materiales, comunicados y seguimiento docente.</p>
+        </a>
+
+        <a href="mi-espacio-preceptor.html" class="module-card" data-module="mi-preceptor">
+          <span class="module-icon">🧩</span>
+          <h3>Mi espacio preceptor</h3>
+          <p>Seguimiento cotidiano de estudiantes, asistencia y comunicaciones.</p>
+        </a>
+
+        <a href="mi-espacio-familia.html" class="module-card" data-module="mi-familia">
+          <span class="module-icon">👨‍👩‍👧</span>
+          <h3>Mi espacio familia</h3>
+          <p>Información de estudiantes vinculados, documentos y comunicados.</p>
+        </a>
+
+        <a href="mi-espacio-alumno.html" class="module-card" data-module="mi-alumno">
+          <span class="module-icon">🎒</span>
+          <h3>Mi espacio alumno</h3>
+          <p>Materiales, comunicados y recursos habilitados para el estudiante.</p>
+        </a>
+      </div>
+    </section>
+
+    <section class="dashboard-group">
       <h2>Gestión de usuarios y roles</h2>
       <div class="dashboard-grid">
         <a href="directivos.html" class="module-card" data-module="directivos">
@@ -139,6 +168,12 @@
           <p>Datos generales, niveles, turnos y configuración institucional.</p>
         </a>
 
+        <a href="importar-excel.html" class="module-card" data-module="importar">
+          <span class="module-icon">⬆️</span>
+          <h3>Importación</h3>
+          <p>Carga masiva de datos institucionales, usuarios y archivos base.</p>
+        </a>
+
         <a href="cursos.html" class="module-card" data-module="cursos">
           <span class="module-icon">📚</span>
           <h3>Cursos</h3>
@@ -185,6 +220,12 @@
           <h3>Reportes</h3>
           <p>Indicadores, seguimiento institucional y exportaciones.</p>
         </a>
+
+        <a href="comunicados.html" class="module-card" data-module="comunicados">
+          <span class="module-icon">📣</span>
+          <h3>Comunicados</h3>
+          <p>Publicaciones institucionales, avisos por rol y novedades por curso.</p>
+        </a>
       </div>
     </section>
 
@@ -193,9 +234,9 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/ada-security.js"></script>
   <script src="../assets/js/sidebar.js"></script>
   <script src="../assets/js/dashboard.js"></script>
-  <script src="../assets/js/ada-security.js"></script>
   <script src="../assets/js/ui-effects.js"></script>
 </body>
 </html>
