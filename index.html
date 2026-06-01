@@ -2,20 +2,111 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>ADA Cloud</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ADA Cloud Web | Portal de acceso</title>
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/bloque23-ui-refresh.css">
+  <link rel="stylesheet" href="assets/css/portal-acceso.css">
 </head>
-<body>
-  <main class="home">
-    <section class="hero">
-      <h1>ADA Cloud</h1>
-      <p>Plataforma educativa inteligente con Supabase e IA.</p>
-      <a href="pages/login.html" class="btn-principal">Ingresar a ADA</a>
+<body class="ada-access-body">
+  <main class="ada-access">
+    <section class="ada-access-hero" aria-labelledby="adaPortalTitle">
+      <div class="ada-access-brand">
+        <span class="ada-brand-mark">ADA</span>
+        <span class="ada-brand-subtitle">Cloud Web</span>
+      </div>
+
+      <div class="ada-access-copy">
+        <p class="ada-eyebrow">Plataforma escolar inteligente</p>
+        <h1 id="adaPortalTitle">Elegí tu espacio de trabajo</h1>
+        <p>
+          Cada usuario ingresa a su propio entorno: gestión institucional, docencia,
+          preceptoría, familia o estudiante, con navegación y permisos según su rol.
+        </p>
+      </div>
     </section>
+
+    <section class="ada-role-grid" aria-label="Accesos por rol">
+      <button class="ada-role-card role-admin" type="button" data-role="admin" data-title="Administrador" data-description="Configuración general, usuarios, seguridad y control institucional.">
+        <span class="role-icon">⚙️</span>
+        <span class="role-name">Administrador</span>
+        <span class="role-description">Configuración y control general</span>
+      </button>
+
+      <button class="ada-role-card role-directivo" type="button" data-role="directivo" data-title="Directivo" data-description="Gestión institucional, reportes, seguimiento y conducción escolar.">
+        <span class="role-icon">🏫</span>
+        <span class="role-name">Directivo</span>
+        <span class="role-description">Gestión institucional</span>
+      </button>
+
+      <button class="ada-role-card role-secretaria" type="button" data-role="secretaria" data-title="Secretaría" data-description="Usuarios, legajos, cursos, materias, importaciones y administración escolar.">
+        <span class="role-icon">🗂️</span>
+        <span class="role-name">Secretaría</span>
+        <span class="role-description">Administración escolar</span>
+      </button>
+
+      <button class="ada-role-card role-docente" type="button" data-role="docente" data-title="Docente" data-description="Clases, asistencia, materias, alumnos, documentos y seguimiento pedagógico.">
+        <span class="role-icon">👩‍🏫</span>
+        <span class="role-name">Docente</span>
+        <span class="role-description">Clases y seguimiento</span>
+      </button>
+
+      <button class="ada-role-card role-preceptor" type="button" data-role="preceptor" data-title="Preceptoría" data-description="Asistencia, alertas, cursos, comunicaciones y acompañamiento cotidiano.">
+        <span class="role-icon">📋</span>
+        <span class="role-name">Preceptoría</span>
+        <span class="role-description">Asistencia y alertas</span>
+      </button>
+
+      <button class="ada-role-card role-familia" type="button" data-role="familia" data-title="Familia" data-description="Seguimiento escolar, comunicados, asistencia, documentos y trayectoria del estudiante.">
+        <span class="role-icon">👨‍👩‍👧</span>
+        <span class="role-name">Familia</span>
+        <span class="role-description">Seguimiento familiar</span>
+      </button>
+
+      <button class="ada-role-card role-alumno" type="button" data-role="alumno" data-title="Alumno" data-description="Materias, asistencia, documentos habilitados y acompañamiento académico.">
+        <span class="role-icon">🎒</span>
+        <span class="role-name">Alumno</span>
+        <span class="role-description">Mi trayectoria escolar</span>
+      </button>
+    </section>
+
+    <footer class="ada-access-footer">
+      <span>ADA Cloud Web</span>
+      <span>Acceso seguro por perfil institucional</span>
+    </footer>
   </main>
 
-  <script src="assets/js/app.js"></script>
-  <script src="assets/js/ui-effects.js"></script>
+  <div class="ada-login-modal" id="adaLoginModal" aria-hidden="true">
+    <div class="ada-modal-backdrop" data-close-modal></div>
+
+    <section class="ada-modal-card" role="dialog" aria-modal="true" aria-labelledby="modalRoleTitle">
+      <button class="ada-modal-close" type="button" data-close-modal aria-label="Cerrar ventana de ingreso">×</button>
+
+      <div class="ada-modal-role-badge" id="modalRoleIcon">ADA</div>
+      <p class="ada-modal-eyebrow">Ingreso seguro</p>
+      <h2 id="modalRoleTitle">Ingreso ADA</h2>
+      <p id="modalRoleDescription" class="ada-modal-description">
+        Ingresá con tus credenciales institucionales.
+      </p>
+
+      <form id="portalLoginForm" class="ada-modal-form">
+        <input type="hidden" id="selectedRole" value="">
+
+        <label for="portalEmail">Correo electrónico</label>
+        <input type="email" id="portalEmail" autocomplete="username" required placeholder="usuario@correo.com">
+
+        <label for="portalPassword">Contraseña</label>
+        <input type="password" id="portalPassword" autocomplete="current-password" required placeholder="Contraseña">
+
+        <button type="submit" id="portalLoginButton">Ingresar a ADA</button>
+      </form>
+
+      <p id="portalLoginMessage" class="ada-modal-message" aria-live="polite"></p>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/supabase-config.js"></script>
+  <script src="assets/js/portal-acceso.js"></script>
 </body>
 </html>
