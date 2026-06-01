@@ -1,5 +1,4 @@
-
-// ADA Cloud Web - Seguridad estable + logout global
+// ADA Cloud Web - Seguridad centralizada + roles + logout global
 // Cargar después de supabase-config.js y antes del JS propio de cada página.
 
 const ADA_ROLE_CLASS_MAP = {
@@ -63,6 +62,10 @@ function adaCurrentPageName() {
   return page || "dashboard.html";
 }
 
+function adaLoginPath() {
+  return adaCurrentPageName() === "index.html" ? "pages/login.html" : "login.html";
+}
+
 function adaApplyRoleTheme(rol) {
   document.body.classList.remove(
     "role-loading",
@@ -74,23 +77,22 @@ function adaApplyRoleTheme(rol) {
     "role-familia",
     "role-alumno"
   );
-
   document.body.classList.add(ADA_ROLE_CLASS_MAP[rol] || "role-alumno");
 }
 
 async function adaLogout() {
   try {
-    await supabaseClient.auth.signOut();
+    if (window.supabaseClient) {
+      await supabaseClient.auth.signOut();
+    }
   } catch (error) {
     console.error("Error cerrando sesión:", error);
   }
-
-  window.location.href = "login.html";
+  window.location.replace(adaLoginPath());
 }
 
 function adaInjectGlobalLogout(perfil) {
   const page = adaCurrentPageName();
-
   if (page === "login.html" || page === "index.html") return;
   if (document.querySelector(".ada-global-logout")) return;
 
@@ -100,11 +102,15 @@ function adaInjectGlobalLogout(perfil) {
   btn.textContent = "Cerrar sesión";
   btn.title = "Cerrar sesión";
   btn.addEventListener("click", adaLogout);
-
   document.body.appendChild(btn);
 }
 
+function adaStopPageExecution(reason) {
+  throw new Error(reason || "ADA_ACCESS_STOPPED");
+}
+
 function adaShowAccessDenied(perfil, pagina) {
+  window.ADA_ACCESS_DENIED = true;
   document.body.classList.remove("role-loading");
   adaApplyRoleTheme(perfil.rol);
 
@@ -129,20 +135,23 @@ function adaShowAccessDenied(perfil, pagina) {
       </section>
     </main>
   `;
-
   adaInjectGlobalLogout(perfil);
 }
 
 async function adaGetSessionAndProfile() {
-  const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+  if (!window.supabaseClient) {
+    console.error("Supabase no está inicializado. Revisar supabase-config.js.");
+    document.body.classList.remove("role-loading");
+    return adaStopPageExecution("ADA_SUPABASE_NOT_READY");
+  }
 
+  const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
   if (sessionError || !sessionData.session) {
-    window.location.href = "login.html";
-    return null;
+    window.location.replace(adaLoginPath());
+    return adaStopPageExecution("ADA_SESSION_REQUIRED");
   }
 
   const session = sessionData.session;
-
   const { data: perfil, error: perfilError } = await supabaseClient
     .from("profiles")
     .select("id, nombre, apellido, email, rol, activo")
@@ -152,11 +161,12 @@ async function adaGetSessionAndProfile() {
   if (perfilError || !perfil) {
     console.error("No se encontró perfil:", perfilError);
     await supabaseClient.auth.signOut();
-    window.location.href = "login.html";
-    return null;
+    window.location.replace(adaLoginPath());
+    return adaStopPageExecution("ADA_PROFILE_NOT_FOUND");
   }
 
   if (!perfil.activo) {
+    window.ADA_ACCESS_DENIED = true;
     document.body.classList.remove("role-loading");
     document.body.innerHTML = `
       <main class="module-shell">
@@ -170,35 +180,32 @@ async function adaGetSessionAndProfile() {
         </section>
       </main>
     `;
-    return null;
+    return adaStopPageExecution("ADA_INACTIVE_USER");
   }
 
   adaApplyRoleTheme(perfil.rol);
   adaInjectGlobalLogout(perfil);
-
   return { session, perfil };
 }
 
 async function adaRequirePageAccess(customAllowedRoles = null) {
   const contexto = await adaGetSessionAndProfile();
-  if (!contexto) return null;
-
   const page = adaCurrentPageName();
   const allowedRoles = customAllowedRoles || ADA_PAGE_ACCESS[page];
 
   if (allowedRoles && !allowedRoles.includes(contexto.perfil.rol)) {
     adaShowAccessDenied(contexto.perfil, page);
-    return null;
+    return adaStopPageExecution("ADA_ACCESS_DENIED");
   }
 
   return contexto;
 }
 
-// Compatibilidad con módulos anteriores.
 async function obtenerSesionPerfil() {
   return await adaRequirePageAccess();
 }
 
+window.ADA_ROLE_HOME = ADA_ROLE_HOME;
 window.adaLogout = adaLogout;
 window.adaRequirePageAccess = adaRequirePageAccess;
 window.adaGetSessionAndProfile = adaGetSessionAndProfile;

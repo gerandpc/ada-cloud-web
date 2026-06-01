@@ -1,6 +1,5 @@
-
-// ADA Cloud Web - Bloque 22
-// Dashboard con seguridad por rol y accesos visuales.
+// ADA Cloud Web - Dashboard integrado por rol
+// Requiere ada-security.js cargado previamente.
 
 const estadoSesion = document.getElementById("estadoSesion");
 const datosUsuario = document.getElementById("datosUsuario");
@@ -68,36 +67,40 @@ function aplicarDashboardPorRol(perfil) {
 
   document.querySelectorAll("[data-module]").forEach((item) => {
     const moduleName = item.getAttribute("data-module");
+    const permitido = config.modules.includes(moduleName);
 
-    item.classList.remove("module-disabled");
-    item.removeAttribute("aria-disabled");
+    item.classList.toggle("module-disabled", !permitido);
+    item.hidden = !permitido;
+    item.setAttribute("aria-hidden", permitido ? "false" : "true");
+    item.setAttribute("aria-disabled", permitido ? "false" : "true");
 
-    if (!config.modules.includes(moduleName)) {
-      item.classList.add("module-disabled");
-      item.setAttribute("aria-disabled", "true");
-
-      if (item.tagName.toLowerCase() === "a") {
-        item.addEventListener("click", (event) => {
-          event.preventDefault();
-        });
-      }
+    if (!permitido && item.tagName.toLowerCase() === "a") {
+      item.addEventListener("click", (event) => event.preventDefault(), { once: true });
     }
+  });
+
+  document.querySelectorAll(".dashboard-group").forEach((group) => {
+    const visibles = group.querySelectorAll("[data-module]:not([hidden])").length;
+    group.hidden = visibles === 0;
   });
 }
 
 async function cargarDashboard() {
-  const contexto = await adaRequirePageAccess(["admin", "directivo", "secretaria", "docente", "preceptor", "familia", "alumno"]);
-  if (!contexto) return;
+  try {
+    const contexto = await adaRequirePageAccess(["admin", "directivo", "secretaria", "docente", "preceptor", "familia", "alumno"]);
+    if (!contexto) return;
 
-  const perfil = contexto.perfil;
+    const perfil = contexto.perfil;
+    aplicarDashboardPorRol(perfil);
 
-  aplicarDashboardPorRol(perfil);
-
-  if (estadoSesion) estadoSesion.textContent = "Sesión iniciada correctamente.";
-  if (datosUsuario) datosUsuario.style.display = "block";
-  if (nombreUsuario) nombreUsuario.textContent = `${perfil.nombre || ""} ${perfil.apellido || ""}`;
-  if (emailUsuario) emailUsuario.textContent = perfil.email || "";
-  if (rolUsuario) rolUsuario.textContent = perfil.rol || "";
+    if (estadoSesion) estadoSesion.textContent = "Sesión iniciada correctamente.";
+    if (datosUsuario) datosUsuario.style.display = "block";
+    if (nombreUsuario) nombreUsuario.textContent = `${perfil.nombre || ""} ${perfil.apellido || ""}`.trim();
+    if (emailUsuario) emailUsuario.textContent = perfil.email || "";
+    if (rolUsuario) rolUsuario.textContent = perfil.rol || "";
+  } catch (error) {
+    console.warn("Carga de dashboard detenida:", error.message);
+  }
 }
 
 if (btnSalir) {
