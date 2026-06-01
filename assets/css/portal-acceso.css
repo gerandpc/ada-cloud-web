@@ -1,0 +1,485 @@
+:root {
+  --ada-admin: #0f172a;
+  --ada-directivo: #dc2626;
+  --ada-secretaria: #0891b2;
+  --ada-docente: #ea580c;
+  --ada-preceptor: #b8860b;
+  --ada-familia: #16a34a;
+  --ada-alumno-a: #7c3aed;
+  --ada-alumno-b: #06b6d4;
+  --ada-alumno-c: #22c55e;
+  --ada-surface: rgba(255, 255, 255, 0.82);
+  --ada-border: rgba(148, 163, 184, 0.28);
+  --ada-text: #0f172a;
+  --ada-muted: #64748b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body.ada-access-body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--ada-text);
+  background:
+    radial-gradient(circle at top left, rgba(59, 130, 246, 0.20), transparent 34rem),
+    radial-gradient(circle at top right, rgba(34, 197, 94, 0.18), transparent 30rem),
+    linear-gradient(135deg, #eef2ff 0%, #f8fafc 42%, #fff7ed 100%);
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  overflow-x: hidden;
+}
+
+.ada-access {
+  width: min(1180px, calc(100% - 32px));
+  min-height: 100vh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 0 22px;
+}
+
+.ada-access-hero {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.8fr) minmax(300px, 1.8fr);
+  gap: 28px;
+  align-items: stretch;
+  margin-bottom: 24px;
+}
+
+.ada-access-brand,
+.ada-access-copy,
+.ada-role-card,
+.ada-access-footer,
+.ada-modal-card {
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.ada-access-brand {
+  min-height: 188px;
+  border: 1px solid var(--ada-border);
+  border-radius: 30px;
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.88));
+  color: white;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.20);
+}
+
+.ada-brand-mark {
+  font-size: clamp(2.8rem, 7vw, 5.4rem);
+  line-height: 0.9;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.ada-brand-subtitle {
+  margin-top: 14px;
+  font-size: 1rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.ada-access-copy {
+  border: 1px solid var(--ada-border);
+  border-radius: 30px;
+  padding: clamp(24px, 4vw, 44px);
+  background: var(--ada-surface);
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.10);
+}
+
+.ada-eyebrow,
+.ada-modal-eyebrow {
+  width: fit-content;
+  margin: 0 0 14px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.07);
+  color: #334155;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.ada-access-copy h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 4.35rem);
+  line-height: 0.98;
+  letter-spacing: -0.06em;
+}
+
+.ada-access-copy p:not(.ada-eyebrow) {
+  max-width: 760px;
+  margin: 18px 0 0;
+  color: var(--ada-muted);
+  font-size: clamp(1rem, 1.8vw, 1.16rem);
+  line-height: 1.7;
+}
+
+.ada-role-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  flex: 1;
+  align-content: start;
+}
+
+.ada-role-card {
+  position: relative;
+  min-height: 188px;
+  width: 100%;
+  border: 1px solid var(--ada-border);
+  border-radius: 28px;
+  padding: 22px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--ada-text);
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 18px 52px rgba(15, 23, 42, 0.10);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.ada-role-card::before {
+  content: "";
+  position: absolute;
+  inset: auto -40px -60px auto;
+  width: 150px;
+  height: 150px;
+  border-radius: 42px;
+  transform: rotate(18deg);
+  opacity: 0.16;
+  background: currentColor;
+}
+
+.ada-role-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, currentColor, transparent 56%);
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.ada-role-card:hover,
+.ada-role-card:focus-visible {
+  transform: translateY(-6px);
+  box-shadow: 0 28px 70px rgba(15, 23, 42, 0.18);
+  border-color: currentColor;
+  outline: none;
+}
+
+.role-icon {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  border-radius: 20px;
+  margin-bottom: 18px;
+  font-size: 2rem;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.72), 0 12px 30px rgba(15, 23, 42, 0.10);
+}
+
+.role-name,
+.role-description {
+  position: relative;
+  z-index: 1;
+  display: block;
+}
+
+.role-name {
+  font-size: 1.22rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+}
+
+.role-description {
+  margin-top: 8px;
+  color: var(--ada-muted);
+  font-size: 0.93rem;
+  line-height: 1.45;
+}
+
+.role-admin { color: var(--ada-admin); }
+.role-directivo { color: var(--ada-directivo); }
+.role-secretaria { color: var(--ada-secretaria); }
+.role-docente { color: var(--ada-docente); }
+.role-preceptor { color: var(--ada-preceptor); }
+.role-familia { color: var(--ada-familia); }
+.role-alumno { color: var(--ada-alumno-a); }
+.role-alumno::after {
+  background: linear-gradient(135deg, var(--ada-alumno-a), var(--ada-alumno-b), var(--ada-alumno-c));
+  opacity: 0.13;
+}
+
+.ada-access-footer {
+  margin-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  border: 1px solid var(--ada-border);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.62);
+  color: var(--ada-muted);
+  font-size: 0.9rem;
+}
+
+.ada-login-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+  place-items: center;
+  padding: 20px;
+}
+
+.ada-login-modal.is-open {
+  display: grid;
+}
+
+.ada-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.48);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.ada-modal-card {
+  position: relative;
+  width: min(430px, 100%);
+  border: 1px solid rgba(255, 255, 255, 0.66);
+  border-radius: 34px;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 34px 100px rgba(15, 23, 42, 0.32);
+  animation: adaModalIn 180ms ease-out;
+}
+
+@keyframes adaModalIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.ada-modal-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.08);
+  color: #334155;
+  cursor: pointer;
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.ada-modal-role-badge {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  margin-bottom: 18px;
+  border-radius: 26px;
+  color: white;
+  font-weight: 900;
+  font-size: 1.9rem;
+  background: var(--selected-role-color, #0f172a);
+  box-shadow: 0 18px 46px color-mix(in srgb, var(--selected-role-color, #0f172a) 38%, transparent);
+}
+
+.ada-modal-card h2 {
+  margin: 0;
+  color: var(--selected-role-color, #0f172a);
+  font-size: 2rem;
+  letter-spacing: -0.05em;
+}
+
+.ada-modal-description {
+  margin: 10px 0 22px;
+  color: var(--ada-muted);
+  line-height: 1.55;
+}
+
+.ada-modal-form {
+  display: grid;
+  gap: 10px;
+}
+
+.ada-modal-form label {
+  color: #334155;
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.ada-modal-form input {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 16px;
+  padding: 14px 15px;
+  background: rgba(248, 250, 252, 0.96);
+  color: #0f172a;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.ada-modal-form input:focus {
+  border-color: var(--selected-role-color, #0f172a);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--selected-role-color, #0f172a) 16%, transparent);
+}
+
+.ada-modal-form button[type="submit"] {
+  margin-top: 10px;
+  border: 0;
+  border-radius: 18px;
+  padding: 15px 18px;
+  color: white;
+  background: var(--selected-role-color, #0f172a);
+  font-size: 1rem;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 18px 46px color-mix(in srgb, var(--selected-role-color, #0f172a) 28%, transparent);
+}
+
+.ada-modal-form button[type="submit"]:disabled {
+  opacity: 0.68;
+  cursor: wait;
+}
+
+.ada-modal-message {
+  min-height: 22px;
+  margin: 14px 0 0;
+  color: #64748b;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.ada-modal-message.is-error {
+  color: #dc2626;
+}
+
+.ada-modal-message.is-ok {
+  color: #16a34a;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+@media (max-width: 980px) {
+  .ada-access-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .ada-access-brand {
+    min-height: 140px;
+  }
+
+  .ada-role-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .ada-access {
+    width: min(100% - 22px, 1180px);
+    padding: 14px 0 18px;
+  }
+
+  .ada-access-hero {
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .ada-access-brand,
+  .ada-access-copy,
+  .ada-role-card,
+  .ada-access-footer,
+  .ada-modal-card {
+    border-radius: 22px;
+  }
+
+  .ada-access-brand {
+    min-height: 108px;
+    padding: 22px;
+  }
+
+  .ada-brand-subtitle {
+    font-size: 0.75rem;
+  }
+
+  .ada-access-copy {
+    padding: 22px;
+  }
+
+  .ada-role-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .ada-role-card {
+    min-height: 122px;
+    display: grid;
+    grid-template-columns: 62px 1fr;
+    column-gap: 16px;
+    align-items: center;
+    padding: 18px;
+  }
+
+  .role-icon {
+    grid-row: 1 / span 2;
+    margin-bottom: 0;
+  }
+
+  .role-name {
+    align-self: end;
+  }
+
+  .role-description {
+    align-self: start;
+    margin-top: 3px;
+  }
+
+  .ada-access-footer {
+    flex-direction: column;
+  }
+
+  .ada-login-modal {
+    padding: 12px;
+  }
+
+  .ada-modal-card {
+    padding: 24px;
+  }
+
+  .ada-modal-role-badge {
+    width: 64px;
+    height: 64px;
+    border-radius: 22px;
+  }
+}
+
+@media (max-width: 380px) {
+  .ada-role-card {
+    grid-template-columns: 52px 1fr;
+  }
+
+  .role-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 17px;
+    font-size: 1.65rem;
+  }
+}
