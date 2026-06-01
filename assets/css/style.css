@@ -759,3 +759,56 @@ body.role-docente .portal-main,
 body.role-docente .role-portal {
   background: linear-gradient(180deg, #fff7ed, #ffedd5) !important;
 }
+
+/* ============================================================
+   PATCH 03 - Menú lateral también en espacios por rol
+   ============================================================ */
+body.ada-with-sidebar {
+  min-height: 100vh;
+  display: flex;
+  background: var(--ada-gradient) !important;
+}
+
+body.ada-with-sidebar .module-shell {
+  margin-left: 286px;
+  width: calc(100% - 286px);
+  min-height: 100vh;
+  padding: 36px;
+}
+
+body.ada-with-sidebar .module-view {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+body.ada-with-sidebar .back-link {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+body.ada-with-sidebar .ada-global-logout {
+  display: none !important;
+}
+
+body.role-docente .role-hero {
+  background: linear-gradient(135deg, #ea580c 0%, #f97316 52%, #fdba74 100%) !important;
+}
+
+@media (max-width: 900px) {
+  body.ada-with-sidebar {
+    display: block;
+  }
+
+  body.ada-with-sidebar .sidebar {
+    position: relative;
+    width: 100%;
+    min-height: auto;
+  }
+
+  body.ada-with-sidebar .module-shell {
+    margin-left: 0;
+    width: 100%;
+    padding: 20px;
+  }
+}
