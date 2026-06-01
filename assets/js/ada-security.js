@@ -139,8 +139,171 @@ async function adaLogout() {
   window.location.href = "login.html";
 }
 
+function adaGetModuleLabel(moduleName) {
+  const labels = {
+    dashboard: "Inicio",
+    "mi-docente": "Mi espacio docente",
+    "mi-preceptor": "Mi espacio preceptor",
+    "mi-familia": "Mi espacio familia",
+    "mi-alumno": "Mi espacio alumno",
+    institucion: "Institución",
+    usuarios: "Usuarios",
+    directivos: "Directivos",
+    secretaria: "Secretaría",
+    docentes: "Docentes",
+    preceptoria: "Preceptoría",
+    alumnos: "Alumnos",
+    familias: "Familias",
+    asignaciones: "Asignaciones",
+    cursos: "Cursos",
+    materias: "Materias",
+    documentos: "Documentos",
+    ia: "ADA IA",
+    horarios: "Horarios",
+    asistencia: "Asistencia",
+    reportes: "Reportes",
+    comunicados: "Comunicados",
+    manuscritos: "Manuscritos",
+    importar: "Importaciones"
+  };
+  return labels[moduleName] || moduleName;
+}
+
+function adaModuleToHref(moduleName, rol) {
+  const homeByModule = {
+    dashboard: "dashboard.html",
+    "mi-docente": "mi-espacio-docente.html",
+    "mi-preceptor": "mi-espacio-preceptor.html",
+    "mi-familia": "mi-espacio-familia.html",
+    "mi-alumno": "mi-espacio-alumno.html",
+    institucion: "institucion.html",
+    usuarios: "usuarios.html",
+    directivos: "directivos.html",
+    secretaria: "secretaria.html",
+    docentes: "docentes.html",
+    preceptoria: "preceptoria.html",
+    alumnos: "alumnos.html",
+    familias: "familias.html",
+    asignaciones: "asignaciones.html",
+    cursos: "cursos.html",
+    materias: "materias.html",
+    documentos: "documentos.html",
+    ia: "ia.html",
+    horarios: "horarios.html",
+    asistencia: "asistencia.html",
+    reportes: "reportes.html",
+    comunicados: "comunicados.html",
+    manuscritos: "manuscritos.html",
+    importar: "importar-usuarios.html"
+  };
+  return homeByModule[moduleName] || (ADA_ROLE_HOME[rol] || "dashboard.html");
+}
+
+function adaBindExistingSidebar(perfil) {
+  if (adaIsLoginOrIndex()) return false;
+
+  const sidebar = document.querySelector(".sidebar");
+  if (!sidebar) return false;
+
+  const rol = adaNormalizeRole(perfil.rol);
+  const home = ADA_ROLE_HOME[rol] || "dashboard.html";
+  const page = adaCurrentPageName();
+
+  document.body.classList.add("dashboard-body", "ada-with-sidebar");
+
+  // Ajusta Inicio y enlaces activos aunque el menú sea estático en el HTML.
+  sidebar.querySelectorAll("a").forEach((link) => {
+    const href = link.getAttribute("href") || "";
+    link.classList.toggle("active", href === page);
+  });
+
+  const homeLinks = sidebar.querySelectorAll("[data-home-link]");
+  homeLinks.forEach((link) => {
+    link.href = home;
+  });
+
+  sidebar.querySelectorAll(".sidebar-section-button").forEach((button) => {
+    if (button.dataset.adaBound === "1") return;
+    button.dataset.adaBound = "1";
+    button.addEventListener("click", () => button.closest(".sidebar-section").classList.toggle("open"));
+  });
+
+  sidebar.querySelectorAll(".sidebar-logout, [data-logout]").forEach((button) => {
+    if (button.dataset.adaBound === "1") return;
+    button.dataset.adaBound = "1";
+    button.addEventListener("click", adaLogout);
+  });
+
+  const backLink = document.querySelector(".back-link");
+  if (backLink) {
+    backLink.href = home;
+    backLink.textContent = "← Mi inicio";
+  }
+
+  adaHideUnauthorizedModules(rol);
+  return true;
+}
+
+function adaInjectRoleSidebar(perfil) {
+  if (adaIsLoginOrIndex()) return;
+  if (adaBindExistingSidebar(perfil)) return;
+
+  const rol = adaNormalizeRole(perfil.rol);
+  const allowed = ADA_ROLE_MODULES[rol] || [];
+  const page = adaCurrentPageName();
+  const home = ADA_ROLE_HOME[rol] || "dashboard.html";
+
+  const groups = [
+    { title: "Inicio", modules: allowed.filter(m => m.startsWith("mi-") || m === "dashboard") },
+    { title: "Trabajo diario", modules: allowed.filter(m => ["asistencia", "alumnos", "cursos", "materias", "documentos", "comunicados"].includes(m)) },
+    { title: "Gestión", modules: allowed.filter(m => ["institucion", "usuarios", "directivos", "secretaria", "docentes", "preceptoria", "familias", "asignaciones", "importar"].includes(m)) },
+    { title: "Herramientas ADA", modules: allowed.filter(m => ["ia", "reportes", "horarios", "manuscritos"].includes(m)) }
+  ].filter(g => g.modules.length > 0);
+
+  const sidebar = document.createElement("aside");
+  sidebar.className = "sidebar ada-role-sidebar";
+  sidebar.innerHTML = `
+    <div class="sidebar-logo">
+      <h2>ADA</h2>
+      <span>${adaGetModuleLabel(allowed.find(m => m.startsWith("mi-")) || "dashboard")}</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="${home}" class="sidebar-link ${page === home ? "active" : ""}">Inicio</a>
+      ${groups.map(group => `
+        <div class="sidebar-section open">
+          <button class="sidebar-section-button" type="button">${group.title} <span class="chevron">›</span></button>
+          <div class="sidebar-submenu">
+            ${group.modules.map(m => {
+              const href = adaModuleToHref(m, rol);
+              return `<a href="${href}" data-module="${m}" class="${page === href ? "active" : ""}">${adaGetModuleLabel(m)}</a>`;
+            }).join("")}
+          </div>
+        </div>
+      `).join("")}
+    </nav>
+    <button type="button" class="sidebar-logout" id="adaSidebarLogout">Cerrar sesión</button>
+  `;
+
+  document.body.insertBefore(sidebar, document.body.firstChild);
+  document.body.classList.add("dashboard-body", "ada-with-sidebar");
+
+  sidebar.querySelectorAll(".sidebar-section-button").forEach((button) => {
+    button.addEventListener("click", () => button.closest(".sidebar-section").classList.toggle("open"));
+  });
+
+  const logout = sidebar.querySelector("#adaSidebarLogout");
+  if (logout) logout.addEventListener("click", adaLogout);
+
+  const backLink = document.querySelector(".back-link");
+  if (backLink) {
+    backLink.href = home;
+    backLink.textContent = "← Mi inicio";
+  }
+}
+
 function adaInjectGlobalLogout(perfil) {
   if (adaIsLoginOrIndex()) return;
+  if (document.querySelector(".sidebar")) return;
   if (document.querySelector(".ada-global-logout")) return;
 
   const btn = document.createElement("button");
@@ -220,6 +383,7 @@ async function adaGetSessionAndProfile() {
   }
 
   adaApplyRoleTheme(perfil.rol);
+  adaInjectRoleSidebar(perfil);
   adaHideUnauthorizedModules(perfil.rol);
   adaInjectGlobalLogout(perfil);
 
