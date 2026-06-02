@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boletines - ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque23-ui-refresh.css">
+  <link rel="stylesheet" href="../assets/css/bloque25-calificaciones-boletines.css">
+</head>
+<body class="module-page role-loading">
+  <main class="module-shell">
+    <a href="dashboard.html" class="back-link">← Volver al panel</a>
+    <section class="module-view">
+      <p class="eyebrow">Bloque 25</p>
+      <h1>Boletines</h1>
+      <p>Generación inicial de boletines por alumno y período, tomando como base las calificaciones cargadas.</p>
+
+      <div class="b25-tabs" role="tablist">
+        <button class="b25-tab active" data-tab="generar" type="button">Generar boletín</button>
+        <button class="b25-tab" data-tab="consulta" type="button">Boletines emitidos</button>
+      </div>
+
+      <section id="tab-generar" class="b25-section active">
+        <div class="b25-layout">
+          <section class="panel-card" data-b25-boletin-manage>
+            <h2>Nuevo boletín</h2>
+            <form id="formBoletin" class="ada-form">
+              <label>Alumno</label><select id="boletinAlumno" required></select>
+              <label>Curso</label><select id="boletinCurso"></select>
+              <label>Período</label><select id="boletinPeriodo" required></select>
+              <label>Observación general</label><textarea id="boletinObservacion"></textarea>
+              <button type="submit" class="btn-primary">Generar boletín</button>
+              <p id="msgBoletin" class="form-message"></p>
+            </form>
+          </section>
+          <section class="panel-card">
+            <h2>Vista previa / detalle</h2>
+            <div id="vistaPreviaBoletin" class="table-wrap"><p class="helper-text">Seleccioná alumno y período para generar o consultar boletines.</p></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="tab-consulta" class="b25-section">
+        <section class="panel-card">
+          <h2>Boletines emitidos</h2>
+          <div class="form-grid">
+            <div><label>Alumno</label><select id="filtroBoletinAlumno"></select></div>
+            <div><label>Período</label><select id="filtroBoletinPeriodo"></select></div>
+          </div>
+          <div class="b25-actions"><button class="btn-primary" id="btnBuscarBoletines" type="button">Buscar</button><button class="btn-secondary" id="btnLimpiarBoletines" type="button">Limpiar</button></div>
+          <div id="tablaBoletines" class="table-wrap" style="margin-top:16px;"></div>
+        </section>
+      </section>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/ada-security.js"></script>
+  <script src="../assets/js/boletines.js"></script>
+</body>
+</html>

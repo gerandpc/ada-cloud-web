@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calificaciones - ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque23-ui-refresh.css">
+  <link rel="stylesheet" href="../assets/css/bloque25-calificaciones-boletines.css">
+</head>
+<body class="module-page role-loading">
+  <main class="module-shell">
+    <a href="dashboard.html" class="back-link">← Volver al panel</a>
+    <section class="module-view">
+      <p class="eyebrow">Bloque 25</p>
+      <h1>Calificaciones</h1>
+      <p>Registro, consulta y seguimiento de evaluaciones por alumno, curso, materia y período.</p>
+
+      <div class="b25-kpi-grid">
+        <div class="b25-kpi"><span>Evaluaciones</span><strong id="kpiEvaluaciones">0</strong></div>
+        <div class="b25-kpi"><span>Calificaciones</span><strong id="kpiCalificaciones">0</strong></div>
+        <div class="b25-kpi"><span>Promedio general</span><strong id="kpiPromedio">-</strong></div>
+        <div class="b25-kpi"><span>Pendientes</span><strong id="kpiPendientes">0</strong></div>
+      </div>
+
+      <div class="b25-tabs" role="tablist">
+        <button class="b25-tab active" data-tab="evaluaciones" type="button">Evaluaciones</button>
+        <button class="b25-tab" data-tab="carga" type="button">Carga de notas</button>
+        <button class="b25-tab" data-tab="consulta" type="button">Consulta</button>
+      </div>
+
+      <section id="tab-evaluaciones" class="b25-section active">
+        <div class="b25-layout">
+          <section class="panel-card" data-b25-manage>
+            <h2>Nueva evaluación</h2>
+            <form id="formEvaluacion" class="ada-form">
+              <label>Período</label><select id="evaluacionPeriodo" required></select>
+              <label>Curso</label><select id="evaluacionCurso"></select>
+              <label>Materia</label><select id="evaluacionMateria" required></select>
+              <label>Título</label><input id="evaluacionTitulo" required placeholder="Ej.: Parcial 1 / Trabajo práctico">
+              <label>Tipo</label><select id="evaluacionTipo"><option>Parcial</option><option>Trabajo práctico</option><option>Proyecto</option><option>Oral</option><option>Actitudinal</option><option>Otro</option></select>
+              <label>Fecha</label><input type="date" id="evaluacionFecha" required>
+              <label>Ponderación</label><input type="number" id="evaluacionPonderacion" min="0" max="100" value="100">
+              <label>Observaciones</label><textarea id="evaluacionObservaciones"></textarea>
+              <button class="btn-primary" type="submit">Guardar evaluación</button>
+              <p class="form-message" id="msgEvaluacion"></p>
+            </form>
+          </section>
+          <section class="panel-card">
+            <h2>Evaluaciones registradas</h2>
+            <div id="tablaEvaluaciones" class="table-wrap"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="tab-carga" class="b25-section">
+        <div class="b25-layout">
+          <section class="panel-card" data-b25-manage>
+            <h2>Cargar calificación</h2>
+            <form id="formCalificacion" class="ada-form">
+              <label>Evaluación</label><select id="calificacionEvaluacion" required></select>
+              <label>Alumno</label><select id="calificacionAlumno" required></select>
+              <label>Nota</label><input type="number" id="calificacionNota" min="1" max="10" step="0.01" required>
+              <label>Estado</label><select id="calificacionEstado"><option value="calificado">Calificado</option><option value="ausente">Ausente</option><option value="pendiente">Pendiente</option><option value="recuperatorio">Recuperatorio</option></select>
+              <label>Observación</label><textarea id="calificacionObservacion"></textarea>
+              <button class="btn-primary" type="submit">Guardar nota</button>
+              <p class="form-message" id="msgCalificacion"></p>
+            </form>
+          </section>
+          <section class="panel-card">
+            <h2>Últimas notas cargadas</h2>
+            <div id="tablaCalificaciones" class="table-wrap"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="tab-consulta" class="b25-section">
+        <section class="panel-card">
+          <h2>Consulta de calificaciones</h2>
+          <div class="form-grid">
+            <div><label>Alumno</label><select id="filtroAlumno"></select></div>
+            <div><label>Materia</label><select id="filtroMateria"></select></div>
+            <div><label>Período</label><select id="filtroPeriodo"></select></div>
+          </div>
+          <div class="b25-actions"><button class="btn-primary" id="btnFiltrarCalificaciones" type="button">Filtrar</button><button class="btn-secondary" id="btnLimpiarFiltros" type="button">Limpiar</button></div>
+          <div id="tablaConsultaCalificaciones" class="table-wrap" style="margin-top:16px;"></div>
+        </section>
+      </section>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/ada-security.js"></script>
+  <script src="../assets/js/calificaciones.js"></script>
+</body>
+</html>
