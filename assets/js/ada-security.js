@@ -34,6 +34,8 @@ const ADA_ROLE_ICONS = {
 
 const ADA_PAGE_ACCESS = {
   "dashboard.html": ["admin", "directivo", "secretaria"],
+  "calificaciones.html": ["admin", "directivo", "secretaria", "docente", "preceptor", "familia", "alumno"],
+  "boletines.html": ["admin", "directivo", "secretaria", "docente", "preceptor", "familia", "alumno"],
 
   "institucion.html": ["admin", "directivo", "secretaria"],
   "usuarios.html": ["admin", "directivo", "secretaria"],
@@ -79,13 +81,13 @@ const ADA_ROLE_HOME = {
 };
 
 const ADA_ROLE_MODULES = {
-  admin: ["dashboard", "institucion", "usuarios", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "ia", "horarios", "asistencia", "reportes", "comunicados", "importar", "manuscritos"],
-  directivo: ["dashboard", "institucion", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "ia", "horarios", "asistencia", "reportes", "comunicados", "manuscritos"],
-  secretaria: ["dashboard", "institucion", "usuarios", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "asistencia", "reportes", "comunicados"],
-  docente: ["mi-docente", "asistencia", "alumnos", "cursos", "materias", "documentos", "comunicados", "ia", "reportes", "manuscritos"],
-  preceptor: ["mi-preceptor", "asistencia", "alumnos", "familias", "cursos", "documentos", "comunicados", "ia", "reportes"],
-  familia: ["mi-familia", "comunicados", "documentos", "ia"],
-  alumno: ["mi-alumno", "comunicados", "documentos", "ia"]
+  admin: ["dashboard", "institucion", "usuarios", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "ia", "horarios", "asistencia", "calificaciones", "boletines", "reportes", "comunicados", "importar", "manuscritos"],
+  directivo: ["dashboard", "institucion", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "ia", "horarios", "asistencia", "calificaciones", "boletines", "reportes", "comunicados", "manuscritos"],
+  secretaria: ["dashboard", "institucion", "usuarios", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "asistencia", "calificaciones", "boletines", "reportes", "comunicados"],
+  docente: ["mi-docente", "asistencia", "calificaciones", "boletines", "alumnos", "cursos", "materias", "documentos", "comunicados", "ia", "reportes", "manuscritos"],
+  preceptor: ["mi-preceptor", "asistencia", "calificaciones", "boletines", "alumnos", "familias", "cursos", "documentos", "comunicados", "ia", "reportes"],
+  familia: ["mi-familia", "calificaciones", "boletines", "comunicados", "documentos", "ia"],
+  alumno: ["mi-alumno", "calificaciones", "boletines", "comunicados", "documentos", "ia"]
 };
 
 const ADA_MODULES = {
@@ -108,6 +110,8 @@ const ADA_MODULES = {
   materias: { label: "Materias", icon: "📘", href: "materias.html", group: "Gestión escolar" },
 
   asistencia: { label: "Asistencia", icon: "✅", href: "asistencia.html", group: "Trabajo diario" },
+  calificaciones: { label: "Calificaciones", icon: "📝", href: "calificaciones.html", group: "Trabajo diario" },
+  boletines: { label: "Boletines", icon: "📑", href: "boletines.html", group: "Trabajo diario" },
   comunicados: { label: "Comunicados", icon: "📣", href: "comunicados.html", group: "Trabajo diario" },
   documentos: { label: "Documentos", icon: "📄", href: "documentos.html", group: "Trabajo diario" },
 
@@ -205,11 +209,34 @@ function adaHideUnauthorizedModules(rol) {
 
 async function adaLogout() {
   try {
-    if (window.supabaseClient?.auth) await supabaseClient.auth.signOut();
+    sessionStorage.setItem("ada_force_portal", "1");
+  } catch (e) {}
+
+  try {
+    if (window.supabaseClient?.auth) {
+      await supabaseClient.auth.signOut({ scope: "global" });
+    }
   } catch (error) {
-    console.error("Error cerrando sesión:", error);
+    console.warn("No se pudo cerrar globalmente, se limpia sesión local:", error);
+    try {
+      if (window.supabaseClient?.auth) await supabaseClient.auth.signOut({ scope: "local" });
+    } catch (e) {}
   }
-  window.location.href = adaPortalHref();
+
+  // Limpieza defensiva de tokens locales de Supabase para evitar que el portal reabra admin.
+  try {
+    Object.keys(localStorage).forEach((key) => {
+      const k = key.toLowerCase();
+      if (k.includes("supabase") || k.includes("sb-")) localStorage.removeItem(key);
+    });
+    Object.keys(sessionStorage).forEach((key) => {
+      const k = key.toLowerCase();
+      if (k.includes("supabase") || k.includes("sb-")) sessionStorage.removeItem(key);
+    });
+    sessionStorage.setItem("ada_force_portal", "1");
+  } catch (e) {}
+
+  window.location.replace(adaPortalHref() + "?logout=1");
 }
 
 function adaBindLogoutButtons() {
@@ -347,6 +374,7 @@ function adaApplyBasePolish(perfil) {
 }
 
 function adaBuildAccessDenied(perfil, pagina) {
+  window.ADA_ACCESS_DENIED = true;
   const rol = adaNormalizeRole(perfil.rol);
   adaApplyRoleTheme(rol);
 

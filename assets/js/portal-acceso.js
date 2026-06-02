@@ -159,4 +159,12 @@ document.addEventListener("keydown", (event) => {
 
 loginForm.addEventListener("submit", iniciarSesion);
 
-redirigirSiYaTieneSesion();
+
+// Importante Bloque 25:
+// El portal NO redirige automáticamente si queda una sesión activa.
+// Esto evita el problema de entrar al portal, cerrar sesión y que vuelva a abrirse el admin.
+// El usuario siempre decide desde qué tarjeta ingresar y Supabase valida el rol real.
+if (new URLSearchParams(window.location.search).has("logout")) {
+  try { window.history.replaceState({}, document.title, window.location.pathname); } catch (e) {}
+}
+
