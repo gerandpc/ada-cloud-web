@@ -812,3 +812,514 @@ body.role-docente .role-hero {
     padding: 20px;
   }
 }
+
+/* ============================================================
+   BLOQUE 24 - Base visual, navegación y permisos ADA
+   Plantilla madre responsive para todos los módulos internos.
+   ============================================================ */
+:root {
+  --ada-radius-lg: 28px;
+  --ada-radius-md: 18px;
+  --ada-shadow-soft: 0 18px 48px rgba(15, 23, 42, 0.10);
+  --ada-shadow-hover: 0 24px 60px rgba(15, 23, 42, 0.16);
+  --ada-sidebar-width: 300px;
+}
+
+body.ada-with-sidebar {
+  min-height: 100vh;
+  display: flex;
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--ada-secondary) 32%, transparent), transparent 34%),
+    linear-gradient(180deg, #f8fafc 0%, var(--ada-soft) 100%) !important;
+}
+
+body.ada-with-sidebar .sidebar {
+  width: var(--ada-sidebar-width);
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(255,255,255,.16), transparent 30%),
+    linear-gradient(180deg, var(--ada-sidebar), #020617);
+  color: white;
+  padding: 22px 16px;
+  position: fixed;
+  inset: 0 auto 0 0;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 18px 0 48px rgba(2, 6, 23, .22);
+}
+
+body.ada-with-sidebar .dashboard-main,
+body.ada-with-sidebar .module-shell {
+  margin-left: var(--ada-sidebar-width) !important;
+  width: calc(100% - var(--ada-sidebar-width)) !important;
+  min-height: 100vh;
+  padding: clamp(20px, 3vw, 42px) !important;
+}
+
+body.ada-with-sidebar .module-view,
+body.ada-with-sidebar .dashboard-header,
+body.ada-with-sidebar .role-banner,
+.ada-surface {
+  border-radius: var(--ada-radius-lg) !important;
+  border: 1px solid rgba(148, 163, 184, .22) !important;
+  box-shadow: var(--ada-shadow-soft) !important;
+  backdrop-filter: blur(14px);
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 8px 18px;
+  border-bottom: 1px solid rgba(255,255,255,.12);
+}
+
+.ada-sidebar-mark {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--ada-primary), var(--ada-secondary));
+  color: white;
+  font-weight: 900;
+  letter-spacing: .5px;
+  box-shadow: 0 14px 28px rgba(0,0,0,.25);
+}
+
+.sidebar-logo h2 {
+  margin: 0;
+  font-size: 26px;
+  letter-spacing: 1px;
+  color: white;
+}
+
+.sidebar-logo span {
+  display: block;
+  margin-top: 2px;
+  color: rgba(226, 232, 240, .82);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ada-sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 4px 20px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.10);
+}
+
+.ada-sidebar-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 15px;
+  display: grid;
+  place-items: center;
+  background: rgba(255,255,255,.14);
+  font-size: 22px;
+}
+
+.ada-sidebar-user strong {
+  display: block;
+  color: white;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.ada-sidebar-user small {
+  display: inline-block;
+  margin-top: 5px;
+  color: var(--ada-secondary);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  font-size: 10px;
+}
+
+.sidebar-nav {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sidebar-section {
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.sidebar-section-button {
+  width: 100%;
+  border: none;
+  background: rgba(255,255,255,.055);
+  color: rgba(226, 232, 240, .92);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 11px;
+  font-weight: 900;
+  padding: 12px 14px;
+  border-radius: 14px;
+}
+
+.sidebar-section-button:hover {
+  background: rgba(255,255,255,.10);
+}
+
+.sidebar-section-button .chevron {
+  transition: transform .2s ease;
+  font-size: 17px;
+}
+
+.sidebar-section.open .chevron {
+  transform: rotate(90deg);
+}
+
+.sidebar-submenu {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 0 8px 0;
+}
+
+.sidebar-section.open .sidebar-submenu {
+  display: flex;
+}
+
+.sidebar-submenu a,
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(226, 232, 240, .86);
+  text-decoration: none;
+  padding: 11px 12px;
+  border-radius: 14px;
+  font-weight: 800;
+  line-height: 1.2;
+  transition: background .18s ease, color .18s ease, transform .18s ease;
+}
+
+.sidebar-submenu a:hover,
+.sidebar-submenu a.active,
+.sidebar-link:hover,
+.sidebar-link.active {
+  background: linear-gradient(135deg, var(--ada-primary), var(--ada-primary-hover));
+  color: white;
+  transform: translateX(3px);
+  box-shadow: 0 12px 24px rgba(0,0,0,.18);
+}
+
+.ada-nav-icon {
+  width: 24px;
+  height: 24px;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 24px;
+}
+
+.ada-sidebar-footer {
+  margin-top: auto;
+  padding-top: 18px;
+}
+
+.sidebar-logout {
+  width: 100%;
+  margin-top: 16px;
+  padding: 13px 14px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.06);
+  color: white;
+  border-radius: 16px;
+  cursor: pointer;
+  font-weight: 900;
+  transition: background .18s ease, transform .18s ease;
+}
+
+.sidebar-logout:hover {
+  background: rgba(255,255,255,.12);
+  transform: translateY(-1px);
+}
+
+.ada-menu-toggle {
+  display: none;
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 1200;
+  border: none;
+  background: var(--ada-primary);
+  color: white;
+  padding: 11px 14px;
+  border-radius: 999px;
+  font-weight: 900;
+  box-shadow: 0 14px 32px rgba(15, 23, 42, .24);
+  cursor: pointer;
+}
+
+.ada-menu-toggle span {
+  margin-left: 6px;
+}
+
+.dashboard-header,
+.role-banner,
+.module-view,
+.panel-card,
+.module-card,
+.user-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard-header::before,
+.module-view::before,
+.panel-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 5px;
+  background: linear-gradient(90deg, var(--ada-primary), var(--ada-secondary));
+}
+
+.dashboard-header h1,
+.module-view h1,
+.panel-card h2 {
+  color: var(--ada-primary) !important;
+}
+
+.module-card {
+  border: 1px solid rgba(148, 163, 184, .26) !important;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, .08) !important;
+}
+
+.module-card:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: var(--ada-shadow-hover) !important;
+}
+
+.btn-primary,
+.btn-principal,
+button[type="submit"] {
+  background: linear-gradient(135deg, var(--ada-primary), var(--ada-primary-hover)) !important;
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--ada-primary) 28%, transparent);
+}
+
+.btn-secondary {
+  border-color: var(--ada-secondary) !important;
+  color: var(--ada-primary) !important;
+}
+
+.ada-action-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.access-denied-card {
+  max-width: 780px;
+  margin: 40px auto;
+}
+
+.ada-access-denied-shell {
+  display: flex;
+  align-items: center;
+}
+
+.helper-text {
+  color: var(--ada-muted);
+  font-size: 16px !important;
+}
+
+.ada-table {
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.ada-table th {
+  background: var(--ada-soft);
+  color: var(--ada-primary) !important;
+}
+
+.badge,
+.role-pill {
+  background: linear-gradient(135deg, var(--ada-primary), var(--ada-primary-hover)) !important;
+  color: white !important;
+}
+
+/* Colores finales por rol */
+body.role-admin {
+  --ada-primary: #0f172a !important;
+  --ada-primary-hover: #334155 !important;
+  --ada-secondary: #94a3b8 !important;
+  --ada-soft: #f1f5f9 !important;
+  --ada-sidebar: #020617 !important;
+  --ada-gradient: linear-gradient(135deg, #0f172a 0%, #334155 100%) !important;
+}
+
+body.role-directivo {
+  --ada-primary: #b91c1c !important;
+  --ada-primary-hover: #dc2626 !important;
+  --ada-secondary: #fecaca !important;
+  --ada-soft: #fef2f2 !important;
+  --ada-sidebar: #450a0a !important;
+  --ada-gradient: linear-gradient(135deg, #fee2e2, #fff7ed) !important;
+}
+
+body.role-secretaria {
+  --ada-primary: #0284c7 !important;
+  --ada-primary-hover: #0ea5e9 !important;
+  --ada-secondary: #bae6fd !important;
+  --ada-soft: #e0f2fe !important;
+  --ada-sidebar: #082f49 !important;
+  --ada-gradient: linear-gradient(135deg, #e0f2fe, #f8fafc) !important;
+}
+
+body.role-docente {
+  --ada-primary: #ea580c !important;
+  --ada-primary-hover: #f97316 !important;
+  --ada-secondary: #fdba74 !important;
+  --ada-soft: #fff7ed !important;
+  --ada-sidebar: #431407 !important;
+  --ada-gradient: linear-gradient(135deg, #ffedd5, #fff7ed) !important;
+}
+
+body.role-preceptor {
+  --ada-primary: #b8860b !important;
+  --ada-primary-hover: #ca8a04 !important;
+  --ada-secondary: #fde68a !important;
+  --ada-soft: #fefce8 !important;
+  --ada-sidebar: #422006 !important;
+  --ada-gradient: linear-gradient(135deg, #fef3c7, #fff7ed) !important;
+}
+
+body.role-familia {
+  --ada-primary: #15803d !important;
+  --ada-primary-hover: #16a34a !important;
+  --ada-secondary: #bbf7d0 !important;
+  --ada-soft: #f0fdf4 !important;
+  --ada-sidebar: #052e16 !important;
+  --ada-gradient: linear-gradient(135deg, #dcfce7, #f8fafc) !important;
+}
+
+body.role-alumno {
+  --ada-primary: #7c3aed !important;
+  --ada-primary-hover: #2563eb !important;
+  --ada-secondary: #c4b5fd !important;
+  --ada-soft: #eef2ff !important;
+  --ada-sidebar: #111827 !important;
+  --ada-gradient: linear-gradient(135deg, #dbeafe 0%, #f3e8ff 35%, #dcfce7 70%, #fff7ed 100%) !important;
+}
+
+body.role-alumno .sidebar {
+  background:
+    radial-gradient(circle at 0% 0%, rgba(124, 58, 237, .34), transparent 28%),
+    radial-gradient(circle at 95% 15%, rgba(37, 99, 235, .28), transparent 30%),
+    radial-gradient(circle at 50% 95%, rgba(22, 163, 74, .22), transparent 28%),
+    linear-gradient(180deg, #111827, #020617) !important;
+}
+
+@media (max-width: 1100px) {
+  :root { --ada-sidebar-width: 278px; }
+}
+
+@media (max-width: 900px) {
+  body.ada-with-sidebar {
+    display: block !important;
+  }
+
+  .ada-menu-toggle {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  body.ada-with-sidebar .sidebar {
+    position: fixed !important;
+    width: min(86vw, 330px) !important;
+    min-height: 100vh !important;
+    transform: translateX(-105%);
+    transition: transform .22s ease;
+    border-radius: 0 28px 28px 0;
+  }
+
+  body.ada-sidebar-open .sidebar {
+    transform: translateX(0);
+  }
+
+  body.ada-sidebar-open::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, .42);
+    z-index: 900;
+  }
+
+  body.ada-with-sidebar .dashboard-main,
+  body.ada-with-sidebar .module-shell {
+    margin-left: 0 !important;
+    width: 100% !important;
+    padding: 74px 16px 22px !important;
+  }
+
+  .dashboard-header,
+  .role-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dashboard-header h1,
+  .module-view h1 {
+    font-size: clamp(28px, 9vw, 38px) !important;
+  }
+
+  .module-view,
+  .dashboard-header,
+  .role-banner,
+  .panel-card {
+    padding: 24px !important;
+    border-radius: 22px !important;
+  }
+
+  .ada-action-row,
+  .role-banner {
+    width: 100%;
+  }
+
+  .ada-action-row .btn-primary,
+  .ada-action-row .btn-secondary {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 560px) {
+  .ada-menu-toggle span {
+    display: none;
+  }
+
+  body.ada-with-sidebar .dashboard-main,
+  body.ada-with-sidebar .module-shell {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  .module-view,
+  .dashboard-header,
+  .role-banner,
+  .panel-card {
+    padding: 20px !important;
+  }
+
+  .dashboard-grid,
+  .form-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
