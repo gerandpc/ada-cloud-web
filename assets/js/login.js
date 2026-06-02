@@ -26,7 +26,8 @@ async function redirigirSegunPerfil() {
     return false;
   }
 
-  window.location.replace(LOGIN_ROLE_HOME[perfil.rol] || "dashboard.html");
+  const rol = (perfil.rol || "alumno").toString().trim().toLowerCase() === "preceptoria" ? "preceptor" : (perfil.rol || "alumno").toString().trim().toLowerCase();
+  window.location.replace(LOGIN_ROLE_HOME[rol] || "dashboard.html");
   return true;
 }
 

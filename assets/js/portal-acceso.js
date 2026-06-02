@@ -90,6 +90,8 @@ async function obtenerPerfilActual() {
     return null;
   }
 
+  perfil.rol = (perfil.rol || "alumno").toString().trim().toLowerCase();
+  if (perfil.rol === "preceptoria") perfil.rol = "preceptor";
   return perfil;
 }
 
