@@ -7,7 +7,7 @@ let b27Materias = [];
 let b27Programas = [];
 let b27Recursos = [];
 
-const B27_MANAGE_ROLES = ["admin", "directivo", "docente"];
+const B27_MANAGE_ROLES = ["docente"];
 const B27_APPROVE_ROLES = ["admin", "directivo"];
 const B27_STORAGE_BUCKET = "ada-programas";
 const B27_MAX_FILE_SIZE = 15 * 1024 * 1024;
