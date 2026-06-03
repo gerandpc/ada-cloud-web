@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Convivencia y descréditos - ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque29-convivencia.css">
+</head>
+<body class="module-page role-loading">
+  <main class="module-shell convivencia-shell">
+    <a href="dashboard.html" class="back-link">← Volver al panel</a>
+
+    <section class="module-view convivencia-view">
+      <div class="cv-hero">
+        <div>
+          <p class="eyebrow">Bloque 29</p>
+          <h1>Convivencia, sanciones y descréditos</h1>
+          <p class="cv-subtitle">Registro de hechos disciplinarios, notificación a la familia, firma/devolución y seguimiento institucional por alumno.</p>
+        </div>
+        <div class="cv-hero-badges">
+          <span>⚠️ Seguimiento</span>
+          <span>✍️ Firma familiar</span>
+          <span>📊 Descréditos</span>
+        </div>
+      </div>
+
+      <div id="mensajeConvivencia" class="form-message">Cargando módulo...</div>
+
+      <div class="cv-summary-grid">
+        <article class="summary-card">
+          <span class="summary-label">Casos abiertos</span>
+          <strong id="sumCasosAbiertos">0</strong>
+        </article>
+        <article class="summary-card">
+          <span class="summary-label">Pendientes de firma</span>
+          <strong id="sumPendientesFirma">0</strong>
+        </article>
+        <article class="summary-card">
+          <span class="summary-label">Descréditos acumulados</span>
+          <strong id="sumDescreditos">0</strong>
+        </article>
+        <article class="summary-card">
+          <span class="summary-label">Casos cerrados</span>
+          <strong id="sumCasosCerrados">0</strong>
+        </article>
+      </div>
+
+      <div class="cv-tabs" role="tablist" aria-label="Secciones de convivencia">
+        <button class="cv-tab active" type="button" data-tab="tab-seguimiento">Seguimiento</button>
+        <button class="cv-tab" type="button" data-tab="tab-nuevo" data-area-only="gestion">Nuevo caso</button>
+        <button class="cv-tab" type="button" data-tab="tab-firma" data-area-only="familia">Firmar / responder</button>
+        <button class="cv-tab" type="button" data-tab="tab-alumnos" data-area-only="gestion">Resumen por alumno</button>
+      </div>
+
+      <section id="tab-seguimiento" class="cv-tab-panel active">
+        <div class="cv-toolbar">
+          <div>
+            <h2>Casos de convivencia</h2>
+            <p>Seguimiento por estado, gravedad, alumno y notificación familiar.</p>
+          </div>
+          <div class="cv-filters">
+            <select id="filtroCvEstado">
+              <option value="">Todos los estados</option>
+              <option value="pendiente">Pendiente</option>
+              <option value="notificado">Notificado</option>
+              <option value="firmado">Firmado</option>
+              <option value="observado">Observado</option>
+              <option value="cerrado">Cerrado</option>
+            </select>
+            <select id="filtroCvGravedad">
+              <option value="">Todas las gravedades</option>
+              <option value="leve">Leve</option>
+              <option value="moderada">Moderada</option>
+              <option value="grave">Grave</option>
+            </select>
+            <button type="button" id="btnActualizarConvivencia" class="btn-secondary">Actualizar</button>
+          </div>
+        </div>
+        <div id="listaConvivencia" class="cv-grid"></div>
+      </section>
+
+      <section id="tab-nuevo" class="cv-tab-panel">
+        <div class="panel-card cv-form-card">
+          <h2>Registrar hecho disciplinario o sanción</h2>
+          <p class="helper-text">Preceptoría registra el caso, asigna descréditos y define si requiere notificación/firma de la familia.</p>
+          <form id="formConvivencia" class="cv-form">
+            <div class="form-grid">
+              <label>Alumno
+                <select id="cvAlumno" required></select>
+              </label>
+              <label>Curso
+                <select id="cvCurso" required></select>
+              </label>
+              <label>Fecha del hecho
+                <input type="date" id="cvFecha" required>
+              </label>
+              <label>Gravedad
+                <select id="cvGravedad" required>
+                  <option value="leve">Leve</option>
+                  <option value="moderada">Moderada</option>
+                  <option value="grave">Grave</option>
+                </select>
+              </label>
+              <label>Tipo de hecho
+                <select id="cvTipo" required>
+                  <option value="conducta">Conducta</option>
+                  <option value="faltas">Falta al reglamento</option>
+                  <option value="convivencia">Convivencia</option>
+                  <option value="disciplina">Disciplina</option>
+                  <option value="otro">Otro</option>
+                </select>
+              </label>
+              <label>Descréditos
+                <input type="number" min="0" step="1" id="cvDescreditos" value="1" required>
+              </label>
+            </div>
+            <label>Descripción del hecho
+              <textarea id="cvDescripcion" rows="4" required placeholder="Detalle del hecho, contexto y personas involucradas."></textarea>
+            </label>
+            <div class="form-grid two">
+              <label>Sanción / medida aplicada
+                <input type="text" id="cvSancion" placeholder="Ej.: apercibimiento, acta, tarea reparadora, llamado a familia">
+              </label>
+              <label>Adjunto opcional
+                <input type="file" id="cvArchivo" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.webp">
+              </label>
+            </div>
+            <div class="form-grid two">
+              <label class="checkline">
+                <input type="checkbox" id="cvRequiereFirma" checked>
+                <span>Notificar y solicitar firma a la familia</span>
+              </label>
+              <label class="checkline">
+                <input type="checkbox" id="cvVisibleSecretaria" checked>
+                <span>Visible para Secretaría y Directivos</span>
+              </label>
+            </div>
+            <div class="ada-action-row">
+              <button type="submit" class="btn-primary">Registrar caso</button>
+              <button type="button" id="btnLimpiarCv" class="btn-secondary">Limpiar</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section id="tab-firma" class="cv-tab-panel">
+        <div class="cv-toolbar">
+          <div>
+            <h2>Notificaciones para la familia</h2>
+            <p>Casos pendientes de lectura, firma o devolución de la familia.</p>
+          </div>
+        </div>
+        <div id="listaFirmaFamilia" class="cv-grid"></div>
+      </section>
+
+      <section id="tab-alumnos" class="cv-tab-panel">
+        <div class="panel-card">
+          <div class="cv-toolbar compact">
+            <div>
+              <h2>Resumen por alumno</h2>
+              <p>Total de descréditos, cantidad de casos y último estado.</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="ada-table">
+              <thead>
+                <tr>
+                  <th>Alumno</th>
+                  <th>Curso</th>
+                  <th>Casos</th>
+                  <th>Descréditos</th>
+                  <th>Pendientes de firma</th>
+                  <th>Último estado</th>
+                </tr>
+              </thead>
+              <tbody id="tablaResumenConvivencia"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <template id="templateCvCard">
+    <article class="cv-card">
+      <div class="cv-card-top">
+        <span class="cv-gravedad"></span>
+        <span class="cv-estado"></span>
+      </div>
+      <h3></h3>
+      <p class="cv-description"></p>
+      <div class="cv-meta"></div>
+      <div class="cv-actions"></div>
+    </article>
+  </template>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/ada-security.js"></script>
+  <script src="../assets/js/convivencia.js"></script>
+</body>
+</html>
