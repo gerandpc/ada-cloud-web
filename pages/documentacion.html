@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentación y firmas - ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque28-documentacion.css">
+</head>
+<body class="module-page role-loading">
+  <main class="module-shell documentacion-shell">
+    <a href="dashboard.html" class="back-link">← Volver al panel</a>
+
+    <section class="module-view documentacion-view">
+      <div class="doc-hero">
+        <div>
+          <p class="eyebrow">Bloque 28</p>
+          <h1>Documentación, justificaciones y firmas</h1>
+          <p class="doc-subtitle">Gestión de documentos enviados por Secretaría o Preceptoría, certificados familiares, devoluciones firmadas y trazabilidad por alumno.</p>
+        </div>
+        <div class="doc-hero-badges">
+          <span>📄 PDF / Word / Imagen</span>
+          <span>✍️ Firma familiar</span>
+          <span>🧾 Trazabilidad</span>
+        </div>
+      </div>
+
+      <div id="mensajeDocumentacion" class="form-message">Cargando módulo...</div>
+
+      <div class="doc-tabs" role="tablist" aria-label="Secciones de documentación">
+        <button class="doc-tab active" type="button" data-tab="tab-seguimiento">Seguimiento</button>
+        <button class="doc-tab" type="button" data-tab="tab-nuevo" data-area-only="gestion">Nuevo envío</button>
+        <button class="doc-tab" type="button" data-tab="tab-familia" data-area-only="familia">Subir certificado</button>
+        <button class="doc-tab" type="button" data-tab="tab-revision" data-area-only="gestion">Revisión</button>
+      </div>
+
+      <section id="tab-seguimiento" class="doc-tab-panel active">
+        <div class="doc-toolbar">
+          <div>
+            <h2>Trámites y solicitudes</h2>
+            <p>Vista unificada por origen, destinatario, estado y devolución.</p>
+          </div>
+          <div class="doc-filters">
+            <select id="filtroEstado">
+              <option value="">Todos los estados</option>
+              <option value="pendiente">Pendiente</option>
+              <option value="visto">Visto</option>
+              <option value="devuelto">Devuelto</option>
+              <option value="aprobado">Aprobado</option>
+              <option value="observado">Observado</option>
+              <option value="rechazado">Rechazado</option>
+              <option value="vencido">Vencido</option>
+            </select>
+            <select id="filtroOrigen">
+              <option value="">Todos los orígenes</option>
+              <option value="secretaria">Secretaría</option>
+              <option value="preceptoria">Preceptoría</option>
+            </select>
+            <button type="button" id="btnActualizarDocumentacion" class="btn-secondary">Actualizar</button>
+          </div>
+        </div>
+        <div id="listaDocumentacion" class="doc-grid"></div>
+      </section>
+
+      <section id="tab-nuevo" class="doc-tab-panel">
+        <div class="panel-card doc-form-card">
+          <h2>Nuevo envío masivo o selectivo</h2>
+          <p class="helper-text">Secretaría y Preceptoría pueden enviar a todo un curso, varios cursos, alumnos seleccionados o un alumno.</p>
+
+          <form id="formNuevoTramite" class="doc-form">
+            <div class="form-grid">
+              <label>Área de origen
+                <select id="tramiteOrigen" required>
+                  <option value="secretaria">Secretaría</option>
+                  <option value="preceptoria">Preceptoría</option>
+                </select>
+              </label>
+              <label>Tipo de trámite
+                <select id="tramiteTipo" required>
+                  <option value="documento_firma">Documento para firma</option>
+                  <option value="autorizacion">Autorización</option>
+                  <option value="ficha">Ficha / formulario</option>
+                  <option value="acta">Acta</option>
+                  <option value="justificacion">Justificación</option>
+                  <option value="certificado">Certificado / comprobante</option>
+                  <option value="tardanza">Tardanza</option>
+                  <option value="retiro">Retiro anticipado</option>
+                  <option value="informativo">Informativo</option>
+                </select>
+              </label>
+              <label>Título
+                <input id="tramiteTitulo" type="text" required placeholder="Ej.: Autorización salida educativa">
+              </label>
+              <label>Fecha límite
+                <input id="tramiteFechaLimite" type="date">
+              </label>
+            </div>
+
+            <label>Descripción / indicaciones
+              <textarea id="tramiteDescripcion" rows="4" placeholder="Indicaciones para la familia, documentación solicitada o motivo del envío."></textarea>
+            </label>
+
+            <div class="form-grid two">
+              <label class="checkline">
+                <input id="tramiteRequiereDevolucion" type="checkbox" checked>
+                <span>Requiere devolución firmada o archivo cargado por la familia</span>
+              </label>
+              <label>Documento enviado
+                <input id="tramiteArchivo" type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.webp">
+              </label>
+            </div>
+
+            <div class="recipient-box">
+              <div class="recipient-mode">
+                <label><input type="radio" name="destinoModo" value="curso" checked> Curso/s completos</label>
+                <label><input type="radio" name="destinoModo" value="alumnos"> Alumno/s seleccionados</label>
+                <label><input type="radio" name="destinoModo" value="todos"> Todos los alumnos activos</label>
+              </div>
+
+              <div id="selectorCursos" class="selector-list"></div>
+              <div id="selectorAlumnos" class="selector-list hidden"></div>
+            </div>
+
+            <div class="ada-action-row">
+              <button type="submit" class="btn-primary">Enviar trámite</button>
+              <button type="button" id="btnLimpiarTramite" class="btn-secondary">Limpiar</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section id="tab-familia" class="doc-tab-panel">
+        <div class="panel-card doc-form-card">
+          <h2>Subir certificado o solicitud familiar</h2>
+          <p class="helper-text">La familia puede cargar certificados, comprobantes o solicitudes vinculadas a inasistencia, tardanza, retiro u otra situación del alumno.</p>
+
+          <form id="formSolicitudFamilia" class="doc-form">
+            <div class="form-grid">
+              <label>Alumno
+                <select id="familiaAlumno" required></select>
+              </label>
+              <label>Destino
+                <select id="familiaDestino" required>
+                  <option value="preceptoria">Preceptoría</option>
+                  <option value="secretaria">Secretaría</option>
+                </select>
+              </label>
+              <label>Tipo
+                <select id="familiaTipo" required>
+                  <option value="justificacion">Justificación de inasistencia</option>
+                  <option value="certificado">Certificado médico / comprobante</option>
+                  <option value="tardanza">Tardanza</option>
+                  <option value="retiro">Retiro anticipado</option>
+                  <option value="documentacion">Documentación solicitada</option>
+                </select>
+              </label>
+              <label>Fecha relacionada
+                <input id="familiaFecha" type="date">
+              </label>
+            </div>
+
+            <label>Observación de la familia
+              <textarea id="familiaObservacion" rows="4" placeholder="Detalle breve del motivo o aclaración."></textarea>
+            </label>
+            <label>Archivo adjunto
+              <input id="familiaArchivo" type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.webp" required>
+            </label>
+            <div class="ada-action-row">
+              <button type="submit" class="btn-primary">Enviar certificado / solicitud</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section id="tab-revision" class="doc-tab-panel">
+        <div class="doc-toolbar">
+          <div>
+            <h2>Pendientes de revisión</h2>
+            <p>Archivos devueltos por familias y certificados cargados.</p>
+          </div>
+        </div>
+        <div id="listaRevision" class="doc-grid"></div>
+      </section>
+    </section>
+  </main>
+
+  <template id="templateDocCard">
+    <article class="doc-card">
+      <div class="doc-card-top">
+        <span class="doc-origin"></span>
+        <span class="doc-status"></span>
+      </div>
+      <h3></h3>
+      <p class="doc-description"></p>
+      <div class="doc-meta"></div>
+      <div class="doc-actions"></div>
+    </article>
+  </template>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/ada-security.js"></script>
+  <script src="../assets/js/documentacion.js"></script>
+</body>
+</html>
