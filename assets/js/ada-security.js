@@ -1,5 +1,5 @@
-// ADA Cloud Web - Bloque 24
-// Base visual, navegación y permisos por rol.
+
+// ADA Cloud Web - Cierre de seguridad por rol
 // Debe cargarse después de supabase-config.js y antes del JS propio de cada página.
 
 const ADA_ROLE_CLASS_MAP = {
@@ -12,34 +12,8 @@ const ADA_ROLE_CLASS_MAP = {
   alumno: "role-alumno"
 };
 
-const ADA_ROLE_LABELS = {
-  admin: "Administrador",
-  directivo: "Directivo",
-  secretaria: "Secretaría",
-  docente: "Docente",
-  preceptor: "Preceptoría",
-  familia: "Familia",
-  alumno: "Alumno"
-};
-
-const ADA_ROLE_ICONS = {
-  admin: "⚙️",
-  directivo: "🏫",
-  secretaria: "🗂️",
-  docente: "👩‍🏫",
-  preceptor: "📋",
-  familia: "👨‍👩‍👧",
-  alumno: "🎒"
-};
-
 const ADA_PAGE_ACCESS = {
   "dashboard.html": ["admin", "directivo", "secretaria"],
-  "calificaciones.html": ["admin", "directivo", "secretaria", "docente", "preceptor", "familia", "alumno"],
-  "boletines.html": ["admin", "directivo", "secretaria", "docente", "preceptor", "familia", "alumno"],
-  "actividades.html": ["admin", "directivo", "secretaria", "docente", "preceptor", "familia", "alumno"],
-  "entregas.html": ["admin", "directivo", "secretaria", "docente", "preceptor", "familia", "alumno"],
-  "programas.html": ["admin", "directivo", "docente"],
-  "documentacion.html": ["admin", "directivo", "secretaria", "preceptor", "familia", "alumno"],
 
   "institucion.html": ["admin", "directivo", "secretaria"],
   "usuarios.html": ["admin", "directivo", "secretaria"],
@@ -71,6 +45,7 @@ const ADA_PAGE_ACCESS = {
   "mi-espacio-docente.html": ["docente"],
   "mi-espacio-preceptor.html": ["preceptor"],
 
+  "convivencia.html": ["admin", "directivo", "secretaria", "preceptor", "familia"],
   "manuscritos.html": ["admin", "directivo", "secretaria", "docente"]
 };
 
@@ -85,54 +60,18 @@ const ADA_ROLE_HOME = {
 };
 
 const ADA_ROLE_MODULES = {
-  admin: ["dashboard", "institucion", "usuarios", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "ia", "horarios", "asistencia", "calificaciones", "boletines", "actividades", "entregas", "programas", "documentacion", "reportes", "comunicados", "importar", "manuscritos"],
-  directivo: ["dashboard", "institucion", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "ia", "horarios", "asistencia", "calificaciones", "boletines", "actividades", "entregas", "programas", "documentacion", "reportes", "comunicados", "manuscritos"],
-  secretaria: ["dashboard", "institucion", "usuarios", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "asistencia", "calificaciones", "boletines", "actividades", "entregas", "documentacion", "reportes", "comunicados"],
-  docente: ["mi-docente", "asistencia", "calificaciones", "boletines", "actividades", "entregas", "programas", "documentacion", "alumnos", "cursos", "materias", "documentos", "comunicados", "ia", "reportes", "manuscritos"],
-  preceptor: ["mi-preceptor", "asistencia", "calificaciones", "boletines", "actividades", "entregas", "documentacion", "alumnos", "familias", "cursos", "documentos", "comunicados", "ia", "reportes"],
-  familia: ["mi-familia", "calificaciones", "boletines", "actividades", "entregas", "documentacion", "comunicados", "documentos", "ia"],
-  alumno: ["mi-alumno", "calificaciones", "boletines", "actividades", "entregas", "documentacion", "comunicados", "documentos", "ia"]
-};
-
-const ADA_MODULES = {
-  dashboard: { label: "Inicio institucional", icon: "🏠", href: "dashboard.html", group: "Inicio" },
-  "mi-docente": { label: "Mi espacio docente", icon: "👩‍🏫", href: "mi-espacio-docente.html", group: "Inicio" },
-  "mi-preceptor": { label: "Mi espacio preceptor", icon: "📋", href: "mi-espacio-preceptor.html", group: "Inicio" },
-  "mi-familia": { label: "Mi espacio familia", icon: "👨‍👩‍👧", href: "mi-espacio-familia.html", group: "Inicio" },
-  "mi-alumno": { label: "Mi espacio alumno", icon: "🎒", href: "mi-espacio-alumno.html", group: "Inicio" },
-
-  institucion: { label: "Institución", icon: "🏫", href: "institucion.html", group: "Gestión institucional" },
-  usuarios: { label: "Usuarios", icon: "👥", href: "usuarios.html", group: "Gestión institucional" },
-  directivos: { label: "Directivos", icon: "🧭", href: "directivos.html", group: "Gestión institucional" },
-  secretaria: { label: "Secretaría", icon: "🗂️", href: "secretaria.html", group: "Gestión institucional" },
-  docentes: { label: "Docentes", icon: "👩‍🏫", href: "docentes.html", group: "Gestión institucional" },
-  preceptoria: { label: "Preceptoría", icon: "🧩", href: "preceptoria.html", group: "Gestión institucional" },
-  alumnos: { label: "Alumnos", icon: "🎒", href: "alumnos.html", group: "Gestión escolar" },
-  familias: { label: "Familias", icon: "👨‍👩‍👧", href: "familias.html", group: "Gestión escolar" },
-  asignaciones: { label: "Asignaciones", icon: "🔗", href: "asignaciones.html", group: "Gestión escolar" },
-  cursos: { label: "Cursos", icon: "📚", href: "cursos.html", group: "Gestión escolar" },
-  materias: { label: "Materias", icon: "📘", href: "materias.html", group: "Gestión escolar" },
-
-  asistencia: { label: "Asistencia", icon: "✅", href: "asistencia.html", group: "Trabajo diario" },
-  calificaciones: { label: "Calificaciones", icon: "📝", href: "calificaciones.html", group: "Trabajo diario" },
-  boletines: { label: "Boletines", icon: "📑", href: "boletines.html", group: "Trabajo diario" },
-  actividades: { label: "Actividades", icon: "🧩", href: "actividades.html", group: "Trabajo diario" },
-  entregas: { label: "Entregas", icon: "📬", href: "entregas.html", group: "Trabajo diario" },
-  programas: { label: "Programas y bibliografía", icon: "📚", href: "programas.html", group: "Trabajo diario" },
-  documentacion: { label: "Documentación y firmas", icon: "🗃️", href: "documentacion.html", group: "Trabajo diario" },
-  comunicados: { label: "Comunicados", icon: "📣", href: "comunicados.html", group: "Trabajo diario" },
-  documentos: { label: "Documentos", icon: "📄", href: "documentos.html", group: "Trabajo diario" },
-
-  ia: { label: "ADA IA", icon: "🤖", href: "ia.html", group: "Herramientas ADA" },
-  horarios: { label: "Horarios", icon: "🗓️", href: "horarios.html", group: "Herramientas ADA" },
-  reportes: { label: "Reportes", icon: "📊", href: "reportes.html", group: "Herramientas ADA" },
-  manuscritos: { label: "Manuscritos", icon: "✍️", href: "manuscritos.html", group: "Herramientas ADA" },
-  importar: { label: "Importaciones", icon: "⬆️", href: "importar-usuarios.html", group: "Herramientas ADA" }
+  admin: ["dashboard", "institucion", "usuarios", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "ia", "horarios", "asistencia", "reportes", "comunicados", "convivencia", "importar", "manuscritos"],
+  directivo: ["dashboard", "institucion", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "ia", "horarios", "asistencia", "reportes", "comunicados", "convivencia", "manuscritos"],
+  secretaria: ["dashboard", "institucion", "usuarios", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "asistencia", "reportes", "comunicados", "convivencia"],
+  docente: ["mi-docente", "alumnos", "cursos", "materias", "documentos", "ia", "asistencia", "reportes", "comunicados", "manuscritos"],
+  preceptor: ["mi-preceptor", "alumnos", "familias", "asignaciones", "cursos", "documentos", "ia", "asistencia", "reportes", "comunicados", "convivencia"],
+  familia: ["mi-familia", "documentos", "ia", "comunicados", "convivencia"],
+  alumno: ["mi-alumno", "documentos", "ia", "comunicados"]
 };
 
 function adaCurrentPageName() {
   const page = window.location.pathname.split("/").pop();
-  return page || "index.html";
+  return page || "dashboard.html";
 }
 
 function adaIsLoginOrIndex() {
@@ -140,18 +79,8 @@ function adaIsLoginOrIndex() {
   return page === "login.html" || page === "index.html" || page === "";
 }
 
-function adaIsInsidePagesFolder() {
-  return window.location.pathname.includes("/pages/");
-}
-
-function adaPortalHref() {
-  return adaIsInsidePagesFolder() ? "../index.html" : "index.html";
-}
-
 function adaNormalizeRole(rol) {
-  const value = (rol || "alumno").toString().trim().toLowerCase();
-  if (value === "preceptoria") return "preceptor";
-  return value;
+  return (rol || "alumno").toString().trim().toLowerCase();
 }
 
 function adaApplyRoleTheme(rol) {
@@ -167,24 +96,6 @@ function adaApplyRoleTheme(rol) {
     "role-alumno"
   );
   document.body.classList.add(ADA_ROLE_CLASS_MAP[normalized] || "role-alumno");
-  document.documentElement.setAttribute("data-ada-role", normalized);
-}
-
-function adaGetModuleLabel(moduleName) {
-  return ADA_MODULES[moduleName]?.label || moduleName;
-}
-
-function adaGetModuleIcon(moduleName) {
-  return ADA_MODULES[moduleName]?.icon || "•";
-}
-
-function adaModuleToHref(moduleName, rol) {
-  return ADA_MODULES[moduleName]?.href || (ADA_ROLE_HOME[rol] || "dashboard.html");
-}
-
-function adaGetUserDisplayName(perfil) {
-  const full = `${perfil?.nombre || ""} ${perfil?.apellido || ""}`.trim();
-  return full || perfil?.email || "Usuario ADA";
 }
 
 function adaHideUnauthorizedModules(rol) {
@@ -193,13 +104,15 @@ function adaHideUnauthorizedModules(rol) {
 
   document.querySelectorAll("[data-module]").forEach((item) => {
     const moduleName = item.getAttribute("data-module");
-    const allowed = allowedModules.includes(moduleName);
-    item.classList.toggle("ada-hidden-by-role", !allowed);
-    if (!allowed) {
+    if (!allowedModules.includes(moduleName)) {
+      item.classList.add("ada-hidden-by-role");
       item.setAttribute("hidden", "hidden");
       item.setAttribute("aria-hidden", "true");
-      item.setAttribute("tabindex", "-1");
+      if (item.tagName.toLowerCase() === "a") {
+        item.setAttribute("tabindex", "-1");
+      }
     } else {
+      item.classList.remove("ada-hidden-by-role");
       item.removeAttribute("hidden");
       item.removeAttribute("aria-hidden");
       item.removeAttribute("tabindex");
@@ -208,131 +121,170 @@ function adaHideUnauthorizedModules(rol) {
 
   document.querySelectorAll(".sidebar-section").forEach((section) => {
     const visibleLinks = section.querySelectorAll(".sidebar-submenu a:not([hidden])");
-    const hide = visibleLinks.length === 0;
-    section.classList.toggle("ada-hidden-by-role", hide);
-    if (hide) section.setAttribute("hidden", "hidden");
-    else section.removeAttribute("hidden");
+    if (visibleLinks.length === 0) {
+      section.classList.add("ada-hidden-by-role");
+      section.setAttribute("hidden", "hidden");
+    } else {
+      section.classList.remove("ada-hidden-by-role");
+      section.removeAttribute("hidden");
+    }
   });
 }
 
 async function adaLogout() {
   try {
-    sessionStorage.setItem("ada_force_portal", "1");
-  } catch (e) {}
-
-  try {
-    if (window.supabaseClient?.auth) {
-      await supabaseClient.auth.signOut({ scope: "global" });
-    }
+    await supabaseClient.auth.signOut();
   } catch (error) {
-    console.warn("No se pudo cerrar globalmente, se limpia sesión local:", error);
-    try {
-      if (window.supabaseClient?.auth) await supabaseClient.auth.signOut({ scope: "local" });
-    } catch (e) {}
+    console.error("Error cerrando sesión:", error);
   }
-
-  // Limpieza defensiva de tokens locales de Supabase para evitar que el portal reabra admin.
-  try {
-    Object.keys(localStorage).forEach((key) => {
-      const k = key.toLowerCase();
-      if (k.includes("supabase") || k.includes("sb-")) localStorage.removeItem(key);
-    });
-    Object.keys(sessionStorage).forEach((key) => {
-      const k = key.toLowerCase();
-      if (k.includes("supabase") || k.includes("sb-")) sessionStorage.removeItem(key);
-    });
-    sessionStorage.setItem("ada_force_portal", "1");
-  } catch (e) {}
-
-  window.location.replace(adaPortalHref() + "?logout=1");
+  window.location.href = "login.html";
 }
 
-function adaBindLogoutButtons() {
-  document.querySelectorAll(".sidebar-logout, [data-logout], .ada-global-logout").forEach((button) => {
+function adaGetModuleLabel(moduleName) {
+  const labels = {
+    dashboard: "Inicio",
+    "mi-docente": "Mi espacio docente",
+    "mi-preceptor": "Mi espacio preceptor",
+    "mi-familia": "Mi espacio familia",
+    "mi-alumno": "Mi espacio alumno",
+    institucion: "Institución",
+    usuarios: "Usuarios",
+    directivos: "Directivos",
+    secretaria: "Secretaría",
+    docentes: "Docentes",
+    preceptoria: "Preceptoría",
+    alumnos: "Alumnos",
+    familias: "Familias",
+    asignaciones: "Asignaciones",
+    cursos: "Cursos",
+    materias: "Materias",
+    documentos: "Documentos",
+    ia: "ADA IA",
+    horarios: "Horarios",
+    asistencia: "Asistencia",
+    reportes: "Reportes",
+    comunicados: "Comunicados",
+    convivencia: "Convivencia",
+    manuscritos: "Manuscritos",
+    importar: "Importaciones"
+  };
+  return labels[moduleName] || moduleName;
+}
+
+function adaModuleToHref(moduleName, rol) {
+  const homeByModule = {
+    dashboard: "dashboard.html",
+    "mi-docente": "mi-espacio-docente.html",
+    "mi-preceptor": "mi-espacio-preceptor.html",
+    "mi-familia": "mi-espacio-familia.html",
+    "mi-alumno": "mi-espacio-alumno.html",
+    institucion: "institucion.html",
+    usuarios: "usuarios.html",
+    directivos: "directivos.html",
+    secretaria: "secretaria.html",
+    docentes: "docentes.html",
+    preceptoria: "preceptoria.html",
+    alumnos: "alumnos.html",
+    familias: "familias.html",
+    asignaciones: "asignaciones.html",
+    cursos: "cursos.html",
+    materias: "materias.html",
+    documentos: "documentos.html",
+    ia: "ia.html",
+    horarios: "horarios.html",
+    asistencia: "asistencia.html",
+    reportes: "reportes.html",
+    comunicados: "comunicados.html",
+    convivencia: "convivencia.html",
+    manuscritos: "manuscritos.html",
+    importar: "importar-usuarios.html"
+  };
+  return homeByModule[moduleName] || (ADA_ROLE_HOME[rol] || "dashboard.html");
+}
+
+function adaBindExistingSidebar(perfil) {
+  if (adaIsLoginOrIndex()) return false;
+
+  const sidebar = document.querySelector(".sidebar");
+  if (!sidebar) return false;
+
+  const rol = adaNormalizeRole(perfil.rol);
+  const home = ADA_ROLE_HOME[rol] || "dashboard.html";
+  const page = adaCurrentPageName();
+
+  document.body.classList.add("dashboard-body", "ada-with-sidebar");
+
+  // Ajusta Inicio y enlaces activos aunque el menú sea estático en el HTML.
+  sidebar.querySelectorAll("a").forEach((link) => {
+    const href = link.getAttribute("href") || "";
+    link.classList.toggle("active", href === page);
+  });
+
+  const homeLinks = sidebar.querySelectorAll("[data-home-link]");
+  homeLinks.forEach((link) => {
+    link.href = home;
+  });
+
+  sidebar.querySelectorAll(".sidebar-section-button").forEach((button) => {
+    if (button.dataset.adaBound === "1") return;
+    button.dataset.adaBound = "1";
+    button.addEventListener("click", () => button.closest(".sidebar-section").classList.toggle("open"));
+  });
+
+  sidebar.querySelectorAll(".sidebar-logout, [data-logout]").forEach((button) => {
     if (button.dataset.adaBound === "1") return;
     button.dataset.adaBound = "1";
     button.addEventListener("click", adaLogout);
   });
-}
 
-function adaToggleSidebar(open) {
-  document.body.classList.toggle("ada-sidebar-open", Boolean(open));
-}
+  const backLink = document.querySelector(".back-link");
+  if (backLink) {
+    backLink.href = home;
+    backLink.textContent = "← Mi inicio";
+  }
 
-function adaEnsureMobileMenuButton() {
-  if (adaIsLoginOrIndex()) return;
-  if (document.querySelector(".ada-menu-toggle")) return;
-
-  const button = document.createElement("button");
-  button.type = "button";
-  button.className = "ada-menu-toggle";
-  button.setAttribute("aria-label", "Abrir o cerrar menú ADA");
-  button.innerHTML = "☰ <span>Menú</span>";
-  button.addEventListener("click", () => adaToggleSidebar(!document.body.classList.contains("ada-sidebar-open")));
-  document.body.appendChild(button);
-
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") adaToggleSidebar(false);
-  });
-}
-
-function adaBuildSidebarGroups(rol) {
-  const allowed = ADA_ROLE_MODULES[rol] || [];
-  const order = ["Inicio", "Trabajo diario", "Gestión institucional", "Gestión escolar", "Herramientas ADA"];
-
-  return order.map((groupName) => {
-    const modules = allowed.filter((moduleName) => ADA_MODULES[moduleName]?.group === groupName);
-    return { title: groupName, modules };
-  }).filter((group) => group.modules.length > 0);
+  adaHideUnauthorizedModules(rol);
+  return true;
 }
 
 function adaInjectRoleSidebar(perfil) {
   if (adaIsLoginOrIndex()) return;
+  if (adaBindExistingSidebar(perfil)) return;
 
   const rol = adaNormalizeRole(perfil.rol);
+  const allowed = ADA_ROLE_MODULES[rol] || [];
   const page = adaCurrentPageName();
-  const groups = adaBuildSidebarGroups(rol);
-  const displayName = adaGetUserDisplayName(perfil);
+  const home = ADA_ROLE_HOME[rol] || "dashboard.html";
 
-  document.querySelectorAll("aside.sidebar").forEach((existing) => existing.remove());
+  const groups = [
+    { title: "Inicio", modules: allowed.filter(m => m.startsWith("mi-") || m === "dashboard") },
+    { title: "Trabajo diario", modules: allowed.filter(m => ["asistencia", "alumnos", "cursos", "materias", "documentos", "comunicados", "convivencia"].includes(m)) },
+    { title: "Gestión", modules: allowed.filter(m => ["institucion", "usuarios", "directivos", "secretaria", "docentes", "preceptoria", "familias", "asignaciones", "importar"].includes(m)) },
+    { title: "Herramientas ADA", modules: allowed.filter(m => ["ia", "reportes", "horarios", "manuscritos"].includes(m)) }
+  ].filter(g => g.modules.length > 0);
 
   const sidebar = document.createElement("aside");
   sidebar.className = "sidebar ada-role-sidebar";
   sidebar.innerHTML = `
     <div class="sidebar-logo">
-      <div class="ada-sidebar-mark">ADA</div>
-      <div>
-        <h2>ADA</h2>
-        <span>Cloud Web</span>
-      </div>
+      <h2>ADA</h2>
+      <span>${adaGetModuleLabel(allowed.find(m => m.startsWith("mi-")) || "dashboard")}</span>
     </div>
-
-    <div class="ada-sidebar-user">
-      <div class="ada-sidebar-avatar">${ADA_ROLE_ICONS[rol] || "👤"}</div>
-      <div>
-        <strong>${displayName}</strong>
-        <small>${ADA_ROLE_LABELS[rol] || rol}</small>
-      </div>
-    </div>
-
-    <nav class="sidebar-nav" aria-label="Navegación principal ADA">
-      ${groups.map((group) => `
+    <nav class="sidebar-nav">
+      <a href="${home}" class="sidebar-link ${page === home ? "active" : ""}">Inicio</a>
+      ${groups.map(group => `
         <div class="sidebar-section open">
-          <button class="sidebar-section-button" type="button">${group.title}<span class="chevron">›</span></button>
+          <button class="sidebar-section-button" type="button">${group.title} <span class="chevron">›</span></button>
           <div class="sidebar-submenu">
-            ${group.modules.map((moduleName) => {
-              const href = adaModuleToHref(moduleName, rol);
-              const active = page === href ? "active" : "";
-              return `<a href="${href}" data-module="${moduleName}" class="${active}"><span class="ada-nav-icon">${adaGetModuleIcon(moduleName)}</span><span>${adaGetModuleLabel(moduleName)}</span></a>`;
+            ${group.modules.map(m => {
+              const href = adaModuleToHref(m, rol);
+              return `<a href="${href}" data-module="${m}" class="${page === href ? "active" : ""}">${adaGetModuleLabel(m)}</a>`;
             }).join("")}
           </div>
         </div>
       `).join("")}
     </nav>
-
-    <div class="ada-sidebar-footer">
-      <button type="button" class="sidebar-logout" data-logout>Cerrar sesión</button>
-    </div>
+    <button type="button" class="sidebar-logout" id="adaSidebarLogout">Cerrar sesión</button>
   `;
 
   document.body.insertBefore(sidebar, document.body.firstChild);
@@ -342,19 +294,14 @@ function adaInjectRoleSidebar(perfil) {
     button.addEventListener("click", () => button.closest(".sidebar-section").classList.toggle("open"));
   });
 
-  sidebar.querySelectorAll(".sidebar-submenu a").forEach((link) => {
-    link.addEventListener("click", () => adaToggleSidebar(false));
-  });
+  const logout = sidebar.querySelector("#adaSidebarLogout");
+  if (logout) logout.addEventListener("click", adaLogout);
 
   const backLink = document.querySelector(".back-link");
   if (backLink) {
-    backLink.href = ADA_ROLE_HOME[rol] || "dashboard.html";
+    backLink.href = home;
     backLink.textContent = "← Mi inicio";
   }
-
-  adaHideUnauthorizedModules(rol);
-  adaEnsureMobileMenuButton();
-  adaBindLogoutButtons();
 }
 
 function adaInjectGlobalLogout(perfil) {
@@ -371,60 +318,35 @@ function adaInjectGlobalLogout(perfil) {
   document.body.appendChild(btn);
 }
 
-function adaApplyBasePolish(perfil) {
-  if (adaIsLoginOrIndex()) return;
-  document.querySelectorAll(".module-view, .panel-card, .dashboard-header, .role-banner").forEach((el) => {
-    el.classList.add("ada-surface");
-  });
-  document.querySelectorAll("table").forEach((table) => {
-    if (!table.classList.contains("ada-table")) table.classList.add("ada-table");
-  });
-}
-
 function adaBuildAccessDenied(perfil, pagina) {
-  window.ADA_ACCESS_DENIED = true;
   const rol = adaNormalizeRole(perfil.rol);
+  document.body.classList.remove("role-loading");
   adaApplyRoleTheme(rol);
 
   document.body.innerHTML = `
-    <main class="module-shell ada-access-denied-shell">
-      <section class="module-view access-denied-card">
-        <p class="eyebrow">Acceso restringido</p>
-        <h1>No tenés permiso para acceder a esta pantalla</h1>
-        <p>Tu rol actual es <strong>${ADA_ROLE_LABELS[rol] || rol}</strong> y la página solicitada es <strong>${pagina}</strong>.</p>
-        <p class="helper-text">Este bloqueo solo aparece si se intenta ingresar por URL directa. Desde el menú ADA solo se muestran las pantallas habilitadas para tu rol.</p>
-        <div class="ada-action-row">
-          <a class="btn-primary" href="${ADA_ROLE_HOME[rol] || "dashboard.html"}">Ir a mi inicio</a>
-          <button class="btn-secondary" type="button" data-logout>Cerrar sesión</button>
+    <main class="module-shell">
+      <section class="module-view">
+        <div class="panel-card access-denied-card">
+          <p class="eyebrow">Acceso restringido</p>
+          <h1>No tenés permiso para acceder a esta pantalla</h1>
+          <p>Tu rol actual es <strong>${rol}</strong> y la página solicitada es <strong>${pagina}</strong>.</p>
+          <p class="helper-text">Este acceso queda bloqueado por seguridad. Desde el menú solo deben mostrarse las pantallas habilitadas para tu rol.</p>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:18px;">
+            <a class="btn-primary" href="${ADA_ROLE_HOME[rol] || "dashboard.html"}">Ir a mi inicio</a>
+            <button class="btn-secondary" onclick="adaLogout()">Cerrar sesión</button>
+          </div>
         </div>
       </section>
     </main>
   `;
-  adaInjectRoleSidebar(perfil);
-  adaBindLogoutButtons();
-}
-
-function adaBuildInactiveUser(perfil) {
-  const rol = adaNormalizeRole(perfil.rol);
-  adaApplyRoleTheme(rol);
-  document.body.innerHTML = `
-    <main class="module-shell ada-access-denied-shell">
-      <section class="module-view access-denied-card">
-        <p class="eyebrow">Usuario inactivo</p>
-        <h1>Tu usuario está inactivo</h1>
-        <p>Contactá al administrador institucional para solicitar la reactivación.</p>
-        <button class="btn-primary" type="button" data-logout>Cerrar sesión</button>
-      </section>
-    </main>
-  `;
-  adaBindLogoutButtons();
+  adaInjectGlobalLogout(perfil);
 }
 
 async function adaGetSessionAndProfile() {
   const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
 
   if (sessionError || !sessionData.session) {
-    window.location.replace(adaPortalHref());
+    window.location.replace("login.html");
     return null;
   }
 
@@ -439,14 +361,27 @@ async function adaGetSessionAndProfile() {
   if (perfilError || !perfil) {
     console.error("No se encontró perfil:", perfilError);
     await supabaseClient.auth.signOut();
-    window.location.replace(adaPortalHref());
+    window.location.replace("login.html");
     return null;
   }
 
   perfil.rol = adaNormalizeRole(perfil.rol);
 
   if (!perfil.activo) {
-    adaBuildInactiveUser(perfil);
+    document.body.classList.remove("role-loading");
+    adaApplyRoleTheme(perfil.rol);
+    document.body.innerHTML = `
+      <main class="module-shell">
+        <section class="module-view">
+          <div class="panel-card access-denied-card">
+            <p class="eyebrow">Usuario inactivo</p>
+            <h1>Tu usuario está inactivo</h1>
+            <p>Contactá al administrador institucional para solicitar la reactivación.</p>
+            <button class="btn-primary" onclick="adaLogout()">Cerrar sesión</button>
+          </div>
+        </section>
+      </main>
+    `;
     return null;
   }
 
@@ -454,7 +389,6 @@ async function adaGetSessionAndProfile() {
   adaInjectRoleSidebar(perfil);
   adaHideUnauthorizedModules(perfil.rol);
   adaInjectGlobalLogout(perfil);
-  adaApplyBasePolish(perfil);
 
   return { session, perfil };
 }
@@ -466,6 +400,8 @@ async function adaRequirePageAccess(customAllowedRoles = null) {
   const page = adaCurrentPageName();
   const rol = contexto.perfil.rol;
 
+  // Los roles operativos no deben caer en el dashboard institucional completo.
+  // Su inicio real es su espacio propio.
   if (page === "dashboard.html" && ADA_ROLE_HOME[rol] && ADA_ROLE_HOME[rol] !== "dashboard.html") {
     window.location.replace(ADA_ROLE_HOME[rol]);
     return null;
@@ -492,11 +428,3 @@ window.obtenerSesionPerfil = obtenerSesionPerfil;
 window.adaHideUnauthorizedModules = adaHideUnauthorizedModules;
 window.ADA_ROLE_HOME = ADA_ROLE_HOME;
 window.ADA_ROLE_MODULES = ADA_ROLE_MODULES;
-window.ADA_MODULES = ADA_MODULES;
-
-// Aplicación automática para pantallas protegidas que no tienen JS propio.
-document.addEventListener("DOMContentLoaded", () => {
-  if (!adaIsLoginOrIndex() && document.body.classList.contains("role-loading")) {
-    adaRequirePageAccess();
-  }
-});
