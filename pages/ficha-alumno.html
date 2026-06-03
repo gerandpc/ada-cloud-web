@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ficha integral del alumno - ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque30-ficha-alumno.css">
+</head>
+<body class="module-page role-loading">
+  <main class="module-shell ficha-shell">
+    <a href="dashboard.html" class="back-link">← Volver al panel</a>
+
+    <section class="module-view ficha-view">
+      <div class="ficha-hero">
+        <div>
+          <p class="eyebrow">Bloque 30</p>
+          <h1>Ficha integral del alumno</h1>
+          <p class="ficha-subtitle">Vista institucional unificada de trayectoria: datos, familia, asistencia, calificaciones, actividades, documentación, convivencia y descréditos.</p>
+        </div>
+        <div class="ficha-hero-badges">
+          <span>🎓 Trayectoria</span>
+          <span>📊 Indicadores</span>
+          <span>🧾 Historial</span>
+        </div>
+      </div>
+
+      <div id="mensajeFicha" class="form-message">Cargando ficha...</div>
+
+      <section class="panel-card selector-card">
+        <div class="selector-grid">
+          <label>Buscar alumno
+            <input id="busquedaAlumno" type="search" placeholder="Apellido, nombre o documento">
+          </label>
+          <label>Alumno
+            <select id="selectorAlumno"></select>
+          </label>
+          <button id="btnCargarFicha" class="btn-primary" type="button">Cargar ficha</button>
+        </div>
+      </section>
+
+      <section id="fichaContenido" class="ficha-content hidden">
+        <div class="ficha-header-card">
+          <div class="student-avatar" id="avatarAlumno">A</div>
+          <div>
+            <h2 id="nombreAlumno">Alumno</h2>
+            <p id="datosAlumno">Curso · Familia · Estado</p>
+          </div>
+          <div class="student-badges">
+            <span id="badgeCurso">Curso</span>
+            <span id="badgeEstado">Activo</span>
+          </div>
+        </div>
+
+        <div class="ficha-kpis">
+          <article><span>Promedio</span><strong id="kpiPromedio">-</strong></article>
+          <article><span>Inasistencias</span><strong id="kpiInasistencias">0</strong></article>
+          <article><span>Entregas pendientes</span><strong id="kpiEntregas">0</strong></article>
+          <article><span>Documentación pendiente</span><strong id="kpiDocumentos">0</strong></article>
+          <article><span>Descréditos</span><strong id="kpiDescreditos">0</strong></article>
+          <article><span>Casos convivencia</span><strong id="kpiConvivencia">0</strong></article>
+        </div>
+
+        <div class="ficha-tabs" role="tablist">
+          <button class="ficha-tab active" data-tab="tab-resumen" type="button">Resumen</button>
+          <button class="ficha-tab" data-tab="tab-notas" type="button">Notas</button>
+          <button class="ficha-tab" data-tab="tab-asistencia" type="button">Asistencia</button>
+          <button class="ficha-tab" data-tab="tab-actividades" type="button">Actividades</button>
+          <button class="ficha-tab" data-tab="tab-documentacion" type="button">Documentación</button>
+          <button class="ficha-tab" data-tab="tab-convivencia" type="button">Convivencia</button>
+        </div>
+
+        <section id="tab-resumen" class="ficha-panel active">
+          <div class="ficha-grid">
+            <article class="panel-card">
+              <h3>Datos del alumno</h3>
+              <div id="resumenDatos" class="detail-list"></div>
+            </article>
+            <article class="panel-card">
+              <h3>Familia / responsables</h3>
+              <div id="resumenFamilia" class="detail-list"></div>
+            </article>
+            <article class="panel-card">
+              <h3>Alertas rápidas</h3>
+              <div id="resumenAlertas" class="alert-list"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="tab-notas" class="ficha-panel">
+          <div class="panel-card">
+            <h3>Calificaciones</h3>
+            <div class="table-wrap"><table class="ada-table"><thead><tr><th>Materia</th><th>Evaluación</th><th>Nota</th><th>Fecha</th><th>Observación</th></tr></thead><tbody id="tablaNotas"></tbody></table></div>
+          </div>
+        </section>
+
+        <section id="tab-asistencia" class="ficha-panel">
+          <div class="panel-card">
+            <h3>Asistencia, tardanzas y retiros</h3>
+            <div class="table-wrap"><table class="ada-table"><thead><tr><th>Fecha</th><th>Estado</th><th>Materia/Clase</th><th>Observación</th></tr></thead><tbody id="tablaAsistencia"></tbody></table></div>
+          </div>
+        </section>
+
+        <section id="tab-actividades" class="ficha-panel">
+          <div class="panel-card">
+            <h3>Actividades y entregas</h3>
+            <div class="table-wrap"><table class="ada-table"><thead><tr><th>Actividad</th><th>Materia</th><th>Estado</th><th>Fecha entrega</th><th>Calificación</th></tr></thead><tbody id="tablaActividades"></tbody></table></div>
+          </div>
+        </section>
+
+        <section id="tab-documentacion" class="ficha-panel">
+          <div class="panel-card">
+            <h3>Documentación, certificados y firmas</h3>
+            <div class="table-wrap"><table class="ada-table"><thead><tr><th>Trámite</th><th>Origen</th><th>Estado</th><th>Fecha</th><th>Observación</th></tr></thead><tbody id="tablaDocumentacion"></tbody></table></div>
+          </div>
+        </section>
+
+        <section id="tab-convivencia" class="ficha-panel">
+          <div class="panel-card">
+            <h3>Convivencia, sanciones y descréditos</h3>
+            <div class="table-wrap"><table class="ada-table"><thead><tr><th>Fecha</th><th>Gravedad</th><th>Hecho</th><th>Sanción</th><th>Descréditos</th><th>Estado firma</th></tr></thead><tbody id="tablaConvivencia"></tbody></table></div>
+          </div>
+        </section>
+      </section>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/ada-security.js"></script>
+  <script src="../assets/js/ficha-alumno.js"></script>
+</body>
+</html>
