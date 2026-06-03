@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entregas - ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque23-ui-refresh.css">
+  <link rel="stylesheet" href="../assets/css/bloque26-actividades-entregas.css">
+</head>
+<body class="module-page role-loading">
+  <main class="module-shell">
+    <a href="dashboard.html" class="back-link">← Volver al panel</a>
+    <section class="module-view">
+      <p class="eyebrow">Bloque 26</p>
+      <h1>Entregas de alumnos</h1>
+      <p>Presentación, revisión y devolución de trabajos vinculados a actividades publicadas.</p>
+
+      <div class="b26-kpi-grid">
+        <div class="b26-kpi"><span>Actividades disponibles</span><strong id="kpiDisponibles">0</strong></div>
+        <div class="b26-kpi"><span>Entregadas</span><strong id="kpiEntregadas">0</strong></div>
+        <div class="b26-kpi"><span>Pendientes</span><strong id="kpiPendientes">0</strong></div>
+        <div class="b26-kpi"><span>Revisadas</span><strong id="kpiRevisadas">0</strong></div>
+      </div>
+
+      <div class="b26-tabs" role="tablist">
+        <button class="b26-tab active" data-tab="mis" type="button">Mis entregas / entregas</button>
+        <button class="b26-tab" data-tab="revision" type="button" data-b26-review>Revisión docente</button>
+      </div>
+
+      <section id="tab-mis" class="b26-section active">
+        <section class="panel-card">
+          <h2>Actividades y entregas</h2>
+          <div id="listaEntregas" class="b26-list"></div>
+        </section>
+      </section>
+
+      <section id="tab-revision" class="b26-section" data-b26-review>
+        <section class="panel-card">
+          <h2>Revisar entregas</h2>
+          <div id="tablaRevision" class="table-wrap"></div>
+        </section>
+      </section>
+    </section>
+  </main>
+
+  <div class="b26-modal" id="modalEntrega" aria-hidden="true">
+    <section class="b26-modal-card">
+      <div class="b26-modal-head">
+        <div><p class="eyebrow">Entrega de actividad</p><h2 id="modalEntregaTitulo">Actividad</h2></div>
+        <button class="b26-modal-close" id="btnCerrarModalEntrega" type="button">×</button>
+      </div>
+      <form id="formEntrega" class="ada-form">
+        <input type="hidden" id="entregaActividadId">
+        <label>Respuesta / comentario de entrega</label>
+        <textarea id="entregaTexto" required placeholder="Escribí acá la respuesta, explicación o referencia de tu trabajo..."></textarea>
+        <label>Link al archivo o recurso</label>
+        <input id="entregaArchivoUrl" placeholder="https://...">
+        <button class="btn-primary" type="submit">Enviar entrega</button>
+        <p class="form-message" id="msgEntrega"></p>
+      </form>
+    </section>
+  </div>
+
+  <div class="b26-modal" id="modalRevision" aria-hidden="true">
+    <section class="b26-modal-card">
+      <div class="b26-modal-head">
+        <div><p class="eyebrow">Revisión docente</p><h2 id="modalRevisionTitulo">Entrega</h2></div>
+        <button class="b26-modal-close" id="btnCerrarModalRevision" type="button">×</button>
+      </div>
+      <form id="formRevision" class="ada-form">
+        <input type="hidden" id="revisionEntregaId">
+        <div class="b26-grid-2"><div><label>Calificación</label><input type="number" id="revisionCalificacion" min="1" max="10" step="0.01"></div><div><label>Estado</label><select id="revisionEstado"><option value="revisada">Revisada</option><option value="devuelta">Devuelta para corregir</option><option value="pendiente">Pendiente</option></select></div></div>
+        <label>Devolución</label><textarea id="revisionDevolucion" placeholder="Escribí una devolución para el alumno..."></textarea>
+        <button class="btn-primary" type="submit">Guardar revisión</button>
+        <p class="form-message" id="msgRevision"></p>
+      </form>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/ada-security.js"></script>
+  <script src="../assets/js/entregas.js"></script>
+</body>
+</html>

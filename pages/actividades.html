@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Actividades - ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque23-ui-refresh.css">
+  <link rel="stylesheet" href="../assets/css/bloque26-actividades-entregas.css">
+</head>
+<body class="module-page role-loading">
+  <main class="module-shell">
+    <a href="dashboard.html" class="back-link">← Volver al panel</a>
+    <section class="module-view">
+      <p class="eyebrow">Bloque 26</p>
+      <h1>Actividades y tareas</h1>
+      <p>Publicación, seguimiento y consulta de actividades por curso, materia y fecha de entrega.</p>
+
+      <div class="b26-kpi-grid">
+        <div class="b26-kpi"><span>Actividades</span><strong id="kpiActividades">0</strong></div>
+        <div class="b26-kpi"><span>Abiertas</span><strong id="kpiAbiertas">0</strong></div>
+        <div class="b26-kpi"><span>Vencidas</span><strong id="kpiVencidas">0</strong></div>
+        <div class="b26-kpi"><span>Entregas</span><strong id="kpiEntregas">0</strong></div>
+      </div>
+
+      <div class="b26-tabs" role="tablist">
+        <button class="b26-tab active" data-tab="listado" type="button">Listado</button>
+        <button class="b26-tab" data-tab="nueva" type="button" data-b26-manage>Nueva actividad</button>
+        <button class="b26-tab" data-tab="seguimiento" type="button">Seguimiento</button>
+      </div>
+
+      <section id="tab-listado" class="b26-section active">
+        <section class="panel-card">
+          <h2>Actividades publicadas</h2>
+          <div class="form-grid">
+            <div><label>Curso</label><select id="filtroCurso"></select></div>
+            <div><label>Materia</label><select id="filtroMateria"></select></div>
+            <div><label>Estado</label><select id="filtroEstado"><option value="">Todos</option><option value="publicada">Publicada</option><option value="borrador">Borrador</option><option value="cerrada">Cerrada</option></select></div>
+          </div>
+          <div class="b26-actions"><button class="btn-primary" id="btnFiltrar" type="button">Filtrar</button><button class="btn-secondary" id="btnLimpiar" type="button">Limpiar</button></div>
+          <div id="listaActividades" class="b26-list" style="margin-top:16px;"></div>
+        </section>
+      </section>
+
+      <section id="tab-nueva" class="b26-section" data-b26-manage>
+        <div class="b26-layout">
+          <section class="panel-card">
+            <h2>Nueva actividad</h2>
+            <form id="formActividad" class="ada-form">
+              <div class="b26-grid-2">
+                <div><label>Curso</label><select id="actividadCurso" required></select></div>
+                <div><label>Materia</label><select id="actividadMateria" required></select></div>
+              </div>
+              <label>Título</label><input id="actividadTitulo" required placeholder="Ej.: Trabajo práctico de investigación">
+              <label>Tipo</label><select id="actividadTipo"><option>Trabajo práctico</option><option>Actividad de clase</option><option>Proyecto</option><option>Investigación</option><option>Evaluación domiciliaria</option><option>Otro</option></select>
+              <label>Consigna</label><textarea id="actividadDescripcion" required placeholder="Escribí la consigna de la actividad..."></textarea>
+              <div class="b26-grid-2">
+                <div><label>Fecha de publicación</label><input type="date" id="actividadPublicacion" required></div>
+                <div><label>Fecha límite de entrega</label><input type="date" id="actividadEntrega" required></div>
+              </div>
+              <div class="b26-grid-2">
+                <div><label>Puntaje máximo</label><input type="number" id="actividadPuntaje" min="1" max="100" value="100"></div>
+                <div><label>Estado</label><select id="actividadEstado"><option value="publicada">Publicada</option><option value="borrador">Borrador</option><option value="cerrada">Cerrada</option></select></div>
+              </div>
+              <button class="btn-primary" type="submit">Guardar actividad</button>
+              <p class="form-message" id="msgActividad"></p>
+            </form>
+          </section>
+          <section class="panel-card">
+            <h2>Criterio ADA</h2>
+            <p class="helper-text">Este módulo recupera del ADA viejo la lógica de tareas/actividades y prepara el circuito para entregas de alumnos.</p>
+            <div class="b26-note">El docente crea la actividad; el alumno la entrega; el docente la revisa; familia y directivos pueden consultar el avance según permisos.</div>
+          </section>
+        </div>
+      </section>
+
+      <section id="tab-seguimiento" class="b26-section">
+        <section class="panel-card">
+          <h2>Seguimiento de entregas</h2>
+          <div id="tablaSeguimiento" class="table-wrap"></div>
+        </section>
+      </section>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/ada-security.js"></script>
+  <script src="../assets/js/actividades.js"></script>
+</body>
+</html>
