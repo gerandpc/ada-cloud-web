@@ -7,6 +7,10 @@ let b26eEntregas = [];
 let b26eAlumnos = [];
 
 const B26_REVIEW_ROLES = ["admin", "directivo", "docente"];
+const B26_STORAGE_BUCKET = "ada-actividades";
+const B26_MAX_FILE_SIZE = 10 * 1024 * 1024;
+const B26_ALLOWED_EXT = ["pdf", "doc", "docx", "jpg", "jpeg", "png", "webp"];
+
 function b26eCanReview(){ return B26_REVIEW_ROLES.includes(b26eRol); }
 function b26eCanSubmit(){ return b26eRol === "alumno"; }
 function b26eEscape(v){ return String(v ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
@@ -14,6 +18,40 @@ function b26ePill(text, cls="info"){ return `<span class="b26-pill ${cls}">${b26
 function b26eEstadoClase(estado){ if(estado==="revisada") return "ok"; if(estado==="devuelta") return "warn"; if(estado==="pendiente") return "warn"; if(estado==="entregada") return "info"; return "info"; }
 function b26eToday(){ return new Date().toISOString().slice(0,10); }
 function b26eVencida(a){ return a.fecha_entrega && a.fecha_entrega < b26eToday() && a.estado !== "cerrada"; }
+function b26eFileExt(name){ return String(name || "").split(".").pop().toLowerCase(); }
+function b26eSafeName(name){ return String(name || "archivo").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9._-]+/g, "_").replace(/^_+|_+$/g, "") || "archivo"; }
+function b26eValidateFile(file){
+  if(!file) return null;
+  if(file.size > B26_MAX_FILE_SIZE) return "El archivo supera los 10 MB.";
+  const ext = b26eFileExt(file.name);
+  if(!B26_ALLOWED_EXT.includes(ext)) return "Formato no permitido. Usá PDF, Word o imagen.";
+  return null;
+}
+async function b26eSignedUrl(path){
+  if(!path) return "";
+  const { data, error } = await supabaseClient.storage.from(B26_STORAGE_BUCKET).createSignedUrl(path, 60 * 60);
+  if(error){ console.warn("No se pudo generar enlace firmado", error); return ""; }
+  return data?.signedUrl || "";
+}
+async function b26eAttachSignedUrls(){
+  await Promise.all((b26eActividades || []).map(async a => { if(a.archivo_path) a.archivo_signed_url = await b26eSignedUrl(a.archivo_path); }));
+  await Promise.all((b26eEntregas || []).map(async e => { if(e.archivo_path) e.archivo_signed_url = await b26eSignedUrl(e.archivo_path); }));
+}
+async function b26eUploadFile(file, folder, ownerId){
+  if(!file) return null;
+  const validation = b26eValidateFile(file);
+  if(validation) throw new Error(validation);
+  const safe = b26eSafeName(file.name);
+  const path = `${folder}/${ownerId}/${Date.now()}_${safe}`;
+  const { error } = await supabaseClient.storage.from(B26_STORAGE_BUCKET).upload(path, file, { cacheControl: "3600", upsert: false, contentType: file.type || "application/octet-stream" });
+  if(error) throw error;
+  return { archivo_path: path, archivo_nombre: file.name, archivo_tipo: file.type || null, archivo_tamano: file.size };
+}
+function b26eFileLink(item, label="Archivo"){
+  if(item?.archivo_signed_url) return `<a class="b26-file-link" href="${b26eEscape(item.archivo_signed_url)}" target="_blank" rel="noopener">📎 ${b26eEscape(item.archivo_nombre || label)}</a>`;
+  if(item?.archivo_url) return `<a class="b26-file-link" href="${b26eEscape(item.archivo_url)}" target="_blank" rel="noopener">🔗 ${b26eEscape(item.archivo_nombre || label)}</a>`;
+  return "";
+}
 
 function b26eTabs(){
   document.querySelectorAll(".b26-tab").forEach(btn=>btn.addEventListener("click",()=>{
@@ -40,6 +78,7 @@ async function b26eLoad(){
   b26eEntregas = entRes.data || [];
   b26eAlumnos = alumRes.data || [];
   if(b26eRol === "alumno") b26eEntregas = b26eEntregas.filter(e=>e.alumno_id === b26ePerfil.id);
+  await b26eAttachSignedUrls();
   renderEntregas();
   renderRevision();
   updateKpis();
@@ -58,7 +97,8 @@ function renderEntregas(){
     const vencida = b26eVencida(a);
     const estado = propia?.estado || (b26eCanSubmit() ? "pendiente" : "sin entrega");
     const boton = b26eCanSubmit() && a.estado === "publicada" ? `<button class="btn-primary" type="button" data-abrir-entrega="${a.id}">${propia ? "Actualizar entrega" : "Realizar entrega"}</button>` : "";
-    const archivo = propia?.archivo_url ? `<a href="${b26eEscape(propia.archivo_url)}" target="_blank" rel="noopener">Ver archivo/link</a>` : "";
+    const archivoConsigna = b26eFileLink(a, "Consigna adjunta");
+    const archivoEntrega = b26eFileLink(propia, "Archivo de entrega");
     return `<article class="b26-card ${vencida && !propia ? "b26-highlight" : ""}">
       <h3>${b26eEscape(a.titulo)}</h3>
       <p>${b26eEscape(a.descripcion || "Sin consigna cargada.")}</p>
@@ -68,7 +108,8 @@ function renderEntregas(){
         ${b26ePill("Fecha límite: " + (a.fecha_entrega || "sin fecha"), vencida ? "warn" : "ok")}
         ${b26ePill(estado, b26eEstadoClase(estado))}
       </div>
-      ${propia?.texto_entrega ? `<div class="b26-note"><strong>Entrega:</strong> ${b26eEscape(propia.texto_entrega)} ${archivo ? " · " + archivo : ""}</div>` : ""}
+      ${archivoConsigna ? `<div class="b26-attachment-row"><strong>Consigna:</strong> ${archivoConsigna}</div>` : ""}
+      ${propia?.texto_entrega ? `<div class="b26-note"><strong>Entrega:</strong> ${b26eEscape(propia.texto_entrega)} ${archivoEntrega ? " · " + archivoEntrega : ""}${propia?.archivo_url ? " · " + b26eFileLink({archivo_url: propia.archivo_url}, "Link externo") : ""}</div>` : ""}
       ${propia?.devolucion ? `<div class="b26-note"><strong>Devolución:</strong> ${b26eEscape(propia.devolucion)} ${propia.calificacion ? " · Nota: " + b26eEscape(propia.calificacion) : ""}</div>` : ""}
       <div class="b26-actions">${boton}</div>
     </article>`;
@@ -82,8 +123,8 @@ function renderRevision(){
   if(!el) return;
   if(!b26eCanReview()){ el.innerHTML = `<p class="helper-text">La revisión está disponible para docentes y equipos de gestión.</p>`; return; }
   if(!b26eEntregas.length){ el.innerHTML = `<p class="helper-text">Todavía no hay entregas para revisar.</p>`; return; }
-  const rows = b26eEntregas.map(e=>`<tr><td>${b26eEscape(e.actividades?.titulo || "-")}</td><td>${b26eEscape((e.alumno?.apellido || "") + ", " + (e.alumno?.nombre || ""))}</td><td>${b26ePill(e.estado || "entregada", b26eEstadoClase(e.estado))}</td><td>${e.calificacion ?? "-"}</td><td>${e.entregado_en ? new Date(e.entregado_en).toLocaleString("es-AR") : "-"}</td><td><button class="btn-secondary" type="button" data-revisar="${e.id}">Revisar</button></td></tr>`).join("");
-  el.innerHTML = `<table class="ada-table"><thead><tr><th>Actividad</th><th>Alumno</th><th>Estado</th><th>Nota</th><th>Fecha</th><th>Acción</th></tr></thead><tbody>${rows}</tbody></table>`;
+  const rows = b26eEntregas.map(e=>`<tr><td>${b26eEscape(e.actividades?.titulo || "-")}</td><td>${b26eEscape((e.alumno?.apellido || "") + ", " + (e.alumno?.nombre || ""))}</td><td>${b26ePill(e.estado || "entregada", b26eEstadoClase(e.estado))}</td><td>${e.calificacion ?? "-"}</td><td>${e.entregado_en ? new Date(e.entregado_en).toLocaleString("es-AR") : "-"}</td><td>${b26eFileLink(e, "Archivo") || (e.archivo_url ? b26eFileLink({archivo_url:e.archivo_url}, "Link") : "-")}</td><td><button class="btn-secondary" type="button" data-revisar="${e.id}">Revisar</button></td></tr>`).join("");
+  el.innerHTML = `<table class="ada-table"><thead><tr><th>Actividad</th><th>Alumno</th><th>Estado</th><th>Nota</th><th>Fecha</th><th>Archivo</th><th>Acción</th></tr></thead><tbody>${rows}</tbody></table>`;
   el.querySelectorAll("[data-revisar]").forEach(btn=>btn.addEventListener("click",()=>abrirModalRevision(btn.dataset.revisar)));
 }
 
@@ -103,6 +144,8 @@ function abrirModalEntrega(actividadId){
   b26e("modalEntregaTitulo").textContent = act?.titulo || "Actividad";
   b26e("entregaTexto").value = propia?.texto_entrega || "";
   b26e("entregaArchivoUrl").value = propia?.archivo_url || "";
+  if(b26e("entregaArchivo")) b26e("entregaArchivo").value = "";
+  b26e("entregaArchivoActual").innerHTML = propia?.archivo_path ? `Archivo actual: ${b26eFileLink(propia, "Ver archivo")}` : "Sin archivo subido todavía.";
   b26e("msgEntrega").textContent = "";
   b26e("modalEntrega").classList.add("open");
   b26e("modalEntrega").setAttribute("aria-hidden", "false");
@@ -112,6 +155,9 @@ function cerrarModalEntrega(){ b26e("modalEntrega").classList.remove("open"); b2
 async function guardarEntrega(ev){
   ev.preventDefault();
   b26e("msgEntrega").textContent = "Enviando entrega...";
+  const file = b26e("entregaArchivo")?.files?.[0] || null;
+  const validation = b26eValidateFile(file);
+  if(validation){ b26e("msgEntrega").textContent = validation; return; }
   const payload = {
     actividad_id: b26e("entregaActividadId").value,
     alumno_id: b26ePerfil.id,
@@ -120,8 +166,20 @@ async function guardarEntrega(ev){
     estado: "entregada",
     entregado_en: new Date().toISOString()
   };
-  const { error } = await supabaseClient.from("entregas_actividades").upsert(payload, { onConflict: "actividad_id,alumno_id" });
+  const { data, error } = await supabaseClient.from("entregas_actividades").upsert(payload, { onConflict: "actividad_id,alumno_id" }).select("id").single();
   if(error){ b26e("msgEntrega").textContent = "Error: " + error.message; return; }
+  if(file){
+    try{
+      b26e("msgEntrega").textContent = "Entrega guardada. Subiendo archivo...";
+      const meta = await b26eUploadFile(file, "entregas", data.id);
+      const upd = await supabaseClient.from("entregas_actividades").update(meta).eq("id", data.id);
+      if(upd.error) throw upd.error;
+    }catch(err){
+      b26e("msgEntrega").textContent = "La entrega se guardó, pero no se pudo subir el archivo: " + err.message;
+      await b26eLoad();
+      return;
+    }
+  }
   b26e("msgEntrega").textContent = "Entrega enviada correctamente.";
   await b26eLoad();
   setTimeout(cerrarModalEntrega, 700);
@@ -158,7 +216,7 @@ async function guardarRevision(ev){
 }
 
 function b26eSetupError(error){
-  const msg = `No se pudo cargar el Bloque 26. Verificá que hayas ejecutado docs/sql/ada_bloque_26_actividades_entregas.sql. Detalle: ${error.message}`;
+  const msg = `No se pudo cargar el Bloque 26. Verificá que hayas ejecutado docs/sql/ada_bloque_26b_archivos_actividades_entregas.sql. Detalle: ${error.message}`;
   ["listaEntregas","tablaRevision"].forEach(id=>{ if(b26e(id)) b26e(id).innerHTML = `<p class="form-message is-error">${b26eEscape(msg)}</p>`; });
 }
 

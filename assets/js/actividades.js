@@ -8,6 +8,9 @@ let b26aActividades = [];
 let b26aEntregas = [];
 
 const B26_MANAGE_ROLES = ["admin", "directivo", "docente"];
+const B26_STORAGE_BUCKET = "ada-actividades";
+const B26_MAX_FILE_SIZE = 10 * 1024 * 1024;
+const B26_ALLOWED_EXT = ["pdf", "doc", "docx", "jpg", "jpeg", "png", "webp"];
 
 function b26aCanManage(){ return B26_MANAGE_ROLES.includes(b26aRol); }
 function b26aToday(){ return new Date().toISOString().slice(0,10); }
@@ -16,6 +19,40 @@ function b26aOption(items, placeholder, label=(x)=>x.nombre || x.titulo || x.id)
 function b26aPill(text, cls="info"){ return `<span class="b26-pill ${cls}">${b26aEscape(text)}</span>`; }
 function b26aEstadoClase(estado){ if(estado==="publicada") return "ok"; if(estado==="borrador") return "warn"; if(estado==="cerrada") return "danger"; return "info"; }
 function b26aVencida(a){ return a.fecha_entrega && a.fecha_entrega < b26aToday() && a.estado !== "cerrada"; }
+function b26aFileExt(name){ return String(name || "").split(".").pop().toLowerCase(); }
+function b26aSafeName(name){ return String(name || "archivo").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9._-]+/g, "_").replace(/^_+|_+$/g, "") || "archivo"; }
+function b26aValidateFile(file){
+  if(!file) return null;
+  if(file.size > B26_MAX_FILE_SIZE) return "El archivo supera los 10 MB.";
+  const ext = b26aFileExt(file.name);
+  if(!B26_ALLOWED_EXT.includes(ext)) return "Formato no permitido. Usá PDF, Word o imagen.";
+  return null;
+}
+async function b26aSignedUrl(path){
+  if(!path) return "";
+  const { data, error } = await supabaseClient.storage.from(B26_STORAGE_BUCKET).createSignedUrl(path, 60 * 60);
+  if(error){ console.warn("No se pudo generar enlace firmado", error); return ""; }
+  return data?.signedUrl || "";
+}
+async function b26aAttachSignedUrls(){
+  await Promise.all((b26aActividades || []).map(async a => { if(a.archivo_path) a.archivo_signed_url = await b26aSignedUrl(a.archivo_path); }));
+  await Promise.all((b26aEntregas || []).map(async e => { if(e.archivo_path) e.archivo_signed_url = await b26aSignedUrl(e.archivo_path); }));
+}
+async function b26aUploadFile(file, folder, ownerId){
+  if(!file) return null;
+  const validation = b26aValidateFile(file);
+  if(validation) throw new Error(validation);
+  const safe = b26aSafeName(file.name);
+  const path = `${folder}/${ownerId}/${Date.now()}_${safe}`;
+  const { error } = await supabaseClient.storage.from(B26_STORAGE_BUCKET).upload(path, file, { cacheControl: "3600", upsert: false, contentType: file.type || "application/octet-stream" });
+  if(error) throw error;
+  return { archivo_path: path, archivo_nombre: file.name, archivo_tipo: file.type || null, archivo_tamano: file.size };
+}
+function b26aFileLink(item, label="Ver archivo"){
+  if(item?.archivo_signed_url) return `<a class="b26-file-link" href="${b26aEscape(item.archivo_signed_url)}" target="_blank" rel="noopener">📎 ${b26aEscape(item.archivo_nombre || label)}</a>`;
+  if(item?.archivo_url) return `<a class="b26-file-link" href="${b26aEscape(item.archivo_url)}" target="_blank" rel="noopener">🔗 ${b26aEscape(item.archivo_nombre || label)}</a>`;
+  return "";
+}
 
 function b26aTabs(){
   document.querySelectorAll(".b26-tab").forEach(btn=>btn.addEventListener("click",()=>{
@@ -56,6 +93,7 @@ async function b26aLoadActividades(){
   if(res.error) throw res.error;
   b26aActividades = res.data || [];
   await b26aLoadEntregas();
+  await b26aAttachSignedUrls();
   b26aRenderActividades(b26aActividades);
   b26aUpdateKpis();
 }
@@ -76,6 +114,7 @@ function b26aRenderActividades(rows){
   cont.innerHTML = rows.map(a=>{
     const entregas = b26aEntregas.filter(e=>e.actividad_id === a.id).length;
     const vencida = b26aVencida(a);
+    const archivo = b26aFileLink(a, "Ver consigna adjunta");
     return `<article class="b26-card ${vencida ? "b26-highlight" : ""}">
       <h3>${b26aEscape(a.titulo)}</h3>
       <p>${b26aEscape(a.descripcion || "Sin consigna cargada.")}</p>
@@ -86,6 +125,7 @@ function b26aRenderActividades(rows){
         ${vencida ? b26aPill("Vencida", "warn") : b26aPill("Entrega: " + (a.fecha_entrega || "sin fecha"), "ok")}
         ${b26aPill(entregas + " entregas", "info")}
       </div>
+      ${archivo ? `<div class="b26-attachment-row">${archivo}</div>` : ""}
       <p class="b26-status-line">Tipo: ${b26aEscape(a.tipo || "-")} · Puntaje: ${b26aEscape(a.puntaje_maximo || "-")} · Creada por: ${b26aEscape((a.creador?.nombre || "") + " " + (a.creador?.apellido || ""))}</p>
     </article>`;
   }).join("");
@@ -96,8 +136,8 @@ function b26aRenderSeguimiento(){
   const el = b26a("tablaSeguimiento");
   if(!el) return;
   if(!b26aEntregas.length){ el.innerHTML = `<p class="helper-text">Todavía no hay entregas registradas.</p>`; return; }
-  const rows = b26aEntregas.map(e=>`<tr><td>${b26aEscape(e.actividades?.titulo || "-")}</td><td>${b26aEscape((e.alumno?.apellido || "") + ", " + (e.alumno?.nombre || ""))}</td><td>${b26aPill(e.estado || "pendiente", e.estado === "revisada" ? "ok" : e.estado === "devuelta" ? "warn" : "info")}</td><td>${e.calificacion ?? "-"}</td><td>${e.entregado_en ? new Date(e.entregado_en).toLocaleString("es-AR") : "-"}</td></tr>`).join("");
-  el.innerHTML = `<table class="ada-table"><thead><tr><th>Actividad</th><th>Alumno</th><th>Estado</th><th>Nota</th><th>Fecha</th></tr></thead><tbody>${rows}</tbody></table>`;
+  const rows = b26aEntregas.map(e=>`<tr><td>${b26aEscape(e.actividades?.titulo || "-")}</td><td>${b26aEscape((e.alumno?.apellido || "") + ", " + (e.alumno?.nombre || ""))}</td><td>${b26aPill(e.estado || "pendiente", e.estado === "revisada" ? "ok" : e.estado === "devuelta" ? "warn" : "info")}</td><td>${e.calificacion ?? "-"}</td><td>${e.entregado_en ? new Date(e.entregado_en).toLocaleString("es-AR") : "-"}</td><td>${b26aFileLink(e, "Archivo") || "-"}</td></tr>`).join("");
+  el.innerHTML = `<table class="ada-table"><thead><tr><th>Actividad</th><th>Alumno</th><th>Estado</th><th>Nota</th><th>Fecha</th><th>Archivo</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 function b26aUpdateKpis(){
@@ -110,6 +150,9 @@ function b26aUpdateKpis(){
 async function b26aGuardarActividad(ev){
   ev.preventDefault();
   b26a("msgActividad").textContent = "Guardando actividad...";
+  const file = b26a("actividadArchivo")?.files?.[0] || null;
+  const validation = b26aValidateFile(file);
+  if(validation){ b26a("msgActividad").textContent = validation; return; }
   const payload = {
     curso_id: b26a("actividadCurso").value,
     materia_id: b26a("actividadMateria").value,
@@ -123,8 +166,20 @@ async function b26aGuardarActividad(ev){
     docente_id: b26aPerfil.id,
     creado_por: b26aPerfil.id
   };
-  const { error } = await supabaseClient.from("actividades").insert(payload);
+  const { data, error } = await supabaseClient.from("actividades").insert(payload).select("id").single();
   if(error){ b26a("msgActividad").textContent = "Error: " + error.message; return; }
+  if(file){
+    try{
+      b26a("msgActividad").textContent = "Actividad guardada. Subiendo archivo...";
+      const meta = await b26aUploadFile(file, "consignas", data.id);
+      const upd = await supabaseClient.from("actividades").update(meta).eq("id", data.id);
+      if(upd.error) throw upd.error;
+    }catch(err){
+      b26a("msgActividad").textContent = "La actividad se guardó, pero no se pudo subir el archivo: " + err.message;
+      await b26aLoadActividades();
+      return;
+    }
+  }
   b26a("msgActividad").textContent = "Actividad guardada correctamente.";
   ev.target.reset();
   b26a("actividadPublicacion").value = b26aToday();
@@ -141,7 +196,7 @@ function b26aFiltrar(){
 }
 
 function b26aSetupError(error){
-  const msg = `No se pudo cargar el Bloque 26. Verificá que hayas ejecutado docs/sql/ada_bloque_26_actividades_entregas.sql. Detalle: ${error.message}`;
+  const msg = `No se pudo cargar el Bloque 26. Verificá que hayas ejecutado docs/sql/ada_bloque_26b_archivos_actividades_entregas.sql. Detalle: ${error.message}`;
   ["listaActividades","tablaSeguimiento"].forEach(id=>{ if(b26a(id)) b26a(id).innerHTML = `<p class="form-message is-error">${b26aEscape(msg)}</p>`; });
 }
 
