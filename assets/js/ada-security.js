@@ -39,6 +39,7 @@ const ADA_PAGE_ACCESS = {
   "actividades.html": ["admin", "directivo", "secretaria", "docente", "preceptor", "familia", "alumno"],
   "entregas.html": ["admin", "directivo", "secretaria", "docente", "preceptor", "familia", "alumno"],
   "programas.html": ["admin", "directivo", "secretaria", "docente", "preceptor", "familia", "alumno"],
+  "documentacion.html": ["admin", "directivo", "secretaria", "preceptor", "familia", "alumno"],
 
   "institucion.html": ["admin", "directivo", "secretaria"],
   "usuarios.html": ["admin", "directivo", "secretaria"],
@@ -84,13 +85,13 @@ const ADA_ROLE_HOME = {
 };
 
 const ADA_ROLE_MODULES = {
-  admin: ["dashboard", "institucion", "usuarios", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "ia", "horarios", "asistencia", "calificaciones", "boletines", "actividades", "entregas", "programas", "reportes", "comunicados", "importar", "manuscritos"],
-  directivo: ["dashboard", "institucion", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "ia", "horarios", "asistencia", "calificaciones", "boletines", "actividades", "entregas", "programas", "reportes", "comunicados", "manuscritos"],
-  secretaria: ["dashboard", "institucion", "usuarios", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "asistencia", "calificaciones", "boletines", "actividades", "entregas", "programas", "reportes", "comunicados"],
-  docente: ["mi-docente", "asistencia", "calificaciones", "boletines", "actividades", "entregas", "programas", "alumnos", "cursos", "materias", "documentos", "comunicados", "ia", "reportes", "manuscritos"],
-  preceptor: ["mi-preceptor", "asistencia", "calificaciones", "boletines", "actividades", "entregas", "programas", "alumnos", "familias", "cursos", "documentos", "comunicados", "ia", "reportes"],
-  familia: ["mi-familia", "calificaciones", "boletines", "actividades", "entregas", "programas", "comunicados", "documentos", "ia"],
-  alumno: ["mi-alumno", "calificaciones", "boletines", "actividades", "entregas", "programas", "comunicados", "documentos", "ia"]
+  admin: ["dashboard", "institucion", "usuarios", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "ia", "horarios", "asistencia", "calificaciones", "boletines", "actividades", "entregas", "programas", "documentacion", "reportes", "comunicados", "importar", "manuscritos"],
+  directivo: ["dashboard", "institucion", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "ia", "horarios", "asistencia", "calificaciones", "boletines", "actividades", "entregas", "programas", "documentacion", "reportes", "comunicados", "manuscritos"],
+  secretaria: ["dashboard", "institucion", "usuarios", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "asistencia", "calificaciones", "boletines", "actividades", "entregas", "programas", "documentacion", "reportes", "comunicados"],
+  docente: ["mi-docente", "asistencia", "calificaciones", "boletines", "actividades", "entregas", "programas", "documentacion", "alumnos", "cursos", "materias", "documentos", "comunicados", "ia", "reportes", "manuscritos"],
+  preceptor: ["mi-preceptor", "asistencia", "calificaciones", "boletines", "actividades", "entregas", "programas", "documentacion", "alumnos", "familias", "cursos", "documentos", "comunicados", "ia", "reportes"],
+  familia: ["mi-familia", "calificaciones", "boletines", "actividades", "entregas", "programas", "documentacion", "comunicados", "documentos", "ia"],
+  alumno: ["mi-alumno", "calificaciones", "boletines", "actividades", "entregas", "programas", "documentacion", "comunicados", "documentos", "ia"]
 };
 
 const ADA_MODULES = {
@@ -118,6 +119,7 @@ const ADA_MODULES = {
   actividades: { label: "Actividades", icon: "🧩", href: "actividades.html", group: "Trabajo diario" },
   entregas: { label: "Entregas", icon: "📬", href: "entregas.html", group: "Trabajo diario" },
   programas: { label: "Programas y bibliografía", icon: "📚", href: "programas.html", group: "Trabajo diario" },
+  documentacion: { label: "Documentación y firmas", icon: "🗃️", href: "documentacion.html", group: "Trabajo diario" },
   comunicados: { label: "Comunicados", icon: "📣", href: "comunicados.html", group: "Trabajo diario" },
   documentos: { label: "Documentos", icon: "📄", href: "documentos.html", group: "Trabajo diario" },
 
