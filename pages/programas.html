@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Programas y bibliografía - ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque23-ui-refresh.css">
+  <link rel="stylesheet" href="../assets/css/bloque27-programas.css">
+</head>
+<body class="module-page role-loading">
+  <main class="module-shell">
+    <a href="dashboard.html" class="back-link">← Mi inicio</a>
+    <section class="module-view">
+      <p class="eyebrow">Bloque 27</p>
+      <h1>Programas de materia y bibliografía</h1>
+      <p>Gestión de programas, archivos curriculares y recursos sugeridos para que ADA IA trabaje luego con contenidos institucionales habilitados.</p>
+
+      <div class="b27-hero">
+        <div>
+          <span class="b27-badge">Base curricular para ADA IA</span>
+          <h2>Primero se define el contenido válido. Después la IA responde desde ahí.</h2>
+          <p>El docente puede cargar el programa de su materia y asociar bibliografía o archivos de apoyo. Directivos pueden revisar y aprobar. Alumnos y familias consultan solo lo publicado.</p>
+        </div>
+        <div class="b27-ai-card">
+          <strong>🤖 IA controlada</strong>
+          <span>Los programas aprobados quedan marcados como fuente habilitada para una futura IA limitada al diseño curricular, bibliografía y materiales validados.</span>
+        </div>
+      </div>
+
+      <div class="b27-kpi-grid">
+        <div class="b27-kpi"><span>Programas</span><strong id="kpiProgramas">0</strong></div>
+        <div class="b27-kpi"><span>Aprobados</span><strong id="kpiAprobados">0</strong></div>
+        <div class="b27-kpi"><span>Pendientes</span><strong id="kpiPendientes">0</strong></div>
+        <div class="b27-kpi"><span>Recursos</span><strong id="kpiRecursos">0</strong></div>
+      </div>
+
+      <div class="b27-tabs" role="tablist">
+        <button class="b27-tab active" data-tab="listado" type="button">Programas</button>
+        <button class="b27-tab" data-tab="nuevo" type="button" data-b27-manage>Nuevo programa</button>
+        <button class="b27-tab" data-tab="bibliografia" type="button" data-b27-manage>Bibliografía / recursos</button>
+        <button class="b27-tab" data-tab="ia" type="button">Base para IA</button>
+      </div>
+
+      <section id="tab-listado" class="b27-section active">
+        <section class="panel-card">
+          <h2>Programas cargados</h2>
+          <div class="form-grid">
+            <div><label>Curso</label><select id="filtroCurso"></select></div>
+            <div><label>Materia</label><select id="filtroMateria"></select></div>
+            <div><label>Estado</label><select id="filtroEstado"><option value="">Todos</option><option value="borrador">Borrador</option><option value="pendiente">Pendiente</option><option value="aprobado">Aprobado</option><option value="observado">Observado</option></select></div>
+          </div>
+          <div class="b27-actions"><button class="btn-primary" id="btnFiltrar" type="button">Filtrar</button><button class="btn-secondary" id="btnLimpiar" type="button">Limpiar</button></div>
+          <div id="listaProgramas" class="b27-list"></div>
+        </section>
+      </section>
+
+      <section id="tab-nuevo" class="b27-section" data-b27-manage>
+        <div class="b27-layout">
+          <section class="panel-card">
+            <h2>Nuevo programa</h2>
+            <form id="formPrograma" class="ada-form">
+              <div class="b27-grid-2">
+                <div><label>Curso</label><select id="programaCurso" required></select></div>
+                <div><label>Materia</label><select id="programaMateria" required></select></div>
+              </div>
+              <div class="b27-grid-2">
+                <div><label>Año lectivo</label><input type="number" id="programaAnio" min="2024" max="2100" required></div>
+                <div><label>Versión</label><input id="programaVersion" value="1.0" required></div>
+              </div>
+              <label>Título</label><input id="programaTitulo" required placeholder="Ej.: Programa anual de Matemática">
+              <label>Fundamentación / enfoque</label><textarea id="programaFundamentacion" placeholder="Breve fundamentación pedagógica..."></textarea>
+              <label>Objetivos</label><textarea id="programaObjetivos" placeholder="Objetivos generales y específicos..."></textarea>
+              <label>Contenidos / unidades</label><textarea id="programaContenidos" required placeholder="Unidades, ejes, contenidos mínimos..."></textarea>
+              <label>Metodología y evaluación</label><textarea id="programaEvaluacion" placeholder="Estrategias de enseñanza, criterios e instrumentos de evaluación..."></textarea>
+
+              <label>Archivo del programa</label>
+              <div class="b27-file-box">
+                <input type="file" id="programaArchivo" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.webp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png,image/webp">
+                <p class="helper-text">Podés adjuntar PDF, Word o imagen del programa. Máximo sugerido: 15 MB.</p>
+              </div>
+
+              <div class="b27-grid-2">
+                <div><label>Estado</label><select id="programaEstado"><option value="pendiente">Pendiente de aprobación</option><option value="borrador">Borrador</option><option value="aprobado">Aprobado</option><option value="observado">Observado</option></select></div>
+                <div><label><input type="checkbox" id="programaIa" checked> Habilitar como fuente para ADA IA cuando esté aprobado</label></div>
+              </div>
+              <button class="btn-primary" type="submit">Guardar programa</button>
+              <p class="form-message" id="msgPrograma"></p>
+            </form>
+          </section>
+
+          <section class="panel-card b27-guidance">
+            <h2>Criterio ADA</h2>
+            <div class="b27-note">El programa no es solo un archivo: se guarda también como datos estructurados para que luego pueda ordenar contenidos, objetivos, evaluación y bibliografía.</div>
+            <div class="b27-note">La IA no debería responder con cualquier cosa de internet: debe priorizar programas aprobados y recursos institucionalmente habilitados.</div>
+            <div class="b27-note">Directivos pueden aprobar u observar programas. Docentes cargan y actualizan versiones.</div>
+          </section>
+        </div>
+      </section>
+
+      <section id="tab-bibliografia" class="b27-section" data-b27-manage>
+        <div class="b27-layout">
+          <section class="panel-card">
+            <h2>Agregar bibliografía o recurso</h2>
+            <form id="formRecurso" class="ada-form">
+              <label>Programa</label><select id="recursoPrograma" required></select>
+              <div class="b27-grid-2">
+                <div><label>Tipo</label><select id="recursoTipo"><option>Bibliografía obligatoria</option><option>Bibliografía sugerida</option><option>Apunte</option><option>Presentación</option><option>Guía de trabajo</option><option>Imagen / recurso visual</option><option>Video / enlace</option><option>Otro</option></select></div>
+                <div><label>Autor / fuente</label><input id="recursoAutor" placeholder="Autor, institución o fuente"></div>
+              </div>
+              <label>Título del recurso</label><input id="recursoTitulo" required placeholder="Ej.: Capítulo 2 - Introducción al tema">
+              <label>Descripción</label><textarea id="recursoDescripcion" placeholder="Uso sugerido, capítulos, páginas o aclaraciones..."></textarea>
+              <label>Link externo opcional</label><input id="recursoUrl" type="url" placeholder="https://...">
+              <label>Archivo opcional</label>
+              <div class="b27-file-box">
+                <input type="file" id="recursoArchivo" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.webp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png,image/webp">
+                <p class="helper-text">PDF, Word o imagen. Máximo sugerido: 15 MB.</p>
+              </div>
+              <label><input type="checkbox" id="recursoIa" checked> Habilitar este recurso como fuente para ADA IA</label>
+              <button class="btn-primary" type="submit">Guardar recurso</button>
+              <p class="form-message" id="msgRecurso"></p>
+            </form>
+          </section>
+          <section class="panel-card">
+            <h2>Recursos cargados</h2>
+            <div id="listaRecursos" class="b27-list small"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="tab-ia" class="b27-section">
+        <section class="panel-card">
+          <h2>Fuentes curriculares habilitadas para ADA IA</h2>
+          <p class="helper-text">Esta vista deja preparada la lógica para que, más adelante, ADA IA responda solo con programas aprobados, bibliografía y recursos habilitados.</p>
+          <div id="listaFuentesIa" class="b27-list"></div>
+        </section>
+      </section>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/ada-security.js"></script>
+  <script src="../assets/js/programas.js"></script>
+</body>
+</html>
