@@ -10,79 +10,96 @@
 </head>
 <body class="module-page role-loading">
   <main class="module-shell">
-    <a href="dashboard.html" class="back-link">← Volver al panel</a>
-    <section class="module-view">
-      <p class="eyebrow">Bloque 25</p>
+    <a href="dashboard.html" class="back-link">← Mi inicio</a>
+
+    <section class="module-view b25-gradebook-view">
+      <p class="eyebrow">Bloque 25B</p>
       <h1>Calificaciones</h1>
-      <p>Registro, consulta y seguimiento de evaluaciones por alumno, curso, materia y período.</p>
+      <p>Planilla docente por curso y materia, con alumnos en filas, notas en columnas, cierre anual, mesas de diciembre/febrero y exportación compatible con Excel.</p>
 
       <div class="b25-kpi-grid">
-        <div class="b25-kpi"><span>Evaluaciones</span><strong id="kpiEvaluaciones">0</strong></div>
-        <div class="b25-kpi"><span>Calificaciones</span><strong id="kpiCalificaciones">0</strong></div>
+        <div class="b25-kpi"><span>Alumnos</span><strong id="kpiAlumnos">0</strong></div>
+        <div class="b25-kpi"><span>Notas cargadas</span><strong id="kpiCalificaciones">0</strong></div>
         <div class="b25-kpi"><span>Promedio general</span><strong id="kpiPromedio">-</strong></div>
-        <div class="b25-kpi"><span>Pendientes</span><strong id="kpiPendientes">0</strong></div>
+        <div class="b25-kpi"><span>Se llevan</span><strong id="kpiPendientes">0</strong></div>
       </div>
 
+      <section class="panel-card b25-selector-card" data-b25-manage>
+        <div class="b25-selector-head">
+          <div>
+            <h2>Planilla anual de calificaciones</h2>
+            <p class="helper-text">Elegí curso y materia para cargar todas las notas en una sola grilla, como en Excel.</p>
+          </div>
+          <div class="b25-actions b25-actions-right">
+            <button class="btn-secondary" id="btnExportarExcel" type="button">Exportar a Excel</button>
+            <button class="btn-primary" id="btnGuardarPlanilla" type="button">Guardar planilla</button>
+          </div>
+        </div>
+        <div class="form-grid b25-grade-filters">
+          <div><label>Curso</label><select id="planillaCurso" required></select></div>
+          <div><label>Materia</label><select id="planillaMateria" required></select></div>
+          <div><label>Ciclo lectivo</label><input id="planillaCiclo" type="number" min="2020" max="2100"></div>
+          <div><label>Nota de aprobación</label><input id="notaAprobacion" type="number" min="1" max="10" step="0.01" value="7"></div>
+        </div>
+        <div class="b25-actions">
+          <button class="btn-primary" id="btnCargarPlanilla" type="button">Cargar alumnos y notas</button>
+          <button class="btn-secondary" id="btnCerrarAnio" type="button">Actualizar cierre anual</button>
+        </div>
+        <p id="msgPlanilla" class="form-message"></p>
+      </section>
+
       <div class="b25-tabs" role="tablist">
-        <button class="b25-tab active" data-tab="evaluaciones" type="button">Evaluaciones</button>
-        <button class="b25-tab" data-tab="carga" type="button">Carga de notas</button>
+        <button class="b25-tab active" data-tab="anual" type="button">Carga anual</button>
+        <button class="b25-tab" data-tab="diciembre" type="button">Diciembre</button>
+        <button class="b25-tab" data-tab="febrero" type="button">Febrero</button>
         <button class="b25-tab" data-tab="consulta" type="button">Consulta</button>
       </div>
 
-      <section id="tab-evaluaciones" class="b25-section active">
-        <div class="b25-layout">
-          <section class="panel-card" data-b25-manage>
-            <h2>Nueva evaluación</h2>
-            <form id="formEvaluacion" class="ada-form">
-              <label>Período</label><select id="evaluacionPeriodo" required></select>
-              <label>Curso</label><select id="evaluacionCurso"></select>
-              <label>Materia</label><select id="evaluacionMateria" required></select>
-              <label>Título</label><input id="evaluacionTitulo" required placeholder="Ej.: Parcial 1 / Trabajo práctico">
-              <label>Tipo</label><select id="evaluacionTipo"><option>Parcial</option><option>Trabajo práctico</option><option>Proyecto</option><option>Oral</option><option>Actitudinal</option><option>Otro</option></select>
-              <label>Fecha</label><input type="date" id="evaluacionFecha" required>
-              <label>Ponderación</label><input type="number" id="evaluacionPonderacion" min="0" max="100" value="100">
-              <label>Observaciones</label><textarea id="evaluacionObservaciones"></textarea>
-              <button class="btn-primary" type="submit">Guardar evaluación</button>
-              <p class="form-message" id="msgEvaluacion"></p>
-            </form>
-          </section>
-          <section class="panel-card">
-            <h2>Evaluaciones registradas</h2>
-            <div id="tablaEvaluaciones" class="table-wrap"></div>
-          </section>
-        </div>
+      <section id="tab-anual" class="b25-section active">
+        <section class="panel-card">
+          <div class="b25-table-title">
+            <div>
+              <h2>Planilla anual</h2>
+              <p class="helper-text">Los alumnos quedan en filas. Las notas y cierres quedan en columnas para carga rápida.</p>
+            </div>
+            <span class="b25-pill info" id="estadoPlanilla">Sin cargar</span>
+          </div>
+          <div id="tablaPlanillaAnual" class="table-wrap b25-gradebook-wrap">
+            <p class="helper-text">Seleccioná curso y materia para cargar la planilla.</p>
+          </div>
+        </section>
       </section>
 
-      <section id="tab-carga" class="b25-section">
-        <div class="b25-layout">
-          <section class="panel-card" data-b25-manage>
-            <h2>Cargar calificación</h2>
-            <form id="formCalificacion" class="ada-form">
-              <label>Evaluación</label><select id="calificacionEvaluacion" required></select>
-              <label>Alumno</label><select id="calificacionAlumno" required></select>
-              <label>Nota</label><input type="number" id="calificacionNota" min="1" max="10" step="0.01" required>
-              <label>Estado</label><select id="calificacionEstado"><option value="calificado">Calificado</option><option value="ausente">Ausente</option><option value="pendiente">Pendiente</option><option value="recuperatorio">Recuperatorio</option></select>
-              <label>Observación</label><textarea id="calificacionObservacion"></textarea>
-              <button class="btn-primary" type="submit">Guardar nota</button>
-              <p class="form-message" id="msgCalificacion"></p>
-            </form>
-          </section>
-          <section class="panel-card">
-            <h2>Últimas notas cargadas</h2>
-            <div id="tablaCalificaciones" class="table-wrap"></div>
-          </section>
-        </div>
+      <section id="tab-diciembre" class="b25-section">
+        <section class="panel-card">
+          <div class="b25-table-title">
+            <div>
+              <h2>Mesa de diciembre</h2>
+              <p class="helper-text">Aparecen solamente los alumnos que no alcanzan la nota de aprobación en el cierre anual.</p>
+            </div>
+            <button class="btn-primary" id="btnGuardarDiciembre" type="button">Guardar diciembre</button>
+          </div>
+          <div id="tablaDiciembre" class="table-wrap b25-gradebook-wrap"><p class="helper-text">Primero cargá o actualizá la planilla anual.</p></div>
+        </section>
+      </section>
+
+      <section id="tab-febrero" class="b25-section">
+        <section class="panel-card">
+          <div class="b25-table-title">
+            <div>
+              <h2>Mesa de febrero</h2>
+              <p class="helper-text">Aparecen solamente los alumnos que no aprobaron en diciembre.</p>
+            </div>
+            <button class="btn-primary" id="btnGuardarFebrero" type="button">Guardar febrero</button>
+          </div>
+          <div id="tablaFebrero" class="table-wrap b25-gradebook-wrap"><p class="helper-text">Primero cargá diciembre.</p></div>
+        </section>
       </section>
 
       <section id="tab-consulta" class="b25-section">
         <section class="panel-card">
-          <h2>Consulta de calificaciones</h2>
-          <div class="form-grid">
-            <div><label>Alumno</label><select id="filtroAlumno"></select></div>
-            <div><label>Materia</label><select id="filtroMateria"></select></div>
-            <div><label>Período</label><select id="filtroPeriodo"></select></div>
-          </div>
-          <div class="b25-actions"><button class="btn-primary" id="btnFiltrarCalificaciones" type="button">Filtrar</button><button class="btn-secondary" id="btnLimpiarFiltros" type="button">Limpiar</button></div>
+          <h2>Consulta general</h2>
+          <p class="helper-text">Vista resumida de los últimos registros guardados para control institucional, familias y estudiantes.</p>
           <div id="tablaConsultaCalificaciones" class="table-wrap" style="margin-top:16px;"></div>
         </section>
       </section>
