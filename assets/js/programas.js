@@ -192,12 +192,35 @@ async function b27SubmitRecurso(ev){
   }catch(err){ b27Msg("msgRecurso", err.message || "No se pudo guardar el recurso.", false); }
 }
 
+async function b27ObtenerContextoSeguro(){
+  // Compatibilidad con la base de seguridad ADA: algunas páginas usan adaReady y otras obtenerSesionPerfil/adaRequirePageAccess.
+  if (window.adaReady) {
+    const ctx = await window.adaReady;
+    if (ctx) return ctx;
+  }
+  if (typeof window.obtenerSesionPerfil === "function") {
+    const ctx = await window.obtenerSesionPerfil();
+    if (ctx) return ctx;
+  }
+  if (typeof window.adaRequirePageAccess === "function") {
+    const ctx = await window.adaRequirePageAccess();
+    if (ctx) return ctx;
+  }
+  throw new Error("No se pudo validar la sesión del usuario.");
+}
+
 document.addEventListener("DOMContentLoaded", async ()=>{
   try{
-    b27Ctx = await window.adaReady;
-    b27Perfil = b27Ctx.perfil;
-    b27Rol = b27Ctx.rol;
-    b27Tabs(); b27ApplyRole();
+    b27Ctx = await b27ObtenerContextoSeguro();
+    b27Perfil = b27Ctx?.perfil || b27Ctx?.profile || b27Ctx?.usuario || null;
+    b27Rol = b27Ctx?.rol || b27Perfil?.rol || null;
+
+    if(!b27Perfil){
+      throw new Error("No se encontró el perfil del usuario autenticado.");
+    }
+
+    b27Tabs();
+    b27ApplyRole();
     await b27LoadBase();
     await b27LoadAll();
     b27("btnFiltrar")?.addEventListener("click", b27Filtrar);
