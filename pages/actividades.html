@@ -10,11 +10,11 @@
 </head>
 <body class="module-page role-loading">
   <main class="module-shell">
-    <a href="dashboard.html" class="back-link">← Volver al panel</a>
+    <a href="dashboard.html" class="back-link">← Mi inicio</a>
     <section class="module-view">
       <p class="eyebrow">Bloque 26</p>
       <h1>Actividades y tareas</h1>
-      <p>Publicación, seguimiento y consulta de actividades por curso, materia y fecha de entrega.</p>
+      <p>Publicación, seguimiento y consulta de actividades por curso, materia, fecha de entrega y archivo adjunto.</p>
 
       <div class="b26-kpi-grid">
         <div class="b26-kpi"><span>Actividades</span><strong id="kpiActividades">0</strong></div>
@@ -54,6 +54,13 @@
               <label>Título</label><input id="actividadTitulo" required placeholder="Ej.: Trabajo práctico de investigación">
               <label>Tipo</label><select id="actividadTipo"><option>Trabajo práctico</option><option>Actividad de clase</option><option>Proyecto</option><option>Investigación</option><option>Evaluación domiciliaria</option><option>Otro</option></select>
               <label>Consigna</label><textarea id="actividadDescripcion" required placeholder="Escribí la consigna de la actividad..."></textarea>
+
+              <label>Archivo de consigna</label>
+              <div class="b26-file-box">
+                <input type="file" id="actividadArchivo" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.webp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png,image/webp">
+                <p class="helper-text">Podés adjuntar PDF, Word o imagen. Tamaño máximo sugerido: 10 MB.</p>
+              </div>
+
               <div class="b26-grid-2">
                 <div><label>Fecha de publicación</label><input type="date" id="actividadPublicacion" required></div>
                 <div><label>Fecha límite de entrega</label><input type="date" id="actividadEntrega" required></div>
@@ -68,8 +75,9 @@
           </section>
           <section class="panel-card">
             <h2>Criterio ADA</h2>
-            <p class="helper-text">Este módulo recupera del ADA viejo la lógica de tareas/actividades y prepara el circuito para entregas de alumnos.</p>
-            <div class="b26-note">El docente crea la actividad; el alumno la entrega; el docente la revisa; familia y directivos pueden consultar el avance según permisos.</div>
+            <p class="helper-text">Este ajuste completa el circuito real: el docente puede publicar una consigna escrita y también adjuntar un archivo.</p>
+            <div class="b26-note">El archivo queda guardado en Supabase Storage dentro del bucket privado <strong>ada-actividades</strong>. Los usuarios autenticados lo abren mediante enlace temporal.</div>
+            <div class="b26-note">Formatos habilitados: PDF, Word, JPG, PNG y WEBP.</div>
           </section>
         </div>
       </section>

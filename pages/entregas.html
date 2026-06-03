@@ -10,11 +10,11 @@
 </head>
 <body class="module-page role-loading">
   <main class="module-shell">
-    <a href="dashboard.html" class="back-link">← Volver al panel</a>
+    <a href="dashboard.html" class="back-link">← Mi inicio</a>
     <section class="module-view">
       <p class="eyebrow">Bloque 26</p>
       <h1>Entregas de alumnos</h1>
-      <p>Presentación, revisión y devolución de trabajos vinculados a actividades publicadas.</p>
+      <p>Presentación, revisión y devolución de trabajos vinculados a actividades publicadas, con archivo adjunto.</p>
 
       <div class="b26-kpi-grid">
         <div class="b26-kpi"><span>Actividades disponibles</span><strong id="kpiDisponibles">0</strong></div>
@@ -54,7 +54,13 @@
         <input type="hidden" id="entregaActividadId">
         <label>Respuesta / comentario de entrega</label>
         <textarea id="entregaTexto" required placeholder="Escribí acá la respuesta, explicación o referencia de tu trabajo..."></textarea>
-        <label>Link al archivo o recurso</label>
+        <label>Archivo de entrega</label>
+        <div class="b26-file-box">
+          <input type="file" id="entregaArchivo" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.webp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png,image/webp">
+          <p class="helper-text">Podés adjuntar PDF, Word o imagen. Si ya habías entregado un archivo, solo se reemplaza si elegís uno nuevo.</p>
+          <p id="entregaArchivoActual" class="b26-status-line"></p>
+        </div>
+        <label>Link externo opcional</label>
         <input id="entregaArchivoUrl" placeholder="https://...">
         <button class="btn-primary" type="submit">Enviar entrega</button>
         <p class="form-message" id="msgEntrega"></p>
