@@ -57,6 +57,8 @@ const ADA_PAGE_ACCESS = {
   "calificaciones.html": ["admin", "directivo", "secretaria", "docente"],
   "planillas-secretaria.html": ["admin", "directivo", "secretaria"],
   "libres-materia.html": ["admin", "directivo", "secretaria", "preceptor"],
+  "cierres-academicos.html": ["admin", "directivo", "secretaria"],
+  "boletines-actas.html": ["admin", "directivo", "secretaria", "familia", "alumno"],
   "manuscritos.html": ["admin", "directivo", "secretaria", "docente"]
 };
 
@@ -71,11 +73,11 @@ const ADA_ROLE_HOME = {
 };
 
 const ADA_ROLE_MODULES = {
-  admin: ["dashboard", "institucion", "usuarios", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "ia", "horarios", "asistencia", "calificaciones", "planillas-secretaria", "libres-materia", "reportes", "comunicados", "convivencia", "ficha-alumno", "importar", "manuscritos"],
-  directivo: ["dashboard", "institucion", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "ia", "horarios", "asistencia", "calificaciones", "planillas-secretaria", "libres-materia", "reportes", "comunicados", "convivencia", "ficha-alumno", "manuscritos"],
-  secretaria: ["dashboard", "institucion", "usuarios", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "asistencia", "calificaciones", "planillas-secretaria", "libres-materia", "reportes", "comunicados", "convivencia", "ficha-alumno"],
-  docente: ["mi-docente", "alumnos", "cursos", "materias", "documentos", "ia", "asistencia", "calificaciones", "planillas-secretaria", "libres-materia", "reportes", "comunicados", "ficha-alumno", "manuscritos"],
-  preceptor: ["mi-preceptor", "alumnos", "familias", "asignaciones", "cursos", "documentos", "ia", "asistencia", "calificaciones", "planillas-secretaria", "libres-materia", "reportes", "comunicados", "convivencia", "ficha-alumno"],
+  admin: ["dashboard", "institucion", "usuarios", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "ia", "horarios", "asistencia", "calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines-actas", "reportes", "boletines-actas", "comunicados", "convivencia", "ficha-alumno", "importar", "manuscritos"],
+  directivo: ["dashboard", "institucion", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "ia", "horarios", "asistencia", "calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines-actas", "reportes", "boletines-actas", "comunicados", "convivencia", "ficha-alumno", "manuscritos"],
+  secretaria: ["dashboard", "institucion", "usuarios", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "asistencia", "calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines-actas", "reportes", "boletines-actas", "comunicados", "convivencia", "ficha-alumno"],
+  docente: ["mi-docente", "alumnos", "cursos", "materias", "documentos", "ia", "asistencia", "calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines-actas", "reportes", "boletines-actas", "comunicados", "ficha-alumno", "manuscritos"],
+  preceptor: ["mi-preceptor", "alumnos", "familias", "asignaciones", "cursos", "documentos", "ia", "asistencia", "calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines-actas", "reportes", "boletines-actas", "comunicados", "convivencia", "ficha-alumno"],
   familia: ["mi-familia", "documentos", "ia", "comunicados", "convivencia", "ficha-alumno"],
   alumno: ["mi-alumno", "documentos", "ia", "comunicados", "ficha-alumno"]
 };
@@ -185,6 +187,8 @@ function adaGetModuleLabel(moduleName) {
     "planillas-secretaria": "Planillas Secretaría",
     "libres-materia": "Libres por materia",
     reportes: "Reportes",
+    "cierres-academicos": "Cierres académicos",
+    "boletines-actas": "Boletines y actas",
     comunicados: "Comunicados",
     convivencia: "Convivencia",
     "ficha-alumno": "Ficha integral",
@@ -220,6 +224,8 @@ function adaModuleToHref(moduleName, rol) {
     "planillas-secretaria": "planillas-secretaria.html",
     "libres-materia": "libres-materia.html",
     reportes: "reportes.html",
+    "cierres-academicos": "cierres-academicos.html",
+    "boletines-actas": "boletines-actas.html",
     comunicados: "comunicados.html",
     convivencia: "convivencia.html",
     "ficha-alumno": "ficha-alumno.html",
@@ -285,9 +291,9 @@ function adaInjectRoleSidebar(perfil) {
 
   const groups = [
     { title: "Inicio", modules: allowed.filter(m => m.startsWith("mi-") || m === "dashboard") },
-    { title: "Trabajo diario", modules: allowed.filter(m => ["asistencia", "calificaciones", "libres-materia", "alumnos", "cursos", "materias", "documentos", "comunicados", "convivencia", "ficha-alumno"].includes(m)) },
+    { title: "Trabajo diario", modules: allowed.filter(m => ["asistencia", "calificaciones", "libres-materia", "cierres-academicos", "boletines-actas", "alumnos", "cursos", "materias", "documentos", "comunicados", "convivencia", "ficha-alumno"].includes(m)) },
     { title: "Gestión", modules: allowed.filter(m => ["institucion", "usuarios", "planillas-secretaria", "directivos", "secretaria", "docentes", "preceptoria", "familias", "asignaciones", "importar"].includes(m)) },
-    { title: "Herramientas ADA", modules: allowed.filter(m => ["ia", "reportes", "horarios", "manuscritos"].includes(m)) }
+    { title: "Herramientas ADA", modules: allowed.filter(m => ["ia", "cierres-academicos", "boletines-actas", "reportes", "horarios", "manuscritos"].includes(m)) }
   ].filter(g => g.modules.length > 0);
 
   const sidebar = document.createElement("aside");
