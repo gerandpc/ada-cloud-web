@@ -1,4 +1,11 @@
 
+function adaGoToPortal() {
+  const path = window.location.pathname || "";
+  const isInsidePages = path.includes("/pages/");
+  window.location.href = isInsidePages ? "../index.html" : "index.html";
+}
+
+
 // ADA Cloud Web - Cierre de seguridad por rol
 // Debe cargarse después de supabase-config.js y antes del JS propio de cada página.
 
@@ -77,7 +84,7 @@ function adaCurrentPageName() {
 
 function adaIsLoginOrIndex() {
   const page = adaCurrentPageName();
-  return page === "login.html" || page === "index.html" || page === "";
+  return page === "../index.html" || page === "index.html" || page === "";
 }
 
 function adaNormalizeRole(rol) {
@@ -138,7 +145,15 @@ async function adaLogout() {
   } catch (error) {
     console.error("Error cerrando sesión:", error);
   }
-  window.location.href = "login.html";
+
+  try {
+    localStorage.removeItem("supabase.auth.token");
+    sessionStorage.clear();
+  } catch (storageError) {
+    console.warn("No se pudo limpiar storage local:", storageError);
+  }
+
+  adaGoToPortal();
 }
 
 function adaGetModuleLabel(moduleName) {
@@ -349,7 +364,7 @@ async function adaGetSessionAndProfile() {
   const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
 
   if (sessionError || !sessionData.session) {
-    window.location.replace("login.html");
+    adaGoToPortal();
     return null;
   }
 
@@ -364,7 +379,7 @@ async function adaGetSessionAndProfile() {
   if (perfilError || !perfil) {
     console.error("No se encontró perfil:", perfilError);
     await supabaseClient.auth.signOut();
-    window.location.replace("login.html");
+    adaGoToPortal();
     return null;
   }
 
