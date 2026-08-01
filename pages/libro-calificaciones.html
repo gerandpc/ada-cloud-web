@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Libro de calificaciones - ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque25-calificaciones-boletines.css">
+</head>
+<body class="module-page role-loading">
+  <main class="module-shell calif-shell">
+    <a href="dashboard.html" class="back-link">← Volver al panel</a>
+    <section class="module-view">
+      <div class="calif-hero">
+        <div>
+          <p class="eyebrow">Libro académico</p>
+          <h1>Libro de calificaciones</h1>
+          <p class="calif-subtitle">Consulta consolidada por curso y materia. El acceso y los datos visibles dependen del rol y de las políticas de Supabase.</p>
+        </div>
+        <div class="hero-badges"><span>📘 Consolidado</span><span>🔒 Acceso por rol</span><span>📤 Exportación</span></div>
+      </div>
+
+      <div id="mensajeLibro" class="form-message">Cargando módulo...</div>
+
+      <section class="toolbar-card">
+        <div class="header-grid">
+          <label>Curso<select id="libroCurso"></select></label>
+          <label>Materia<select id="libroMateria"></select></label>
+          <label>Período<select id="libroPeriodo"><option value="">Todos</option><option value="primer_bimestre">Primer bimestre</option><option value="primer_cuatrimestre">Primer cuatrimestre</option><option value="tercer_bimestre">Tercer bimestre</option><option value="segundo_cuatrimestre">Segundo cuatrimestre</option></select></label>
+        </div>
+        <div class="ada-action-row">
+          <button id="btnCargarLibro" type="button" class="btn-primary">Cargar libro</button>
+          <button id="btnExportarLibro" type="button" class="btn-secondary">Exportar Excel</button>
+        </div>
+      </section>
+
+      <section class="planilla-card">
+        <div class="planilla-title-row"><div><h2>Resumen de calificaciones</h2><p class="helper-text">Solo se muestran registros autorizados para el usuario actual.</p></div></div>
+        <div id="tablaLibro" class="table-wrap"></div>
+      </section>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/ada-security.js"></script>
+  <script src="../assets/js/libro-calificaciones.js"></script>
+</body>
+</html>
