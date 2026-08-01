@@ -26,6 +26,58 @@ function cursoPerteneceAlDocente(row, cursoIds, cursoNombres) {
   return false;
 }
 
+function fechaCorta(value) {
+  if (!value) return "Sin fecha";
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? "Sin fecha" : d.toLocaleDateString("es-AR");
+}
+
+async function consultaSegura(promise, fallback = []) {
+  try {
+    const result = await promise;
+    if (result?.error) throw result.error;
+    return result?.data || fallback;
+  } catch (error) {
+    console.warn("Consulta opcional del espacio docente:", error.message);
+    return fallback;
+  }
+}
+
+function renderEstadoTrabajo(programas, actividades, entregas) {
+  const programasPendientes = programas.filter(p => p.estado === "pendiente").length;
+  const programasObservados = programas.filter(p => p.estado === "observado").length;
+  const actividadesBorrador = actividades.filter(a => ["borrador", "pausada"].includes(a.estado)).length;
+  const actividadesPublicadas = actividades.filter(a => a.estado === "publicada").length;
+  const entregasPendientes = entregas.filter(e => !e.calificacion && !e.corregido_en && e.estado !== "corregida").length;
+
+  qs("statProgramas").textContent = programas.length;
+  qs("statActividades").textContent = actividadesPublicadas;
+  qs("statCorrecciones").textContent = entregasPendientes;
+
+  const alertas = [];
+  if (programasPendientes) alertas.push(item("Programas en revisión", `${programasPendientes} programa(s) enviados a Dirección.`, '<a class="role-action-link" href="programas.html">Ver programas</a>'));
+  if (programasObservados) alertas.push(item("Programas observados", `${programasObservados} programa(s) requieren correcciones.`, '<a class="role-action-link" href="programas.html">Corregir ahora</a>'));
+  if (actividadesBorrador) alertas.push(item("Actividades sin publicar", `${actividadesBorrador} actividad(es) continúan en borrador.`, '<a class="role-action-link" href="actividades.html">Revisar actividades</a>'));
+  if (entregasPendientes) alertas.push(item("Correcciones pendientes", `${entregasPendientes} entrega(s) esperan devolución.`, '<a class="role-action-link" href="entregas.html">Corregir entregas</a>'));
+
+  qs("pendientesDocente").innerHTML = alertas.length
+    ? alertas.join("")
+    : item("Trabajo al día", "No hay observaciones ni correcciones pendientes.", '<span class="role-badge role-badge-ok">Sin pendientes</span>');
+
+  const proximas = actividades
+    .filter(a => a.estado === "publicada")
+    .sort((a, b) => new Date(a.fecha_entrega || "2999-12-31") - new Date(b.fecha_entrega || "2999-12-31"))
+    .slice(0, 6);
+
+  qs("proximasActividades").innerHTML = proximas.length
+    ? proximas.map(a => item(
+        a.titulo || "Actividad",
+        `${a.materias?.nombre || "Materia"} · ${a.cursos?.nombre || "Curso"} · entrega ${fechaCorta(a.fecha_entrega)}`,
+        '<a class="role-action-link" href="actividades.html">Abrir actividad</a>'
+      )).join("")
+    : "<p class='helper-text'>No hay actividades publicadas próximas.</p>";
+}
+
 async function cargarDocente() {
   const contexto = await obtenerSesionPerfil();
   if (!contexto) return;
@@ -33,19 +85,15 @@ async function cargarDocente() {
 
   qs("tituloDocente").textContent = `Hola, ${perfilActual.nombre || "docente"}`;
 
-  const [matRes, alumnosRes, docsRes] = await Promise.all([
-    supabaseClient.from("v_docente_mis_materias").select("*").eq("docente_id", perfilActual.id).order("curso"),
-    supabaseClient.from("v_docente_mis_alumnos").select("*").eq("docente_id", perfilActual.id).order("alumno_apellido"),
-    supabaseClient.from("documentos")
-      .select("titulo,descripcion,tipo_documento,puede_usarse_ia")
-      .eq("activo", true)
-      .eq("visible_general", true)
-      .order("creado_en", { ascending: false })
-      .limit(10)
+  const [materias, alumnosRows, documentos, programas, actividades, entregas] = await Promise.all([
+    consultaSegura(supabaseClient.from("v_docente_mis_materias").select("*").eq("docente_id", perfilActual.id).order("curso")),
+    consultaSegura(supabaseClient.from("v_docente_mis_alumnos").select("*").eq("docente_id", perfilActual.id).order("alumno_apellido")),
+    consultaSegura(supabaseClient.from("documentos").select("titulo,descripcion,tipo_documento,puede_usarse_ia").eq("activo", true).eq("visible_general", true).order("creado_en", { ascending: false }).limit(10)),
+    consultaSegura(supabaseClient.from("programas_materia").select("id,titulo,estado,curso_id,materia_id").eq("creado_por", perfilActual.id).limit(200)),
+    consultaSegura(supabaseClient.from("actividades").select("id,titulo,estado,fecha_entrega,curso_id,materia_id,cursos(id,nombre),materias(id,nombre)").eq("docente_id", perfilActual.id).limit(250)),
+    consultaSegura(supabaseClient.from("entregas_actividades").select("id,actividad_id,estado,calificacion,corregido_en,actividades!inner(docente_id)").eq("actividades.docente_id", perfilActual.id).limit(500))
   ]);
 
-  const materias = matRes.data || [];
-  const alumnosRows = alumnosRes.data || [];
   const cursosUnicos = [...new Set(materias.map(m => m.curso_id).filter(Boolean))];
   const cursoIds = new Set(cursosUnicos.map(String));
   const cursoNombres = new Set(materias.map(m => m.curso).filter(Boolean).map(String));
@@ -54,26 +102,24 @@ async function cargarDocente() {
 
   let seguimientos = [];
   if (cursoIds.size || cursoNombres.size) {
-    const segRes = await supabaseClient
-      .from("v_reporte_seguimiento_detalle")
-      .select("*")
-      .order("creado_en", { ascending: false })
-      .limit(100);
-    seguimientos = (segRes.data || []).filter(row => cursoPerteneceAlDocente(row, cursoIds, cursoNombres)).slice(0, 12);
+    const segRes = await consultaSegura(
+      supabaseClient.from("v_reporte_seguimiento_detalle").select("*").order("creado_en", { ascending: false }).limit(100)
+    );
+    seguimientos = segRes.filter(row => cursoPerteneceAlDocente(row, cursoIds, cursoNombres)).slice(0, 12);
   }
-
-  const documentos = docsRes.data || [];
 
   qs("statMaterias").textContent = materias.length;
   qs("statCursos").textContent = cursosUnicos.length;
   qs("statAlumnos").textContent = Object.keys(alumnosUnicos).length;
   qs("statSeguimientos").textContent = seguimientos.length;
 
+  renderEstadoTrabajo(programas, actividades, entregas);
+
   qs("misMaterias").innerHTML = materias.length
     ? materias.map(m => item(
         m.materia || "Materia",
         `${m.curso || "-"} · ${m.tipo_materia || "Materia"} · ${m.carga_horaria_semanal || "-"} hs semanales`,
-        `<span class="role-badge">${escapeHtml(m.curso || "-")}</span>`
+        `<div class="role-item-actions"><span class="role-badge">${escapeHtml(m.curso || "-")}</span><a class="role-action-link" href="calificaciones.html">Calificaciones</a><a class="role-action-link" href="asistencia.html">Asistencia</a></div>`
       )).join("")
     : "<p class='helper-text'>Todavía no tenés materias asignadas.</p>";
 
@@ -101,13 +147,13 @@ async function cargarDocente() {
     ? documentos.map(d => item(
         d.titulo || "Documento",
         d.descripcion || d.tipo_documento || "Documento",
-        d.puede_usarse_ia ? `<span class="role-badge">Usable por ADA IA</span>` : ""
+        d.puede_usarse_ia ? '<span class="role-badge">Usable por ADA IA</span>' : ""
       )).join("")
     : "<p class='helper-text'>No hay documentos generales habilitados.</p>";
 }
 
 cargarDocente().catch((error) => {
   console.error(error);
-  const box = qs("seguimientosDocente");
+  const box = qs("pendientesDocente") || qs("seguimientosDocente");
   if (box) box.textContent = "No se pudo cargar el espacio docente.";
 });
