@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="../assets/css/style.css">
   <link rel="stylesheet" href="../assets/css/bloque23-ui-refresh.css">
   <link rel="stylesheet" href="../assets/css/bloque21-comunicados.css">
+  <link rel="stylesheet" href="../assets/css/bloque34-comunicados-notificaciones.css">
 </head>
 <body class="module-page role-loading">
   <main class="module-shell">
@@ -21,6 +22,7 @@
         <div class="comms-stat"><strong id="statActivos">0</strong><span>Activos</span></div>
         <div class="comms-stat"><strong id="statMios">0</strong><span>Disponibles</span></div>
         <div class="comms-stat"><strong id="statLeidos">0</strong><span>Leídos</span></div>
+        <div class="comms-stat"><strong id="statPendientes">0</strong><span>Pendientes</span></div>
       </div>
 
       <div class="comms-tabs">
@@ -32,6 +34,16 @@
       <section id="tab-mis" class="comms-section active">
         <section class="panel-card">
           <h2>Comunicados disponibles</h2>
+          <div class="comms-toolbar">
+            <input type="search" id="filtroComunicados" placeholder="Buscar por título, tipo o contenido">
+            <select id="filtroPrioridad">
+              <option value="">Todas las prioridades</option>
+              <option value="alta">Alta</option>
+              <option value="media">Media</option>
+              <option value="baja">Baja</option>
+            </select>
+            <label class="comms-filter-check"><input type="checkbox" id="soloNoLeidos"> Solo no leídos</label>
+          </div>
           <div id="listaMisComunicados"></div>
         </section>
       </section>
@@ -116,6 +128,16 @@
       <section id="tab-gestion" class="comms-section">
         <section class="panel-card">
           <h2>Todos los comunicados</h2>
+          <div class="comms-toolbar">
+            <input type="search" id="filtroGestion" placeholder="Buscar comunicado">
+            <select id="filtroEstadoGestion">
+              <option value="">Todos los estados</option>
+              <option value="vigente">Vigentes</option>
+              <option value="borrador">Borradores</option>
+              <option value="vencido">Vencidos</option>
+              <option value="archivado">Archivados</option>
+            </select>
+          </div>
           <div id="tablaGestionComunicados" class="table-wrap"></div>
         </section>
       </section>
