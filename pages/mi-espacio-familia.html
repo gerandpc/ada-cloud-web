@@ -2,18 +2,16 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Mi espacio familia - ADA Cloud</title>
   <link rel="stylesheet" href="../assets/css/style.css">
   <link rel="stylesheet" href="../assets/css/bloque23-ui-refresh.css">
   <link rel="stylesheet" href="../assets/css/bloque19-portales.css">
+  <link rel="stylesheet" href="../assets/css/bloque39-familia.css">
 </head>
 <body class="module-page role-loading">
-
   <aside class="sidebar ada-role-sidebar">
-    <div class="sidebar-logo">
-      <h2>ADA</h2>
-      <span>Familia</span>
-    </div>
+    <div class="sidebar-logo"><h2>ADA</h2><span>Familia</span></div>
     <nav class="sidebar-nav">
       <a href="mi-espacio-familia.html" class="sidebar-link" data-module="mi-familia" data-home-link>Mi inicio</a>
       <div class="sidebar-section open">
@@ -28,9 +26,7 @@
       </div>
       <div class="sidebar-section open">
         <button class="sidebar-section-button" type="button">Herramientas ADA <span class="chevron">›</span></button>
-        <div class="sidebar-submenu">
-          <a href="ia.html" data-module="ia">ADA IA</a>
-        </div>
+        <div class="sidebar-submenu"><a href="ia.html" data-module="ia">ADA IA</a></div>
       </div>
     </nav>
     <button type="button" class="sidebar-logout" data-logout>Cerrar sesión</button>
@@ -38,50 +34,66 @@
 
   <main class="module-shell">
     <a href="dashboard.html" class="back-link">← Volver al panel</a>
-
     <section class="module-view">
-      <div class="portal-hero">
-        <p>ADA Familias</p>
-        <h1>Mi espacio familiar</h1>
-        <p>Seguimiento de hijos/as vinculados, asistencia, documentos y alertas institucionales.</p>
+      <div class="portal-hero familia-hero">
+        <div>
+          <p>ADA Familias</p>
+          <h1 id="tituloFamilia">Mi espacio familiar</h1>
+          <p id="subtituloFamilia">Información académica y administrativa de los estudiantes vinculados.</p>
+        </div>
         <div class="portal-actions">
+          <a class="btn-primary" href="boletines.html">Ver boletines</a>
+          <a class="btn-secondary" href="documentacion.html">Documentación</a>
           <a class="btn-secondary" href="ia.html">Consultar ADA IA</a>
-          <a class="btn-secondary" href="documentos.html">Documentos habilitados</a>
         </div>
       </div>
 
-      <div class="portal-grid">
-        <div class="portal-card"><strong id="statHijos">0</strong><span>Hijos/as</span></div>
-        <div class="portal-card"><strong id="statRegistros">0</strong><span>Registros</span></div>
-        <div class="portal-card"><strong id="statAusencias">0</strong><span>Ausencias</span></div>
-        <div class="portal-card"><strong id="statSeguimientos">0</strong><span>Seguimientos</span></div>
-      </div>
-
-      <section class="panel-card">
-        <h2>Hijos/as vinculados</h2>
+      <section class="panel-card familia-selector-card">
+        <div class="panel-card-head">
+          <div><span class="eyebrow">Estudiante seleccionado</span><h2>Hijos/as vinculados</h2></div>
+          <span id="estadoCargaFamilia" class="familia-status">Cargando...</span>
+        </div>
         <div id="selectorHijos" class="child-selector"></div>
       </section>
 
       <div id="alertaFamilia"></div>
 
-      <div class="portal-section-grid">
+      <div class="portal-grid familia-kpis">
+        <div class="portal-card"><strong id="statHijos">0</strong><span>Hijos/as vinculados</span></div>
+        <div class="portal-card"><strong id="statPendientes">0</strong><span>Actividades pendientes</span></div>
+        <div class="portal-card"><strong id="statAusencias">0</strong><span>Ausencias computables</span></div>
+        <div class="portal-card"><strong id="statBoletines">0</strong><span>Boletines publicados</span></div>
+        <div class="portal-card"><strong id="statSeguimientos">0</strong><span>Seguimientos visibles</span></div>
+      </div>
+
+      <div class="portal-section-grid familia-main-grid">
         <section class="panel-card">
-          <h2>Datos del estudiante</h2>
+          <div class="panel-card-head"><h2>Datos del estudiante</h2></div>
           <div id="datosHijo" class="portal-list"></div>
         </section>
 
         <section class="panel-card">
-          <h2>Asistencia</h2>
-          <div id="asistenciaHijo" class="table-wrap"></div>
+          <div class="panel-card-head"><h2>Próximas actividades</h2></div>
+          <div id="actividadesHijo" class="familia-task-list"></div>
         </section>
 
         <section class="panel-card">
-          <h2>Seguimientos visibles</h2>
+          <div class="panel-card-head"><h2>Boletines publicados</h2><a href="boletines.html">Ver todos</a></div>
+          <div id="boletinesHijo" class="portal-list"></div>
+        </section>
+
+        <section class="panel-card">
+          <div class="panel-card-head"><h2>Seguimientos visibles</h2></div>
           <div id="seguimientosHijo" class="portal-list"></div>
         </section>
 
-        <section class="panel-card">
-          <h2>Documentos para familias</h2>
+        <section class="panel-card familia-wide-card">
+          <div class="panel-card-head"><h2>Asistencia reciente</h2></div>
+          <div id="asistenciaHijo" class="table-wrap"></div>
+        </section>
+
+        <section class="panel-card familia-wide-card">
+          <div class="panel-card-head"><h2>Documentos para familias</h2><a href="documentos.html">Ver documentos</a></div>
           <div id="documentosFamilia" class="portal-list"></div>
         </section>
       </div>
@@ -90,7 +102,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../assets/js/supabase-config.js"></script>
- <script src="../assets/js/ada-security.js"></script>
+  <script src="../assets/js/ada-security.js"></script>
   <script src="../assets/js/mi-espacio-familia.js"></script>
   <script src="../assets/js/ui-effects.js"></script>
 </body>
