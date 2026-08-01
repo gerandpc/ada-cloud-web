@@ -14,7 +14,8 @@
     <section class="module-view">
       <p class="eyebrow">Bloque 27</p>
       <h1>Programas de materia y bibliografía</h1>
-      <p>Gestión de programas, archivos curriculares y recursos sugeridos para que ADA IA trabaje luego con contenidos institucionales habilitados.</p>
+      <p>Gestión, revisión, aprobación y publicación de programas de materia.</p>
+      <div id="roleProgramasMessage" class="b27-role-message" aria-live="polite"></div>
 
       <div class="b27-hero">
         <div>
@@ -48,7 +49,7 @@
           <div class="form-grid">
             <div><label>Curso</label><select id="filtroCurso"></select></div>
             <div><label>Materia</label><select id="filtroMateria"></select></div>
-            <div><label>Estado</label><select id="filtroEstado"><option value="">Todos</option><option value="borrador">Borrador</option><option value="pendiente">Pendiente</option><option value="aprobado">Aprobado</option><option value="observado">Observado</option></select></div>
+            <div><label>Estado</label><select id="filtroEstado"><option value="">Todos</option><option value="borrador">Borrador</option><option value="pendiente">En revisión</option><option value="aprobado">Aprobado</option><option value="observado">Observado</option></select></div>
           </div>
           <div class="b27-actions"><button class="btn-primary" id="btnFiltrar" type="button">Filtrar</button><button class="btn-secondary" id="btnLimpiar" type="button">Limpiar</button></div>
           <div id="listaProgramas" class="b27-list"></div>
@@ -58,7 +59,7 @@
       <section id="tab-nuevo" class="b27-section" data-b27-manage>
         <div class="b27-layout">
           <section class="panel-card">
-            <h2>Nuevo programa</h2>
+            <h2 id="programaFormTitle">Nuevo programa</h2>
             <form id="formPrograma" class="ada-form">
               <div class="b27-grid-2">
                 <div><label>Curso</label><select id="programaCurso" required></select></div>
@@ -84,7 +85,7 @@
                 <div><label>Estado</label><select id="programaEstado"><option value="pendiente">Pendiente de aprobación</option><option value="borrador">Borrador</option><option value="aprobado">Aprobado</option><option value="observado">Observado</option></select></div>
                 <div><label><input type="checkbox" id="programaIa" checked> Habilitar como fuente para ADA IA cuando esté aprobado</label></div>
               </div>
-              <button class="btn-primary" type="submit">Guardar programa</button>
+              <div class="b27-card-actions"><button class="btn-primary" type="submit"><span id="programaSubmitText">Guardar programa</span></button><button class="btn-secondary is-hidden" id="btnCancelarEdicion" type="button">Cancelar</button></div>
               <p class="form-message" id="msgPrograma"></p>
             </form>
           </section>
