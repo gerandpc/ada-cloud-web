@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="../assets/css/style.css">
   <link rel="stylesheet" href="../assets/css/bloque23-ui-refresh.css">
   <link rel="stylesheet" href="../assets/css/bloque20-roles-operativos.css">
+  <link rel="stylesheet" href="../assets/css/bloque37-docente.css">
 </head>
 <body class="module-page role-loading">
 
@@ -51,21 +52,36 @@
         <p>ADA Docente</p>
         <h1 id="tituloDocente">Mi espacio docente</h1>
         <p>Materias, cursos, alumnos, asistencia, documentos y seguimiento pedagógico.</p>
-        <div class="quick-actions">
-          <a class="btn-secondary" href="asistencia.html">Cargar asistencia</a>
-          <a class="btn-secondary" href="documentos.html">Documentos</a>
-          <a class="btn-secondary" href="ia.html">ADA IA</a>
+        <div class="quick-actions docente-quick-actions">
+          <a class="btn-primary" href="programas.html">Cargar programa</a>
+          <a class="btn-secondary" href="actividades.html">Crear actividad</a>
+          <a class="btn-secondary" href="entregas.html">Corregir entregas</a>
+          <a class="btn-secondary" href="calificaciones.html">Cargar notas</a>
+          <a class="btn-secondary" href="asistencia.html">Tomar asistencia</a>
         </div>
       </div>
 
-      <div class="role-grid">
+      <div class="role-grid docente-kpi-grid">
         <div class="role-card"><strong id="statMaterias">0</strong><span>Materias</span></div>
         <div class="role-card"><strong id="statCursos">0</strong><span>Cursos</span></div>
         <div class="role-card"><strong id="statAlumnos">0</strong><span>Alumnos</span></div>
+        <div class="role-card"><strong id="statProgramas">0</strong><span>Programas</span></div>
+        <div class="role-card"><strong id="statActividades">0</strong><span>Actividades publicadas</span></div>
+        <div class="role-card role-card-alert"><strong id="statCorrecciones">0</strong><span>Correcciones pendientes</span></div>
         <div class="role-card"><strong id="statSeguimientos">0</strong><span>Seguimientos</span></div>
       </div>
 
-      <div class="role-section-grid">
+      <div class="role-section-grid docente-section-grid">
+        <section class="panel-card docente-priority-panel">
+          <div class="panel-heading-row"><div><p class="eyebrow">Prioridad</p><h2>Mi trabajo pendiente</h2></div><a href="entregas.html" class="role-action-link">Ver entregas</a></div>
+          <div id="pendientesDocente" class="role-list"></div>
+        </section>
+
+        <section class="panel-card">
+          <div class="panel-heading-row"><div><p class="eyebrow">Agenda</p><h2>Próximas actividades</h2></div><a href="actividades.html" class="role-action-link">Administrar</a></div>
+          <div id="proximasActividades" class="role-list"></div>
+        </section>
+
         <section class="panel-card">
           <h2>Mis materias y cursos</h2>
           <div id="misMaterias" class="role-list"></div>
