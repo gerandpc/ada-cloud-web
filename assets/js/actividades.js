@@ -6,6 +6,7 @@ let b26aCursos = [];
 let b26aMaterias = [];
 let b26aActividades = [];
 let b26aEntregas = [];
+let b26aEditingId = null;
 
 const B26_MANAGE_ROLES = ["docente"];
 const B26_STORAGE_BUCKET = "ada-actividades";
@@ -66,6 +67,7 @@ function b26aTabs(){
 function b26aApplyRole(){
   const can = b26aCanManage();
   document.querySelectorAll("[data-b26-manage]").forEach(el=>{ el.style.display = can ? "" : "none"; });
+  document.querySelectorAll("[data-b26-followup]").forEach(el=>{ el.style.display = ["admin","directivo","secretaria","docente"].includes(b26aRol) ? "" : "none"; });
 }
 
 async function b26aLoadBase(){
@@ -78,9 +80,72 @@ async function b26aLoadBase(){
   b26aMaterias = materiasRes.data || [];
   const materiaLabel = m => `${m.nombre || "Materia"}${m.cursos?.nombre ? " · " + m.cursos.nombre : ""}`;
   ["actividadCurso","filtroCurso"].forEach(id=>{ if(b26a(id)) b26a(id).innerHTML = b26aOption(b26aCursos,"Seleccionar curso"); });
-  ["actividadMateria","filtroMateria"].forEach(id=>{ if(b26a(id)) b26a(id).innerHTML = b26aOption(b26aMaterias,"Seleccionar materia",materiaLabel); });
+  if(b26a("filtroMateria")) b26a("filtroMateria").innerHTML = b26aOption(b26aMaterias,"Seleccionar materia",materiaLabel);
+  b26aSyncMateriaOptions();
   if(b26a("actividadPublicacion")) b26a("actividadPublicacion").value = b26aToday();
   if(b26a("actividadEntrega")) b26a("actividadEntrega").value = b26aToday();
+}
+
+function b26aSyncMateriaOptions(selectedId=""){
+  const cursoId = b26a("actividadCurso")?.value || "";
+  const materias = cursoId ? b26aMaterias.filter(m => String(m.curso_id || m.cursos?.id || "") === String(cursoId)) : [];
+  if(b26a("actividadMateria")){
+    b26a("actividadMateria").innerHTML = b26aOption(materias, cursoId ? "Seleccionar materia" : "Primero seleccioná un curso", m=>m.nombre || "Materia");
+    if(selectedId && materias.some(m=>String(m.id)===String(selectedId))) b26a("actividadMateria").value = selectedId;
+  }
+}
+function b26aOpenForm(){
+  document.querySelectorAll(".b26-tab").forEach(b=>b.classList.toggle("active", b.dataset.tab === "nueva"));
+  document.querySelectorAll(".b26-section").forEach(sec=>sec.classList.toggle("active", sec.id === "tab-nueva"));
+  b26a("actividadTitulo")?.focus();
+}
+function b26aResetForm(){
+  b26aEditingId = null;
+  const form = b26a("formActividad");
+  form?.reset();
+  if(b26a("actividadId")) b26a("actividadId").value = "";
+  if(b26a("tituloFormActividad")) b26a("tituloFormActividad").textContent = "Nueva actividad";
+  if(b26a("btnGuardarActividad")) b26a("btnGuardarActividad").textContent = "Guardar actividad";
+  if(b26a("btnCancelarEdicion")) b26a("btnCancelarEdicion").style.display = "none";
+  if(b26a("actividadPublicacion")) b26a("actividadPublicacion").value = b26aToday();
+  if(b26a("actividadEntrega")) b26a("actividadEntrega").value = b26aToday();
+  b26aSyncMateriaOptions();
+}
+function b26aEditarActividad(id){
+  const a = b26aActividades.find(x=>String(x.id)===String(id));
+  if(!a || !b26aCanManage()) return;
+  b26aEditingId = a.id;
+  b26a("actividadId").value = a.id;
+  b26a("actividadCurso").value = a.curso_id || "";
+  b26aSyncMateriaOptions(a.materia_id || "");
+  b26a("actividadTitulo").value = a.titulo || "";
+  b26a("actividadTipo").value = a.tipo || "Otro";
+  b26a("actividadDescripcion").value = a.descripcion || "";
+  b26a("actividadPublicacion").value = a.fecha_publicacion || b26aToday();
+  b26a("actividadEntrega").value = a.fecha_entrega || b26aToday();
+  b26a("actividadPuntaje").value = a.puntaje_maximo || 100;
+  b26a("actividadEstado").value = a.estado || "borrador";
+  b26a("tituloFormActividad").textContent = "Editar actividad";
+  b26a("btnGuardarActividad").textContent = "Guardar cambios";
+  b26a("btnCancelarEdicion").style.display = "inline-flex";
+  b26a("msgActividad").textContent = "";
+  b26aOpenForm();
+}
+async function b26aCambiarEstado(id, estado){
+  if(!b26aCanManage()) return;
+  const { error } = await supabaseClient.from("actividades").update({estado}).eq("id", id).eq("docente_id", b26aPerfil.id);
+  if(error){ alert("No se pudo cambiar el estado: " + error.message); return; }
+  await b26aLoadActividades();
+}
+async function b26aEliminarActividad(id){
+  if(!b26aCanManage()) return;
+  const actividad = b26aActividades.find(a=>String(a.id)===String(id));
+  const entregas = b26aEntregas.filter(e=>String(e.actividad_id)===String(id)).length;
+  if(entregas){ alert("No se puede eliminar una actividad que ya tiene entregas. Cerrala para conservar el historial."); return; }
+  if(!confirm(`¿Eliminar definitivamente “${actividad?.titulo || "esta actividad"}”?`)) return;
+  const { error } = await supabaseClient.from("actividades").delete().eq("id", id).eq("docente_id", b26aPerfil.id);
+  if(error){ alert("No se pudo eliminar: " + error.message); return; }
+  await b26aLoadActividades();
 }
 
 async function b26aLoadActividades(){
@@ -160,8 +225,16 @@ function b26aRenderActividades(rows){
       </div>
       ${archivo ? `<div class="b26-attachment-row">${archivo}</div>` : ""}
       <p class="b26-status-line">Tipo: ${b26aEscape(a.tipo || "-")} · Puntaje: ${b26aEscape(a.puntaje_maximo || "-")} · Creada por: ${b26aEscape((a.creador?.nombre || "") + " " + (a.creador?.apellido || ""))}</p>
+      ${b26aCanManage() ? `<div class="b26-actions">
+        <button class="btn-secondary" type="button" data-edit-actividad="${b26aEscape(a.id)}">Editar</button>
+        ${a.estado === "publicada" ? `<button class="btn-secondary" type="button" data-state-actividad="${b26aEscape(a.id)}" data-state="cerrada">Cerrar</button>` : `<button class="btn-secondary" type="button" data-state-actividad="${b26aEscape(a.id)}" data-state="publicada">Publicar</button>`}
+        ${entregas === 0 ? `<button class="btn-secondary" type="button" data-delete-actividad="${b26aEscape(a.id)}">Eliminar</button>` : ""}
+      </div>` : ""}
     </article>`;
   }).join("");
+  cont.querySelectorAll("[data-edit-actividad]").forEach(btn=>btn.addEventListener("click",()=>b26aEditarActividad(btn.dataset.editActividad)));
+  cont.querySelectorAll("[data-state-actividad]").forEach(btn=>btn.addEventListener("click",()=>b26aCambiarEstado(btn.dataset.stateActividad, btn.dataset.state)));
+  cont.querySelectorAll("[data-delete-actividad]").forEach(btn=>btn.addEventListener("click",()=>b26aEliminarActividad(btn.dataset.deleteActividad)));
   if(b26aCanManage() || ["admin","directivo","secretaria"].includes(b26aRol)) b26aRenderSeguimiento();
 }
 
@@ -186,6 +259,9 @@ async function b26aGuardarActividad(ev){
   const file = b26a("actividadArchivo")?.files?.[0] || null;
   const validation = b26aValidateFile(file);
   if(validation){ b26a("msgActividad").textContent = validation; return; }
+  const fechaPublicacion = b26a("actividadPublicacion").value;
+  const fechaEntrega = b26a("actividadEntrega").value;
+  if(fechaEntrega < fechaPublicacion){ b26a("msgActividad").textContent = "La fecha límite no puede ser anterior a la publicación."; return; }
   const payload = {
     curso_id: b26a("actividadCurso").value,
     materia_id: b26a("actividadMateria").value,
@@ -199,7 +275,15 @@ async function b26aGuardarActividad(ev){
     docente_id: b26aPerfil.id,
     creado_por: b26aPerfil.id
   };
-  const { data, error } = await supabaseClient.from("actividades").insert(payload).select("id").single();
+  let data = null;
+  let error = null;
+  if(b26aEditingId){
+    const res = await supabaseClient.from("actividades").update(payload).eq("id", b26aEditingId).eq("docente_id", b26aPerfil.id).select("id").single();
+    data = res.data; error = res.error;
+  }else{
+    const res = await supabaseClient.from("actividades").insert(payload).select("id").single();
+    data = res.data; error = res.error;
+  }
   if(error){ b26a("msgActividad").textContent = "Error: " + error.message; return; }
   if(file){
     try{
@@ -213,10 +297,8 @@ async function b26aGuardarActividad(ev){
       return;
     }
   }
-  b26a("msgActividad").textContent = "Actividad guardada correctamente.";
-  ev.target.reset();
-  b26a("actividadPublicacion").value = b26aToday();
-  b26a("actividadEntrega").value = b26aToday();
+  b26a("msgActividad").textContent = b26aEditingId ? "Cambios guardados correctamente." : "Actividad guardada correctamente.";
+  b26aResetForm();
   await b26aLoadActividades();
 }
 
@@ -244,6 +326,8 @@ async function iniciarBloque26Actividades(){
 }
 
 b26a("formActividad")?.addEventListener("submit", b26aGuardarActividad);
+b26a("actividadCurso")?.addEventListener("change", ()=>b26aSyncMateriaOptions());
+b26a("btnCancelarEdicion")?.addEventListener("click", b26aResetForm);
 b26a("btnFiltrar")?.addEventListener("click", b26aFiltrar);
 b26a("btnLimpiar")?.addEventListener("click", ()=>{ b26a("filtroCurso").value=""; b26a("filtroMateria").value=""; b26a("filtroEstado").value=""; b26aRenderActividades(b26aActividades); });
 

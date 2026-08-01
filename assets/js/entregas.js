@@ -6,12 +6,14 @@ let b26eActividades = [];
 let b26eEntregas = [];
 let b26eAlumnos = [];
 
-const B26_REVIEW_ROLES = ["admin", "directivo", "docente"];
+const B26_REVIEW_ROLES = ["docente"];
+const B26_OVERSIGHT_ROLES = ["admin", "directivo", "secretaria"];
 const B26_STORAGE_BUCKET = "ada-actividades";
 const B26_MAX_FILE_SIZE = 10 * 1024 * 1024;
 const B26_ALLOWED_EXT = ["pdf", "doc", "docx", "jpg", "jpeg", "png", "webp"];
 
 function b26eCanReview(){ return B26_REVIEW_ROLES.includes(b26eRol); }
+function b26eCanOversee(){ return B26_OVERSIGHT_ROLES.includes(b26eRol); }
 function b26eCanSubmit(){ return b26eRol === "alumno"; }
 function b26eEscape(v){ return String(v ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
 function b26ePill(text, cls="info"){ return `<span class="b26-pill ${cls}">${b26eEscape(text)}</span>`; }
@@ -63,8 +65,10 @@ function b26eTabs(){
 }
 
 function b26eApplyRole(){
-  const review = b26eCanReview();
-  document.querySelectorAll("[data-b26-review]").forEach(el=>{ el.style.display = review ? "" : "none"; });
+  const visible = b26eCanReview() || b26eCanOversee();
+  document.querySelectorAll("[data-b26-review]").forEach(el=>{ el.style.display = visible ? "" : "none"; });
+  const tab = document.querySelector('[data-tab="revision"]');
+  if(tab && b26eCanOversee()) tab.textContent = "Seguimiento institucional";
 }
 
 async function b26eLoad(){
@@ -114,27 +118,14 @@ async function b26eLoad(){
     entregasQuery = entregasQuery.eq("alumno_id", b26ePerfil.id);
   }
 
-  const requests = [actividadesQuery, entregasQuery];
-
-  if(b26eCanReview()){
-    requests.push(
-      supabaseClient
-        .from("profiles")
-        .select("id,nombre,apellido,email,rol,activo")
-        .eq("rol", "alumno")
-        .eq("activo", true)
-        .order("apellido", {ascending:true})
-    );
-  }
-
-  const results = await Promise.all(requests);
-  const [actRes, entRes, alumRes] = results;
+  const results = await Promise.all([actividadesQuery, entregasQuery]);
+  const [actRes, entRes] = results;
 
   for(const r of results) if(r?.error) throw r.error;
 
   b26eActividades = actRes.data || [];
   b26eEntregas = entRes.data || [];
-  b26eAlumnos = alumRes?.data || [];
+  b26eAlumnos = [];
 
   if(b26eRol === "docente"){
     const ids = new Set(b26eActividades.map(a=>a.id));
@@ -145,6 +136,7 @@ async function b26eLoad(){
   }
 
   await b26eAttachSignedUrls();
+  b26eCargarFiltros();
   renderEntregas();
   renderRevision();
   updateKpis();
@@ -162,7 +154,8 @@ function renderEntregas(){
     const propia = entregaDeActividad(a.id);
     const vencida = b26eVencida(a);
     const estado = propia?.estado || (b26eCanSubmit() ? "pendiente" : "sin entrega");
-    const boton = b26eCanSubmit() && a.estado === "publicada" && !vencida ? `<button class="btn-primary" type="button" data-abrir-entrega="${a.id}">${propia ? "Actualizar entrega" : "Realizar entrega"}</button>` : "";
+    const editable = !propia || ["entregada","devuelta","pendiente"].includes(propia.estado);
+    const boton = b26eCanSubmit() && a.estado === "publicada" && !vencida && editable ? `<button class="btn-primary" type="button" data-abrir-entrega="${a.id}">${propia ? "Actualizar entrega" : "Realizar entrega"}</button>` : "";
     const archivoConsigna = b26eFileLink(a, "Consigna adjunta");
     const archivoEntrega = b26eFileLink(propia, "Archivo de entrega");
     return `<article class="b26-card ${vencida && !propia ? "b26-highlight" : ""}">
@@ -184,12 +177,26 @@ function renderEntregas(){
   cont.querySelectorAll("[data-abrir-entrega]").forEach(btn=>btn.addEventListener("click",()=>abrirModalEntrega(btn.dataset.abrirEntrega)));
 }
 
+function b26eFiltrarRevision(){
+  const actividadId = b26e("filtroRevisionActividad")?.value || "";
+  const estado = b26e("filtroRevisionEstado")?.value || "";
+  return b26eEntregas.filter(e => (!actividadId || String(e.actividad_id)===String(actividadId)) && (!estado || e.estado===estado));
+}
+function b26eCargarFiltros(){
+  const select = b26e("filtroRevisionActividad");
+  if(!select) return;
+  const actuales = select.value;
+  select.innerHTML = `<option value="">Todas las actividades</option>` + b26eActividades.map(a=>`<option value="${b26eEscape(a.id)}">${b26eEscape(a.titulo)}</option>`).join("");
+  if([...select.options].some(o=>o.value===actuales)) select.value = actuales;
+}
+
 function renderRevision(){
   const el = b26e("tablaRevision");
   if(!el) return;
   if(!b26eCanReview()){ el.innerHTML = `<p class="helper-text">La revisión está disponible para docentes y equipos de gestión.</p>`; return; }
-  if(!b26eEntregas.length){ el.innerHTML = `<p class="helper-text">Todavía no hay entregas para revisar.</p>`; return; }
-  const rows = b26eEntregas.map(e=>`<tr><td>${b26eEscape(e.actividades?.titulo || "-")}</td><td>${b26eEscape((e.alumno?.apellido || "") + ", " + (e.alumno?.nombre || ""))}</td><td>${b26ePill(e.estado || "entregada", b26eEstadoClase(e.estado))}</td><td>${e.calificacion ?? "-"}</td><td>${e.entregado_en ? new Date(e.entregado_en).toLocaleString("es-AR") : "-"}</td><td>${b26eFileLink(e, "Archivo") || (e.archivo_url ? b26eFileLink({archivo_url:e.archivo_url}, "Link") : "-")}</td><td><button class="btn-secondary" type="button" data-revisar="${e.id}">Revisar</button></td></tr>`).join("");
+  const entregas = b26eFiltrarRevision();
+  if(!entregas.length){ el.innerHTML = `<p class="helper-text">No hay entregas que coincidan con los filtros.</p>`; return; }
+  const rows = entregas.map(e=>`<tr><td>${b26eEscape(e.actividades?.titulo || "-")}</td><td>${b26eEscape((e.alumno?.apellido || "") + ", " + (e.alumno?.nombre || ""))}</td><td>${b26ePill(e.estado || "entregada", b26eEstadoClase(e.estado))}</td><td>${e.calificacion ?? "-"}</td><td>${e.entregado_en ? new Date(e.entregado_en).toLocaleString("es-AR") : "-"}</td><td>${b26eFileLink(e, "Archivo") || (e.archivo_url ? b26eFileLink({archivo_url:e.archivo_url}, "Link") : "-")}</td><td>${b26eCanReview() ? `<button class="btn-secondary" type="button" data-revisar="${e.id}">Revisar</button>` : "Solo lectura"}</td></tr>`).join("");
   el.innerHTML = `<table class="ada-table"><thead><tr><th>Actividad</th><th>Alumno</th><th>Estado</th><th>Nota</th><th>Fecha</th><th>Archivo</th><th>Acción</th></tr></thead><tbody>${rows}</tbody></table>`;
   el.querySelectorAll("[data-revisar]").forEach(btn=>btn.addEventListener("click",()=>abrirModalRevision(btn.dataset.revisar)));
 }
@@ -206,6 +213,7 @@ function updateKpis(){
 function abrirModalEntrega(actividadId){
   const act = b26eActividades.find(a=>a.id === actividadId);
   const propia = entregaDeActividad(actividadId);
+  if(propia?.estado === "revisada"){ alert("La entrega ya fue revisada y no puede modificarse."); return; }
   b26e("entregaActividadId").value = actividadId;
   b26e("modalEntregaTitulo").textContent = act?.titulo || "Actividad";
   b26e("entregaTexto").value = propia?.texto_entrega || "";
@@ -300,6 +308,8 @@ b26e("btnCerrarModalEntrega")?.addEventListener("click", cerrarModalEntrega);
 b26e("btnCerrarModalRevision")?.addEventListener("click", cerrarModalRevision);
 b26e("formEntrega")?.addEventListener("submit", guardarEntrega);
 b26e("formRevision")?.addEventListener("submit", guardarRevision);
+b26e("filtroRevisionActividad")?.addEventListener("change", renderRevision);
+b26e("filtroRevisionEstado")?.addEventListener("change", renderRevision);
 document.addEventListener("keydown", (e)=>{ if(e.key === "Escape"){ cerrarModalEntrega(); cerrarModalRevision(); }});
 
 iniciarBloque26Entregas();
