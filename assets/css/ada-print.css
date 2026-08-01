@@ -1,0 +1,96 @@
+.ada-pdf-export {
+  position: fixed;
+  right: 24px;
+  bottom: 86px;
+  z-index: 1200;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 10px 14px;
+  border: 1px solid rgba(20, 83, 75, .22);
+  border-radius: 999px;
+  background: #ffffff;
+  color: #14534b;
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+  box-shadow: 0 10px 28px rgba(15, 55, 50, .16);
+}
+.ada-pdf-export:hover { transform: translateY(-1px); box-shadow: 0 14px 34px rgba(15, 55, 50, .22); }
+.print-only { display: none !important; }
+
+@media (max-width: 720px) {
+  .ada-pdf-export { right: 14px; bottom: 76px; padding: 10px 12px; }
+  .ada-pdf-export span:last-child { display: none; }
+}
+
+@media print {
+  @page { size: A4; margin: 14mm 12mm 16mm; }
+  html, body { background: #fff !important; color: #111 !important; }
+  body { font-size: 10.5pt !important; }
+  .print-only { display: flex !important; }
+  .no-print,
+  .sidebar,
+  .ada-role-sidebar,
+  .ada-global-logout,
+  .ada-account-access,
+  .ada-pdf-export,
+  .back-link,
+  button,
+  [role="button"],
+  .tabs,
+  .calif-tabs,
+  .sidebar-toggle,
+  .toast-container,
+  .modal-overlay { display: none !important; }
+  .ada-print-header {
+    position: static !important;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    padding: 0 0 10px;
+    margin: 0 0 14px;
+    border-bottom: 1px solid #cbd5e1;
+    color: #334155;
+    font-size: 9pt;
+  }
+  .ada-print-header strong { color: #0f3f3a; font-size: 12pt; }
+  .dashboard-main,
+  .module-shell,
+  .module-view,
+  .main-content,
+  .content-area,
+  .ada-with-sidebar .module-shell {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+  }
+  .panel-card,
+  .toolbar-card,
+  .planilla-card,
+  .kpi-card,
+  .dashboard-card,
+  .module-card,
+  .card {
+    box-shadow: none !important;
+    break-inside: avoid;
+    border-color: #cbd5e1 !important;
+    background: #fff !important;
+  }
+  .table-wrap { overflow: visible !important; }
+  table { width: 100% !important; border-collapse: collapse !important; font-size: 8.5pt !important; }
+  th, td { border: 1px solid #cbd5e1 !important; padding: 5px !important; color: #111 !important; }
+  thead { display: table-header-group; }
+  tr { break-inside: avoid; }
+  input, select, textarea {
+    border: 0 !important;
+    box-shadow: none !important;
+    color: #111 !important;
+    background: transparent !important;
+  }
+  a { color: #111 !important; text-decoration: none !important; }
+  h1, h2, h3 { break-after: avoid; color: #0f2f2c !important; }
+}
