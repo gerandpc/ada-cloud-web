@@ -1,0 +1,30 @@
+/* ADA Bloque 36 — Panel ejecutivo de Dirección */
+.directivo-executive[hidden]{display:none!important}
+.directivo-executive{margin:0 0 28px}
+.directivo-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:16px 0}
+.directivo-kpi{background:#fff;border:1px solid rgba(15,71,82,.14);border-radius:18px;padding:18px;box-shadow:0 10px 25px rgba(20,52,61,.08)}
+.directivo-kpi .label{display:block;color:#62747b;font-size:.84rem;font-weight:700;margin-bottom:7px}
+.directivo-kpi strong{display:block;font-size:2rem;line-height:1;color:#14343d}
+.directivo-kpi small{display:block;margin-top:8px;color:#6f8086}
+.directivo-kpi.warn{border-left:5px solid #e8a52b}
+.directivo-kpi.ok{border-left:5px solid #24a58a}
+.directivo-kpi.info{border-left:5px solid #4e82d8}
+.directivo-kpi.danger{border-left:5px solid #d65b5b}
+.directivo-board{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-top:16px}
+.directivo-panel{background:#fff;border:1px solid rgba(15,71,82,.14);border-radius:18px;padding:18px;box-shadow:0 10px 25px rgba(20,52,61,.08)}
+.directivo-panel h2{margin:0 0 12px;font-size:1.05rem}
+.directivo-list{display:grid;gap:10px}
+.directivo-item{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid rgba(15,71,82,.09)}
+.directivo-item:last-child{border-bottom:0}
+.directivo-item a{font-weight:800;color:#155966;text-decoration:none}
+.directivo-item p{margin:4px 0 0;color:#6b7a80;font-size:.88rem}
+.directivo-badge{display:inline-flex;align-items:center;justify-content:center;min-width:34px;padding:5px 9px;border-radius:999px;background:#eef6f7;color:#155966;font-weight:800}
+.directivo-badge.warn{background:#fff4d8;color:#8b6100}
+.directivo-badge.ok{background:#e8f7f1;color:#15755f}
+.directivo-alert{padding:12px;border-radius:14px;background:#f7fafb;color:#52666d}
+.directivo-alert.error{background:#fff0f0;color:#9a3d3d}
+.directivo-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.directivo-actions a{display:block;padding:13px 14px;border:1px solid rgba(15,71,82,.14);border-radius:14px;background:#f8fbfc;color:#174550;text-decoration:none;font-weight:800}
+.directivo-actions a:hover{border-color:#28a995;background:#f0faf8}
+@media (max-width:980px){.directivo-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.directivo-board{grid-template-columns:1fr}}
+@media (max-width:620px){.directivo-kpis,.directivo-actions{grid-template-columns:1fr}}
