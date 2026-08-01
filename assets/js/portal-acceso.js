@@ -47,18 +47,28 @@ function setServiceStatus(text, state = "") {
 }
 
 async function comprobarServicio() {
-  if (!window.supabaseClient) {
-    setServiceStatus("Servicio no disponible", "is-offline");
+  if (!window.supabaseClient || typeof SUPABASE_URL === "undefined" || typeof SUPABASE_ANON_KEY === "undefined") {
+    setServiceStatus("Configuración incompleta", "is-offline");
     return false;
   }
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 8000);
   try {
-    const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 7000));
-    await Promise.race([supabaseClient.auth.getSession(), timeout]);
+    const response = await fetch(`${SUPABASE_URL}/auth/v1/health`, {
+      method: "GET",
+      headers: { apikey: SUPABASE_ANON_KEY },
+      cache: "no-store",
+      signal: controller.signal
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
     setServiceStatus("Servicio disponible", "is-online");
     return true;
-  } catch (_) {
-    setServiceStatus("Servicio sin conexión", "is-offline");
+  } catch (error) {
+    const paused = String(error?.message || "").includes("503");
+    setServiceStatus(paused ? "Servicio pausado" : "Servicio sin conexión", "is-offline");
     return false;
+  } finally {
+    clearTimeout(timer);
   }
 }
 
