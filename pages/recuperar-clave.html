@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crear nueva contraseña | ADA</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/portal-acceso.css">
+</head>
+<body class="ada-access-body">
+  <main class="ada-access" style="max-width:560px;justify-content:center;">
+    <section class="ada-modal-card" style="width:100%;margin:auto;">
+      <div class="ada-modal-role-badge">🔐</div>
+      <p class="ada-modal-eyebrow">Recuperación de acceso</p>
+      <h2>Nueva contraseña</h2>
+      <p class="ada-modal-description">Ingresá una contraseña nueva de al menos 8 caracteres.</p>
+      <form id="resetForm" class="ada-modal-form">
+        <label for="newPassword">Nueva contraseña</label>
+        <input id="newPassword" type="password" minlength="8" autocomplete="new-password" required>
+        <label for="repeatPassword">Repetir contraseña</label>
+        <input id="repeatPassword" type="password" minlength="8" autocomplete="new-password" required>
+        <button type="submit" id="resetSubmit">Guardar contraseña</button>
+      </form>
+      <p id="resetMessage" class="ada-modal-message" aria-live="polite"></p>
+      <p><a href="../index.html">Volver al ingreso</a></p>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/recuperar-clave.js"></script>
+</body>
+</html>
