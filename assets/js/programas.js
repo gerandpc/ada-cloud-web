@@ -118,7 +118,7 @@ function b27RenderProgramas(rows){
       ${archivo ? `<div>${archivo}</div>` : ""}
       ${p.observaciones ? `<div class="b27-observation"><strong>Observación de revisión:</strong> ${b27Escape(p.observaciones)}</div>` : ""}
       ${b27Historial(p)}
-      ${(canEdit||canSend||canVersion) ? `<div class="b27-card-actions">${canEdit ? `<button class="btn-secondary" type="button" onclick="b27OpenEditor('${p.id}')">Editar</button>` : ""}${canSend ? `<button class="btn-primary" type="button" onclick="b27EnviarRevision('${p.id}')">Enviar a revisión</button>` : ""}${canVersion ? `<button class="btn-secondary" type="button" onclick="b27NuevaVersion('${p.id}')">Crear nueva versión</button>` : ""}</div>` : ""}
+      <div class="b27-card-actions"><button class="btn-secondary ada-record-export" type="button" onclick="b27ExportPrograma('${p.id}')">Exportar programa a PDF</button>${canEdit ? `<button class="btn-secondary" type="button" onclick="b27OpenEditor('${p.id}')">Editar</button>` : ""}${canSend ? `<button class="btn-primary" type="button" onclick="b27EnviarRevision('${p.id}')">Enviar a revisión</button>` : ""}${canVersion ? `<button class="btn-secondary" type="button" onclick="b27NuevaVersion('${p.id}')">Crear nueva versión</button>` : ""}</div>
       ${canApprove ? `<div class="b27-card-actions"><button class="btn-secondary" type="button" onclick="b27ToggleApprove('${p.id}')">Revisar programa</button></div><div class="b27-approve-box" id="approve-${p.id}"><label>Observación para el docente</label><textarea id="obs-${p.id}" placeholder="Es obligatoria para observar el programa."></textarea><div class="b27-card-actions"><button class="btn-primary" type="button" onclick="b27CambiarEstado('${p.id}','aprobado')">Aprobar y publicar</button><button class="btn-secondary" type="button" onclick="b27CambiarEstado('${p.id}','observado')">Devolver con observaciones</button></div></div>` : ""}
     </article>`;
   }).join("");
@@ -275,3 +275,25 @@ window.b27CambiarEstado=b27CambiarEstado;
 window.b27EnviarRevision=b27EnviarRevision;
 window.b27OpenEditor=b27OpenEditor;
 window.b27NuevaVersion=b27NuevaVersion;
+
+function b27ExportPrograma(id){
+  const p=b27Programas.find(x=>x.id===id);
+  if(!p){ alert("No se encontró el programa seleccionado."); return; }
+  if(!window.ADAExport){ alert("El módulo de exportación todavía no terminó de cargar. Intentá nuevamente."); return; }
+  const recursos=b27Recursos.filter(r=>r.programa_id===p.id);
+  const recursosHtml=recursos.length ? `<table><thead><tr><th>Tipo</th><th>Título</th><th>Autor / fuente</th><th>Descripción</th></tr></thead><tbody>${recursos.map(r=>`<tr><td>${b27Escape(r.tipo||"-")}</td><td>${b27Escape(r.titulo||"-")}</td><td>${b27Escape(r.autor_fuente||"-")}</td><td>${b27Escape(r.descripcion||"-")}</td></tr>`).join("")}</tbody></table>` : '<span class="empty">Sin bibliografía o recursos asociados.</span>';
+  window.ADAExport.exportDocument(p.titulo || "Programa de materia",[
+    {label:"Curso",value:p.cursos?.nombre || "No informado"},
+    {label:"Materia",value:p.materias?.nombre || "No informada"},
+    {label:"Año lectivo",value:String(p.anio_lectivo || "No informado")},
+    {label:"Versión",value:p.version || "1.0"},
+    {label:"Estado",value:b27Status(p.estado)},
+    {label:"Fundamentación / enfoque",value:p.fundamentacion || "No informado"},
+    {label:"Objetivos",value:p.objetivos || "No informado"},
+    {label:"Contenidos / unidades",value:p.contenidos || "No informado"},
+    {label:"Metodología y evaluación",value:p.metodologia_evaluacion || "No informado"},
+    {label:"Observaciones de revisión",value:p.observaciones || "Sin observaciones"},
+    {label:"Bibliografía y recursos",value:recursosHtml,html:true}
+  ],{subtitle:"ADA Cloud · Programa curricular"});
+}
+window.b27ExportPrograma=b27ExportPrograma;

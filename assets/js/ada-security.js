@@ -32,7 +32,7 @@ const ADA_PAGE_ACCESS = {
   "secretaria.html": ["admin", "directivo", "secretaria"],
   "docentes.html": ["admin", "directivo", "secretaria"],
   "preceptoria.html": ["admin", "directivo", "secretaria", "preceptor"],
-  "alumnos.html": ["admin", "directivo", "secretaria", "preceptor"],
+  "alumnos.html": ["admin", "directivo", "secretaria", "preceptor", "docente"],
   "familias.html": ["admin", "directivo", "secretaria", "preceptor"],
 
   "cursos.html": ["admin", "directivo", "secretaria", "preceptor", "docente"],
@@ -52,20 +52,20 @@ const ADA_PAGE_ACCESS = {
   "mi-espacio-docente.html": ["docente"],
   "mi-espacio-preceptor.html": ["preceptor"],
 
-  "convivencia.html": ["admin", "directivo", "secretaria", "preceptor"],
-  "ficha-alumno.html": ["admin", "directivo", "secretaria", "preceptor", "docente"],
+  "convivencia.html": ["admin", "directivo", "secretaria", "preceptor", "familia"],
+  "ficha-alumno.html": ["admin", "directivo", "secretaria", "preceptor", "docente", "familia", "alumno"],
   "calificaciones.html": ["admin", "directivo", "secretaria", "docente"],
-  "libro-calificaciones.html": ["admin", "directivo", "secretaria", "docente"],
   "planillas-secretaria.html": ["admin", "directivo", "secretaria"],
   "libres-materia.html": ["admin", "directivo", "secretaria", "preceptor"],
   "cierres-academicos.html": ["admin", "directivo", "secretaria"],
   "boletines-actas.html": ["admin", "directivo", "secretaria", "familia", "alumno"],
+  "manuscritos.html": ["admin", "directivo", "secretaria", "docente"],
 
   // Flujos pedagógicos y académicos
   "programas.html": ["admin", "directivo", "docente", "alumno", "familia"],
   "actividades.html": ["admin", "directivo", "docente", "alumno"],
   "entregas.html": ["admin", "directivo", "docente", "alumno"],
-  "boletines.html": ["admin", "directivo", "secretaria", "alumno", "familia"],
+  "boletines.html": ["admin", "directivo", "secretaria", "docente", "alumno", "familia"],
   "documentacion.html": ["admin", "directivo", "secretaria", "preceptor", "familia", "alumno"],
   "auditoria.html": ["admin", "directivo"],
   "logs.html": ["admin"],
@@ -84,13 +84,13 @@ const ADA_ROLE_HOME = {
 };
 
 const ADA_ROLE_MODULES = {
-  admin: ["mi-perfil", "dashboard", "institucion", "usuarios", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "programas", "actividades", "entregas", "documentos", "documentacion", "ia", "horarios", "asistencia", "calificaciones", "libro-calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines", "boletines-actas", "reportes", "comunicados", "convivencia", "ficha-alumno", "importar", "auditoria", "logs", "estado-sistema"],
-  directivo: ["mi-perfil", "dashboard", "institucion", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "programas", "actividades", "entregas", "documentos", "documentacion", "ia", "horarios", "asistencia", "calificaciones", "libro-calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines", "boletines-actas", "reportes", "comunicados", "convivencia", "ficha-alumno", "auditoria", "estado-sistema"],
-  secretaria: ["mi-perfil", "secretaria", "institucion", "usuarios", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "documentacion", "asistencia", "calificaciones", "libro-calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines", "boletines-actas", "reportes", "comunicados", "convivencia", "ficha-alumno", "estado-sistema"],
-  docente: ["mi-perfil", "mi-docente", "cursos", "materias", "programas", "actividades", "entregas", "documentos", "ia", "asistencia", "calificaciones", "libro-calificaciones", "reportes", "comunicados", "ficha-alumno"],
-  preceptor: ["mi-perfil", "mi-preceptor", "alumnos", "familias", "asignaciones", "cursos", "documentos", "documentacion", "ia", "asistencia", "libres-materia", "reportes", "comunicados"],
-  familia: ["mi-perfil", "mi-familia", "programas", "boletines", "documentos", "documentacion", "ia", "comunicados"],
-  alumno: ["mi-perfil", "mi-alumno", "programas", "actividades", "entregas", "boletines", "documentos", "documentacion", "ia", "comunicados"]
+  admin: ["mi-perfil", "dashboard", "institucion", "usuarios", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "programas", "actividades", "entregas", "documentos", "documentacion", "ia", "horarios", "asistencia", "calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines", "boletines-actas", "reportes", "comunicados", "convivencia", "ficha-alumno", "importar", "manuscritos", "auditoria", "logs", "estado-sistema"],
+  directivo: ["mi-perfil", "dashboard", "institucion", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "programas", "actividades", "entregas", "documentos", "documentacion", "ia", "horarios", "asistencia", "calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines", "boletines-actas", "reportes", "comunicados", "convivencia", "ficha-alumno", "manuscritos", "auditoria", "estado-sistema"],
+  secretaria: ["mi-perfil", "secretaria", "institucion", "usuarios", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "documentacion", "asistencia", "calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines", "boletines-actas", "reportes", "comunicados", "convivencia", "ficha-alumno", "estado-sistema"],
+  docente: ["mi-perfil", "mi-docente", "alumnos", "cursos", "materias", "programas", "actividades", "entregas", "documentos", "ia", "asistencia", "calificaciones", "reportes", "comunicados", "ficha-alumno", "manuscritos"],
+  preceptor: ["mi-perfil", "mi-preceptor", "alumnos", "familias", "asignaciones", "cursos", "documentos", "documentacion", "ia", "asistencia", "libres-materia", "reportes", "comunicados", "convivencia", "ficha-alumno"],
+  familia: ["mi-perfil", "mi-familia", "programas", "boletines", "documentos", "documentacion", "ia", "comunicados", "convivencia", "ficha-alumno"],
+  alumno: ["mi-perfil", "mi-alumno", "programas", "actividades", "entregas", "boletines", "documentos", "documentacion", "ia", "comunicados", "ficha-alumno"]
 };
 
 function adaCurrentPageName() {
@@ -200,7 +200,6 @@ function adaGetModuleLabel(moduleName) {
     horarios: "Horarios",
     asistencia: "Asistencia",
     calificaciones: "Calificaciones",
-    "libro-calificaciones": "Libro de calificaciones",
     "planillas-secretaria": "Planillas Secretaría",
     "libres-materia": "Libres por materia",
     reportes: "Reportes",
@@ -247,7 +246,6 @@ function adaModuleToHref(moduleName, rol) {
     horarios: "horarios.html",
     asistencia: "asistencia.html",
     calificaciones: "calificaciones.html",
-    "libro-calificaciones": "libro-calificaciones.html",
     "planillas-secretaria": "planillas-secretaria.html",
     "libres-materia": "libres-materia.html",
     reportes: "reportes.html",
@@ -323,9 +321,9 @@ function adaInjectRoleSidebar(perfil) {
 
   const groups = [
     { title: "Inicio", modules: allowed.filter(m => m.startsWith("mi-") || m === "dashboard") },
-    { title: "Trabajo diario", modules: allowed.filter(m => ["programas", "actividades", "entregas", "asistencia", "calificaciones", "libro-calificaciones", "libres-materia", "cierres-academicos", "boletines", "boletines-actas", "alumnos", "cursos", "materias", "documentos", "documentacion", "comunicados"].includes(m)) },
+    { title: "Trabajo diario", modules: allowed.filter(m => ["programas", "actividades", "entregas", "asistencia", "calificaciones", "libres-materia", "cierres-academicos", "boletines", "boletines-actas", "alumnos", "cursos", "materias", "documentos", "documentacion", "comunicados", "convivencia", "ficha-alumno"].includes(m)) },
     { title: "Gestión", modules: allowed.filter(m => ["institucion", "usuarios", "planillas-secretaria", "directivos", "secretaria", "docentes", "preceptoria", "familias", "asignaciones", "importar"].includes(m)) },
-    { title: "Herramientas ADA", modules: allowed.filter(m => ["ia", "cierres-academicos", "boletines-actas", "reportes", "horarios", "auditoria", "logs", "estado-sistema"].includes(m)) }
+    { title: "Herramientas ADA", modules: allowed.filter(m => ["ia", "cierres-academicos", "boletines-actas", "reportes", "horarios", "manuscritos", "auditoria", "logs", "estado-sistema"].includes(m)) }
   ].filter(g => g.modules.length > 0);
 
   const sidebar = document.createElement("aside");
@@ -403,53 +401,6 @@ function adaInjectGlobalLogout(perfil) {
   document.body.appendChild(btn);
 }
 
-
-function adaEnsurePrintStyles() {
-  if (document.querySelector('link[data-ada-print-styles]')) return;
-  const link = document.createElement("link");
-  link.rel = "stylesheet";
-  link.href = "../assets/css/ada-print.css";
-  link.dataset.adaPrintStyles = "true";
-  document.head.appendChild(link);
-}
-
-function adaPrintableTitle() {
-  const heading = document.querySelector("h1");
-  return (heading?.textContent || document.title || "ADA").trim();
-}
-
-function adaExportCurrentViewToPdf() {
-  const previousTitle = document.title;
-  const cleanTitle = adaPrintableTitle().replace(/[\\/:*?"<>|]+/g, "-");
-  document.title = `${cleanTitle} - ADA`;
-  document.body.classList.add("ada-printing");
-  window.setTimeout(() => window.print(), 80);
-  window.setTimeout(() => {
-    document.body.classList.remove("ada-printing");
-    document.title = previousTitle;
-  }, 800);
-}
-
-function adaInjectPdfExport(perfil) {
-  if (adaIsLoginOrIndex() || document.querySelector(".ada-pdf-export")) return;
-  adaEnsurePrintStyles();
-
-  const button = document.createElement("button");
-  button.type = "button";
-  button.className = "ada-pdf-export no-print";
-  button.title = "Imprimir o guardar esta vista como PDF";
-  button.setAttribute("aria-label", "Imprimir o guardar esta vista como PDF");
-  button.innerHTML = '<span aria-hidden="true">▣</span><span>Guardar PDF</span>';
-  button.addEventListener("click", adaExportCurrentViewToPdf);
-  document.body.appendChild(button);
-
-  const meta = document.createElement("div");
-  meta.className = "ada-print-header print-only";
-  const fullName = `${perfil?.nombre || ""} ${perfil?.apellido || ""}`.trim();
-  meta.innerHTML = `<strong>ADA · ${adaPrintableTitle()}</strong><span>${fullName ? `Usuario: ${fullName} · ` : ""}${new Date().toLocaleString("es-AR")}</span>`;
-  document.body.prepend(meta);
-}
-
 function adaBuildAccessDenied(perfil, pagina) {
   const rol = adaNormalizeRole(perfil.rol);
   document.body.classList.remove("role-loading");
@@ -522,7 +473,6 @@ async function adaGetSessionAndProfile() {
   adaHideUnauthorizedModules(perfil.rol);
   adaInjectGlobalLogout(perfil);
   adaInjectAccountAccess(perfil);
-  adaInjectPdfExport(perfil);
 
   return { session, perfil };
 }
@@ -564,6 +514,24 @@ window.adaGetSessionAndProfile = adaGetSessionAndProfile;
 window.obtenerSesionPerfil = obtenerSesionPerfil;
 window.adaHideUnauthorizedModules = adaHideUnauthorizedModules;
 window.adaInjectAccountAccess = adaInjectAccountAccess;
-window.adaExportCurrentViewToPdf = adaExportCurrentViewToPdf;
 window.ADA_ROLE_HOME = ADA_ROLE_HOME;
 window.ADA_ROLE_MODULES = ADA_ROLE_MODULES;
+function adaLoadContextualExports() {
+  if (!document.querySelector('link[data-ada-export]')) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = '../assets/css/ada-export.css';
+    link.dataset.adaExport = '1';
+    document.head.appendChild(link);
+  }
+  if (!document.querySelector('script[data-ada-export]')) {
+    const script = document.createElement('script');
+    script.src = '../assets/js/ada-export.js';
+    script.defer = true;
+    script.dataset.adaExport = '1';
+    document.head.appendChild(script);
+  }
+}
+
+adaLoadContextualExports();
+
