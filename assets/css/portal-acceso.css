@@ -483,3 +483,49 @@ body.modal-open {
     font-size: 1.65rem;
   }
 }
+
+/* Bloque 5: estado de conexión y recuperación de acceso */
+.ada-login-tools {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.ada-link-button {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--selected-role-color, #2563eb);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ada-link-button:disabled {
+  opacity: .55;
+  cursor: wait;
+}
+
+.ada-service-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .82rem;
+  color: var(--ada-muted);
+}
+
+.ada-service-status::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: #94a3b8;
+  box-shadow: 0 0 0 4px rgba(148,163,184,.16);
+}
+
+.ada-service-status.is-online::before { background: #16a34a; box-shadow: 0 0 0 4px rgba(22,163,74,.14); }
+.ada-service-status.is-offline::before { background: #dc2626; box-shadow: 0 0 0 4px rgba(220,38,38,.14); }
