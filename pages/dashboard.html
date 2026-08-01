@@ -5,6 +5,7 @@
   <title>Dashboard - ADA Cloud</title>
   <link rel="stylesheet" href="../assets/css/style.css">
   <link rel="stylesheet" href="../assets/css/bloque23-ui-refresh.css">
+  <link rel="stylesheet" href="../assets/css/bloque36-directivo.css">
 </head>
 <body class="dashboard-body role-loading">
 
@@ -87,6 +88,39 @@
         <p id="descripcionRol">ADA ajustará colores, módulos y permisos según el tipo de usuario.</p>
       </div>
       <span class="role-pill" id="rolePill">ROL</span>
+    </section>
+
+
+    <section id="directivoExecutive" class="directivo-executive" hidden aria-label="Resumen ejecutivo de Dirección">
+      <div class="dashboard-group">
+        <h2>Resumen ejecutivo</h2>
+        <p id="directivoResumenEstado" class="form-message">Cargando indicadores institucionales...</p>
+        <div class="directivo-kpis">
+          <article class="directivo-kpi info"><span class="label">Estudiantes activos</span><strong id="dirKpiAlumnos">—</strong><small>Matrícula visible para Dirección</small></article>
+          <article class="directivo-kpi info"><span class="label">Docentes activos</span><strong id="dirKpiDocentes">—</strong><small>Plantel docente registrado</small></article>
+          <article class="directivo-kpi warn"><span class="label">Programas en revisión</span><strong id="dirKpiProgramas">—</strong><small>Requieren decisión directiva</small></article>
+          <article class="directivo-kpi ok"><span class="label">Cursos activos</span><strong id="dirKpiCursos">—</strong><small>Estructura académica actual</small></article>
+        </div>
+        <div class="directivo-board">
+          <article class="directivo-panel">
+            <h2>Pendientes de gestión</h2>
+            <div id="directivoPendientes" class="directivo-list">
+              <div class="directivo-alert">Consultando programas y cierres...</div>
+            </div>
+          </article>
+          <article class="directivo-panel">
+            <h2>Accesos ejecutivos</h2>
+            <div class="directivo-actions">
+              <a href="programas.html">Revisar programas</a>
+              <a href="cierres-academicos.html">Cierres académicos</a>
+              <a href="reportes.html">Indicadores y reportes</a>
+              <a href="auditoria.html">Auditoría de acciones</a>
+              <a href="asistencia.html">Asistencia institucional</a>
+              <a href="boletines-actas.html">Boletines y actas</a>
+            </div>
+          </article>
+        </div>
+      </div>
     </section>
 
     <section class="dashboard-group">
