@@ -1,0 +1,1 @@
+.ada-pdf-toolbar{display:flex;justify-content:flex-end;gap:8px;margin:0 0 10px}.ada-pdf-button{white-space:nowrap}.ada-record-export{display:inline-flex;align-items:center;gap:6px}@media(max-width:680px){.ada-pdf-toolbar{justify-content:stretch}.ada-pdf-toolbar .ada-pdf-button{width:100%;justify-content:center}}
