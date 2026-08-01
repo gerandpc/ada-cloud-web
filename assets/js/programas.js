@@ -31,7 +31,14 @@ function b27FileLink(item, label="Ver archivo"){ if(item?.archivo_signed_url) re
 function b27Msg(id, text, ok=true){ const el=b27(id); if(!el) return; el.textContent=text; el.className=`form-message ${ok ? "ok" : "error"}`; }
 
 function b27Tabs(){ document.querySelectorAll(".b27-tab").forEach(btn=>btn.addEventListener("click",()=>{ document.querySelectorAll(".b27-tab").forEach(b=>b.classList.remove("active")); document.querySelectorAll(".b27-section").forEach(s=>s.classList.remove("active")); btn.classList.add("active"); b27(`tab-${btn.dataset.tab}`)?.classList.add("active"); })); }
-function b27ApplyRole(){ const can=b27CanManage(); document.querySelectorAll("[data-b27-manage]").forEach(el=>{ el.style.display = can ? "" : "none"; }); }
+function b27ApplyRole(){
+  const canManage=b27CanManage();
+  document.querySelectorAll("[data-b27-manage]").forEach(el=>{ el.style.display = canManage ? "" : "none"; });
+  const estado=b27("programaEstado");
+  if(estado && b27Rol === "docente"){
+    estado.innerHTML='<option value="borrador">Borrador</option><option value="pendiente">Enviar a aprobación</option>';
+  }
+}
 
 async function b27LoadBase(){
   const [cursosRes, materiasRes] = await Promise.all([
@@ -56,6 +63,13 @@ async function b27LoadAll(){
   if(recRes.error) throw recRes.error;
   b27Programas = progRes.data || [];
   b27Recursos = recRes.data || [];
+  if(b27Rol === "docente"){
+    b27Programas = b27Programas.filter(p => p.creado_por === b27Perfil.id);
+  } else if(["alumno","familia"].includes(b27Rol)){
+    b27Programas = b27Programas.filter(p => p.estado === "aprobado");
+  }
+  const permitidos = new Set(b27Programas.map(p=>p.id));
+  b27Recursos = b27Recursos.filter(r => permitidos.has(r.programa_id));
   await b27AttachSignedUrls();
   b27RenderProgramas(b27Programas);
   b27RenderRecursos();
@@ -70,7 +84,7 @@ function b27RenderProgramas(rows){
   cont.innerHTML=rows.map(p=>{
     const recursos=b27Recursos.filter(r=>r.programa_id===p.id).length;
     const archivo=b27FileLink(p,"Ver programa adjunto");
-    const canApprove=b27CanApprove();
+    const canApprove=b27CanApprove() && p.estado !== "aprobado";
     const ai = p.habilitado_ia ? b27Pill("Fuente IA", "ai") : b27Pill("No IA", "info");
     return `<article class="b27-card">
       <h3>${b27Escape(p.titulo)}</h3>

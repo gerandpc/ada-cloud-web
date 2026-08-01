@@ -7,7 +7,7 @@ let b26aMaterias = [];
 let b26aActividades = [];
 let b26aEntregas = [];
 
-const B26_MANAGE_ROLES = ["admin", "directivo", "docente"];
+const B26_MANAGE_ROLES = ["docente"];
 const B26_STORAGE_BUCKET = "ada-actividades";
 const B26_MAX_FILE_SIZE = 10 * 1024 * 1024;
 const B26_ALLOWED_EXT = ["pdf", "doc", "docx", "jpg", "jpeg", "png", "webp"];
@@ -89,6 +89,8 @@ async function b26aLoadActividades(){
     .select("*, cursos(id,nombre), materias(id,nombre), creador:profiles!actividades_creado_por_fkey(id,nombre,apellido,email)")
     .order("fecha_entrega", {ascending:false})
     .limit(300);
+  if(b26aRol === "docente") query = query.eq("docente_id", b26aPerfil.id);
+  if(["alumno","familia"].includes(b26aRol)) query = query.eq("estado", "publicada");
   const res = await query;
   if(res.error) throw res.error;
   b26aActividades = res.data || [];
@@ -106,6 +108,12 @@ async function b26aLoadEntregas(){
     .limit(500);
   if(res.error) throw res.error;
   b26aEntregas = res.data || [];
+  if(b26aRol === "docente"){
+    const ids = new Set(b26aActividades.map(a=>a.id));
+    b26aEntregas = b26aEntregas.filter(e=>ids.has(e.actividad_id));
+  } else if(!["admin","directivo","secretaria"].includes(b26aRol)){
+    b26aEntregas = [];
+  }
 }
 
 function b26aRenderActividades(rows){
@@ -129,7 +137,7 @@ function b26aRenderActividades(rows){
       <p class="b26-status-line">Tipo: ${b26aEscape(a.tipo || "-")} · Puntaje: ${b26aEscape(a.puntaje_maximo || "-")} · Creada por: ${b26aEscape((a.creador?.nombre || "") + " " + (a.creador?.apellido || ""))}</p>
     </article>`;
   }).join("");
-  b26aRenderSeguimiento();
+  if(b26aCanManage() || ["admin","directivo","secretaria"].includes(b26aRol)) b26aRenderSeguimiento();
 }
 
 function b26aRenderSeguimiento(){

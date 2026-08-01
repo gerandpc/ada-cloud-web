@@ -1,10 +1,11 @@
 const bb = (id) => document.getElementById(id);
 let bbContexto = null, bbPerfil = null, bbRol = null;
 let bbPeriodos = [], bbCursos = [], bbAlumnos = [], bbBoletines = [];
-const BB_CAN_MANAGE = ["admin", "directivo", "secretaria", "docente"];
+const BB_CAN_MANAGE = ["admin", "directivo", "secretaria"];
 
+function bbEscape(v){ return String(v ?? "").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
 function bbOption(items, placeholder, getLabel = (x) => x.nombre || x.email || x.id) {
-  return `<option value="">${placeholder}</option>` + (items || []).map(item => `<option value="${item.id}">${getLabel(item)}</option>`).join("");
+  return `<option value="">${bbEscape(placeholder)}</option>` + (items || []).map(item => `<option value="${bbEscape(item.id)}">${bbEscape(getLabel(item))}</option>`).join("");
 }
 function bbTable(headers, rows) {
   if (!rows.length) return `<p class="helper-text">No hay datos para mostrar.</p>`;
@@ -23,6 +24,12 @@ async function bbLoadBase(){
   for (const r of [periodosRes, cursosRes, alumnosRes]) if (r.error) throw r.error;
   bbPeriodos = periodosRes.data || []; bbCursos = cursosRes.data || []; bbAlumnos = alumnosRes.data || [];
   if (bbRol === "alumno") bbAlumnos = bbAlumnos.filter(a=>a.id===bbPerfil.id);
+  if (bbRol === "familia") {
+    const vinc = await supabaseClient.from("v_familia_hijos").select("alumno_id").eq("familia_id", bbPerfil.id);
+    if(vinc.error) throw vinc.error;
+    const ids = new Set((vinc.data || []).map(x=>x.alumno_id));
+    bbAlumnos = bbAlumnos.filter(a=>ids.has(a.id));
+  }
   const alumnoLabel = a => `${a.apellido || ""}, ${a.nombre || ""} · ${a.email || ""}`;
   ["boletinAlumno","filtroBoletinAlumno"].forEach(id=>bb(id).innerHTML = bbOption(bbAlumnos, "Seleccionar alumno", alumnoLabel));
   ["boletinCurso"].forEach(id=>bb(id).innerHTML = bbOption(bbCursos, "Seleccionar curso"));
@@ -35,12 +42,17 @@ async function bbLoadBoletines(){
     .select("*, alumno:profiles!boletines_alumno_id_fkey(id,nombre,apellido,email), cursos(id,nombre), periodos_academicos(id,nombre)")
     .order("emitido_en", {ascending:false})
     .limit(200);
-  if (bbRol === "alumno") query = query.eq("alumno_id", bbPerfil.id);
+  if (bbRol === "alumno") query = query.eq("alumno_id", bbPerfil.id).eq("estado", "emitido");
+  if (bbRol === "familia") {
+    const ids = bbAlumnos.map(a=>a.id);
+    if(!ids.length){ bbBoletines=[]; renderBoletines([]); return; }
+    query = query.in("alumno_id", ids).eq("estado", "emitido");
+  }
   const res = await query; if (res.error) throw res.error;
   bbBoletines = res.data || []; renderBoletines(bbBoletines);
 }
 function renderBoletines(rows){
-  bb("tablaBoletines").innerHTML = bbTable(["Alumno","Curso","Período","Promedio","Estado","Emitido"], rows.map(b=>`<tr><td>${b.alumno?.apellido || ""}, ${b.alumno?.nombre || ""}</td><td>${b.cursos?.nombre || "-"}</td><td>${b.periodos_academicos?.nombre || "-"}</td><td><span class="b25-pill ${Number(b.promedio_general)>=7 ? "ok" : "warn"}">${b.promedio_general ?? "-"}</span></td><td>${b.estado || "borrador"}</td><td>${b.emitido_en ? new Date(b.emitido_en).toLocaleDateString() : "-"}</td></tr>`));
+  bb("tablaBoletines").innerHTML = bbTable(["Alumno","Curso","Período","Promedio","Estado","Emitido"], rows.map(b=>`<tr><td>${bbEscape(b.alumno?.apellido || "")}, ${bbEscape(b.alumno?.nombre || "")}</td><td>${bbEscape(b.cursos?.nombre || "-")}</td><td>${bbEscape(b.periodos_academicos?.nombre || "-")}</td><td><span class="b25-pill ${Number(b.promedio_general)>=7 ? "ok" : "warn"}">${b.promedio_general ?? "-"}</span></td><td>${bbEscape(b.estado || "borrador")}</td><td>${b.emitido_en ? new Date(b.emitido_en).toLocaleDateString() : "-"}</td></tr>`));
 }
 async function generarBoletin(e){
   e.preventDefault();

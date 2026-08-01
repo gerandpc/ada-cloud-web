@@ -70,14 +70,20 @@ function b26eApplyRole(){
 async function b26eLoad(){
   const [actRes, entRes, alumRes] = await Promise.all([
     supabaseClient.from("actividades").select("*, cursos(id,nombre), materias(id,nombre)").in("estado", ["publicada", "cerrada"]).order("fecha_entrega", {ascending:false}).limit(300),
-    supabaseClient.from("entregas_actividades").select("*, actividades(id,titulo,materia_id,curso_id), alumno:profiles!entregas_actividades_alumno_id_fkey(id,nombre,apellido,email)").order("entregado_en", {ascending:false}).limit(500),
+    supabaseClient.from("entregas_actividades").select("*, actividades(id,titulo,materia_id,curso_id,docente_id), alumno:profiles!entregas_actividades_alumno_id_fkey(id,nombre,apellido,email)").order("entregado_en", {ascending:false}).limit(500),
     supabaseClient.from("profiles").select("id,nombre,apellido,email,rol,activo").eq("rol", "alumno").eq("activo", true).order("apellido", {ascending:true})
   ]);
   for(const r of [actRes, entRes, alumRes]) if(r.error) throw r.error;
   b26eActividades = actRes.data || [];
   b26eEntregas = entRes.data || [];
   b26eAlumnos = alumRes.data || [];
-  if(b26eRol === "alumno") b26eEntregas = b26eEntregas.filter(e=>e.alumno_id === b26ePerfil.id);
+  if(b26eRol === "alumno"){
+    b26eEntregas = b26eEntregas.filter(e=>e.alumno_id === b26ePerfil.id);
+  } else if(b26eRol === "docente"){
+    b26eActividades = b26eActividades.filter(a=>a.docente_id === b26ePerfil.id);
+    const ids = new Set(b26eActividades.map(a=>a.id));
+    b26eEntregas = b26eEntregas.filter(e=>ids.has(e.actividad_id));
+  }
   await b26eAttachSignedUrls();
   renderEntregas();
   renderRevision();
@@ -96,7 +102,7 @@ function renderEntregas(){
     const propia = entregaDeActividad(a.id);
     const vencida = b26eVencida(a);
     const estado = propia?.estado || (b26eCanSubmit() ? "pendiente" : "sin entrega");
-    const boton = b26eCanSubmit() && a.estado === "publicada" ? `<button class="btn-primary" type="button" data-abrir-entrega="${a.id}">${propia ? "Actualizar entrega" : "Realizar entrega"}</button>` : "";
+    const boton = b26eCanSubmit() && a.estado === "publicada" && !vencida ? `<button class="btn-primary" type="button" data-abrir-entrega="${a.id}">${propia ? "Actualizar entrega" : "Realizar entrega"}</button>` : "";
     const archivoConsigna = b26eFileLink(a, "Consigna adjunta");
     const archivoEntrega = b26eFileLink(propia, "Archivo de entrega");
     return `<article class="b26-card ${vencida && !propia ? "b26-highlight" : ""}">
