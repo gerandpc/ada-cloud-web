@@ -76,7 +76,7 @@ const ADA_PAGE_ACCESS = {
 const ADA_ROLE_HOME = {
   admin: "dashboard.html",
   directivo: "dashboard.html",
-  secretaria: "dashboard.html",
+  secretaria: "secretaria.html",
   docente: "mi-espacio-docente.html",
   preceptor: "mi-espacio-preceptor.html",
   familia: "mi-espacio-familia.html",
@@ -86,7 +86,7 @@ const ADA_ROLE_HOME = {
 const ADA_ROLE_MODULES = {
   admin: ["mi-perfil", "dashboard", "institucion", "usuarios", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "programas", "actividades", "entregas", "documentos", "documentacion", "ia", "horarios", "asistencia", "calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines", "boletines-actas", "reportes", "comunicados", "convivencia", "ficha-alumno", "importar", "manuscritos", "auditoria", "logs", "estado-sistema"],
   directivo: ["mi-perfil", "dashboard", "institucion", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "programas", "actividades", "entregas", "documentos", "documentacion", "ia", "horarios", "asistencia", "calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines", "boletines-actas", "reportes", "comunicados", "convivencia", "ficha-alumno", "manuscritos", "auditoria", "estado-sistema"],
-  secretaria: ["mi-perfil", "dashboard", "institucion", "usuarios", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "documentacion", "asistencia", "calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines", "boletines-actas", "reportes", "comunicados", "convivencia", "ficha-alumno", "estado-sistema"],
+  secretaria: ["mi-perfil", "secretaria", "institucion", "usuarios", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "documentacion", "asistencia", "calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines", "boletines-actas", "reportes", "comunicados", "convivencia", "ficha-alumno", "estado-sistema"],
   docente: ["mi-perfil", "mi-docente", "alumnos", "cursos", "materias", "programas", "actividades", "entregas", "documentos", "ia", "asistencia", "calificaciones", "reportes", "comunicados", "ficha-alumno", "manuscritos"],
   preceptor: ["mi-perfil", "mi-preceptor", "alumnos", "familias", "asignaciones", "cursos", "documentos", "documentacion", "ia", "asistencia", "libres-materia", "reportes", "comunicados", "convivencia", "ficha-alumno"],
   familia: ["mi-perfil", "mi-familia", "programas", "boletines", "documentos", "documentacion", "ia", "comunicados", "convivencia", "ficha-alumno"],
