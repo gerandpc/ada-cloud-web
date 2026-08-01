@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Auditoría - ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque23-ui-refresh.css">
+  <link rel="stylesheet" href="../assets/css/bloque32-auditoria.css">
+</head>
+<body class="module-page role-loading">
+  <main class="module-shell">
+    <a href="dashboard.html" class="back-link">← Volver al panel</a>
+    <section class="module-view">
+      <p class="eyebrow">Seguridad y trazabilidad</p>
+      <h1>Auditoría de acciones</h1>
+      <p>Consulta centralizada de accesos y cambios registrados por ADA.</p>
+
+      <section class="panel-card audit-toolbar">
+        <div><label for="auditSearch">Buscar</label><input id="auditSearch" type="search" placeholder="Usuario, acción, módulo o detalle"></div>
+        <div><label for="auditSource">Origen</label><select id="auditSource"><option value="">Todos</option><option value="auditoria_accesos">Accesos</option><option value="documentacion_auditoria">Documentación</option></select></div>
+        <button class="btn-secondary" id="auditRefresh" type="button">Actualizar</button>
+        <button class="btn-primary" id="auditExport" type="button">Exportar CSV</button>
+      </section>
+
+      <div class="audit-summary"><strong id="auditCount">0</strong><span>eventos visibles según tus permisos</span></div>
+      <p id="auditMessage" class="module-message"></p>
+
+      <section class="panel-card table-wrap">
+        <table class="data-table"><thead><tr><th>Fecha</th><th>Origen</th><th>Usuario</th><th>Acción</th><th>Entidad</th><th>Detalle</th></tr></thead><tbody id="auditTableBody"><tr><td colspan="6" class="empty-cell">Cargando…</td></tr></tbody></table>
+      </section>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/ada-security.js"></script>
+  <script src="../assets/js/auditoria.js"></script>
+  <script src="../assets/js/sidebar.js"></script>
+</body>
+</html>
