@@ -37,8 +37,12 @@
 
       <section id="tab-revision" class="b26-section" data-b26-review>
         <section class="panel-card">
-          <h2>Revisar entregas</h2>
-          <div id="tablaRevision" class="table-wrap"></div>
+          <h2>Revisión y seguimiento de entregas</h2>
+          <div class="form-grid">
+            <div><label>Actividad</label><select id="filtroRevisionActividad"><option value="">Todas las actividades</option></select></div>
+            <div><label>Estado</label><select id="filtroRevisionEstado"><option value="">Todos</option><option value="entregada">Entregada</option><option value="revisada">Revisada</option><option value="devuelta">Devuelta</option><option value="pendiente">Pendiente</option></select></div>
+          </div>
+          <div id="tablaRevision" class="table-wrap" style="margin-top:16px"></div>
         </section>
       </section>
     </section>

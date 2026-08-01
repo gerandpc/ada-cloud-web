@@ -26,7 +26,7 @@
       <div class="b26-tabs" role="tablist">
         <button class="b26-tab active" data-tab="listado" type="button">Listado</button>
         <button class="b26-tab" data-tab="nueva" type="button" data-b26-manage>Nueva actividad</button>
-        <button class="b26-tab" data-tab="seguimiento" type="button">Seguimiento</button>
+        <button class="b26-tab" data-tab="seguimiento" type="button" data-b26-followup>Seguimiento</button>
       </div>
 
       <section id="tab-listado" class="b26-section active">
@@ -45,8 +45,9 @@
       <section id="tab-nueva" class="b26-section" data-b26-manage>
         <div class="b26-layout">
           <section class="panel-card">
-            <h2>Nueva actividad</h2>
+            <h2 id="tituloFormActividad">Nueva actividad</h2>
             <form id="formActividad" class="ada-form">
+              <input type="hidden" id="actividadId">
               <div class="b26-grid-2">
                 <div><label>Curso</label><select id="actividadCurso" required></select></div>
                 <div><label>Materia</label><select id="actividadMateria" required></select></div>
@@ -69,7 +70,7 @@
                 <div><label>Puntaje máximo</label><input type="number" id="actividadPuntaje" min="1" max="100" value="100"></div>
                 <div><label>Estado</label><select id="actividadEstado"><option value="publicada">Publicada</option><option value="borrador">Borrador</option><option value="cerrada">Cerrada</option></select></div>
               </div>
-              <button class="btn-primary" type="submit">Guardar actividad</button>
+              <div class="b26-actions"><button class="btn-primary" id="btnGuardarActividad" type="submit">Guardar actividad</button><button class="btn-secondary" id="btnCancelarEdicion" type="button" style="display:none">Cancelar edición</button></div>
               <p class="form-message" id="msgActividad"></p>
             </form>
           </section>
@@ -82,7 +83,7 @@
         </div>
       </section>
 
-      <section id="tab-seguimiento" class="b26-section">
+      <section id="tab-seguimiento" class="b26-section" data-b26-followup>
         <section class="panel-card">
           <h2>Seguimiento de entregas</h2>
           <div id="tablaSeguimiento" class="table-wrap"></div>
