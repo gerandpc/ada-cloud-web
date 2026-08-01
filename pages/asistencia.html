@@ -1,19 +1,122 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Asistencia y seguimiento - ADA Cloud</title><link rel="stylesheet" href="../assets/css/style.css">
-  <link rel="stylesheet" href="../assets/css/bloque23-ui-refresh.css"><link rel="stylesheet" href="../assets/css/bloque15-asistencia.css"></head>
-<body class="module-page role-loading"><main class="module-shell"><a href="dashboard.html" class="back-link">← Volver al panel</a><section class="module-view">
-<p class="eyebrow">Bloque 15</p><h1>Asistencia y seguimiento</h1><p>Carga de asistencia por curso/materia/fecha y seguimiento inicial de estudiantes.</p>
-<div class="attendance-tabs"><button class="attendance-tab active" data-tab="carga">Cargar asistencia</button><button class="attendance-tab" data-tab="historial">Historial</button><button class="attendance-tab" data-tab="seguimiento">Seguimiento</button><button class="attendance-tab" data-tab="alertas">Alertas básicas</button></div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asistencia y seguimiento - ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque23-ui-refresh.css">
+  <link rel="stylesheet" href="../assets/css/bloque15-asistencia.css">
+</head>
+<body class="module-page role-loading">
+<main class="module-shell">
+  <a href="dashboard.html" class="back-link">← Volver al panel</a>
+  <section class="module-view">
+    <p class="eyebrow">Gestión académica</p>
+    <h1>Asistencia y seguimiento</h1>
+    <p>Carga diaria, historial, seguimiento pedagógico y alertas de inasistencia.</p>
+    <p id="rolAsistencia" class="role-context">Cargando perfil...</p>
 
-<section id="tab-carga" class="attendance-section active"><div class="attendance-layout">
-<section class="panel-card"><h2>Datos de la clase</h2><form id="formClaseAsistencia" class="ada-form">
-<label>Curso</label><select id="asistenciaCurso" required></select><label>Materia</label><select id="asistenciaMateria"></select><label>Fecha</label><input type="date" id="asistenciaFecha" required><label>Observación general</label><textarea id="asistenciaObservacionGeneral"></textarea><button type="button" class="btn-secondary" id="btnCargarAlumnos">Cargar alumnos del curso</button><p id="msgCargaAlumnos" class="form-message"></p></form></section>
-<section class="panel-card"><h2>Registro de asistencia</h2><form id="formGuardarAsistencia"><div id="listaAlumnosAsistencia" class="attendance-list"><p class="helper-text" style="padding:16px;">Seleccioná curso y fecha para cargar alumnos.</p></div><button type="submit" class="btn-primary" style="margin-top:16px;">Guardar asistencia</button><p id="msgGuardarAsistencia" class="form-message"></p></form></section>
-</div></section>
+    <section class="attendance-summary" aria-label="Resumen de acceso">
+      <article><strong id="statCursosAsistencia">0</strong><span>Cursos disponibles</span></article>
+      <article><strong id="statMateriasAsistencia">0</strong><span>Materias disponibles</span></article>
+      <article><strong id="statAlumnosAsistencia">0</strong><span>Alumnos visibles</span></article>
+    </section>
 
-<section id="tab-historial" class="attendance-section"><section class="panel-card"><h2>Historial de asistencias</h2><div class="form-grid"><div><label>Curso</label><select id="historialCurso"></select></div><div><label>Alumno</label><select id="historialAlumno"></select></div><div><label>Desde</label><input type="date" id="historialDesde"></div><div><label>Hasta</label><input type="date" id="historialHasta"></div></div><button class="btn-primary" id="btnBuscarHistorial" style="margin-top:14px;">Buscar historial</button><div id="tablaHistorial" class="table-wrap"></div></section></section>
+    <div class="attendance-tabs" role="tablist">
+      <button class="attendance-tab active" data-tab="carga" type="button">Cargar asistencia</button>
+      <button class="attendance-tab" data-tab="historial" type="button">Historial</button>
+      <button class="attendance-tab" data-tab="seguimiento" type="button">Seguimiento</button>
+      <button class="attendance-tab" data-tab="alertas" type="button">Alertas</button>
+    </div>
 
-<section id="tab-seguimiento" class="attendance-section"><div class="attendance-layout"><section class="panel-card"><h2>Nuevo seguimiento</h2><form id="formSeguimiento" class="ada-form"><label>Alumno</label><select id="seguimientoAlumno" required></select><label>Curso</label><select id="seguimientoCurso"></select><label>Tipo</label><select id="seguimientoTipo"><option>Académico</option><option>Convivencia</option><option>Asistencia</option><option>Familiar</option><option>Institucional</option><option>Otro</option></select><label>Prioridad</label><select id="seguimientoPrioridad"><option value="alta">Alta</option><option value="media" selected>Media</option><option value="baja">Baja</option></select><label>Descripción</label><textarea id="seguimientoDescripcion" required></textarea><label class="checkbox-line"><input type="checkbox" id="seguimientoVisibleFamilia">Visible para familia</label><button class="btn-primary" type="submit">Guardar seguimiento</button><p id="msgSeguimiento" class="form-message"></p></form></section><section class="panel-card"><h2>Seguimientos registrados</h2><div id="listaSeguimientos"></div></section></div></section>
+    <section id="tab-carga" class="attendance-section active">
+      <div class="attendance-layout">
+        <section class="panel-card">
+          <h2>Datos de la clase</h2>
+          <form id="formClaseAsistencia" class="ada-form">
+            <label for="asistenciaCurso">Curso</label>
+            <select id="asistenciaCurso" required></select>
+            <label for="asistenciaMateria">Materia</label>
+            <select id="asistenciaMateria"></select>
+            <label for="asistenciaFecha">Fecha</label>
+            <input type="date" id="asistenciaFecha" required>
+            <label for="asistenciaObservacionGeneral">Observación general</label>
+            <textarea id="asistenciaObservacionGeneral" maxlength="500"></textarea>
+            <button type="button" class="btn-secondary" id="btnCargarAlumnos">Cargar alumnos del curso</button>
+            <p id="msgCargaAlumnos" class="form-message"></p>
+          </form>
+        </section>
 
-<section id="tab-alertas" class="attendance-section"><section class="panel-card"><h2>Alertas básicas de asistencia</h2><p class="helper-text">ADA calcula alertas simples según registros de ausencias cargados.</p><button class="btn-primary" id="btnCalcularAlertas">Calcular alertas</button><div id="resultadoAlertas"></div></section></section>
-</section></main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../assets/js/supabase-config.js"></script><script src="../assets/js/ada-security.js"></script><script src="../assets/js/asistencia.js"></script>  <script src="../assets/js/ui-effects.js"></script>
-</body></html>
+        <section class="panel-card">
+          <div class="attendance-list-header">
+            <h2>Registro de asistencia</h2>
+            <div class="attendance-bulk-actions">
+              <button type="button" class="btn-mini" id="btnTodosPresentes">Todos presentes</button>
+              <button type="button" class="btn-mini" id="btnTodosAusentes">Todos ausentes</button>
+            </div>
+          </div>
+          <form id="formGuardarAsistencia">
+            <div id="listaAlumnosAsistencia" class="attendance-list">
+              <p class="helper-text attendance-empty">Seleccioná curso y fecha para cargar alumnos.</p>
+            </div>
+            <button type="submit" class="btn-primary attendance-save">Guardar asistencia</button>
+            <p id="msgGuardarAsistencia" class="form-message"></p>
+          </form>
+        </section>
+      </div>
+    </section>
+
+    <section id="tab-historial" class="attendance-section">
+      <section class="panel-card">
+        <h2>Historial de asistencias</h2>
+        <div class="form-grid">
+          <div><label for="historialCurso">Curso</label><select id="historialCurso"></select></div>
+          <div><label for="historialAlumno">Alumno</label><select id="historialAlumno"></select></div>
+          <div><label for="historialDesde">Desde</label><input type="date" id="historialDesde"></div>
+          <div><label for="historialHasta">Hasta</label><input type="date" id="historialHasta"></div>
+        </div>
+        <button class="btn-primary attendance-search" id="btnBuscarHistorial" type="button">Buscar historial</button>
+        <div id="tablaHistorial" class="table-wrap"></div>
+      </section>
+    </section>
+
+    <section id="tab-seguimiento" class="attendance-section">
+      <div class="attendance-layout">
+        <section class="panel-card">
+          <h2>Nuevo seguimiento</h2>
+          <form id="formSeguimiento" class="ada-form">
+            <label for="seguimientoAlumno">Alumno</label><select id="seguimientoAlumno" required></select>
+            <label for="seguimientoCurso">Curso</label><select id="seguimientoCurso"></select>
+            <label for="seguimientoTipo">Tipo</label>
+            <select id="seguimientoTipo"><option>Académico</option><option>Convivencia</option><option>Asistencia</option><option>Familiar</option><option>Institucional</option><option>Otro</option></select>
+            <label for="seguimientoPrioridad">Prioridad</label>
+            <select id="seguimientoPrioridad"><option value="alta">Alta</option><option value="media" selected>Media</option><option value="baja">Baja</option></select>
+            <label for="seguimientoDescripcion">Descripción</label>
+            <textarea id="seguimientoDescripcion" maxlength="1200" required></textarea>
+            <label class="checkbox-line"><input type="checkbox" id="seguimientoVisibleFamilia"> Visible para familia</label>
+            <button class="btn-primary" type="submit">Guardar seguimiento</button>
+            <p id="msgSeguimiento" class="form-message"></p>
+          </form>
+        </section>
+        <section class="panel-card"><h2>Seguimientos registrados</h2><div id="listaSeguimientos"></div></section>
+      </div>
+    </section>
+
+    <section id="tab-alertas" class="attendance-section">
+      <section class="panel-card">
+        <h2>Alertas de asistencia</h2>
+        <p class="helper-text">Las alertas se calculan únicamente con los registros que el perfil tiene permitido consultar.</p>
+        <button class="btn-primary" id="btnCalcularAlertas" type="button">Calcular alertas</button>
+        <div id="resultadoAlertas"></div>
+      </section>
+    </section>
+  </section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-config.js"></script>
+<script src="../assets/js/ada-security.js"></script>
+<script src="../assets/js/asistencia.js"></script>
+<script src="../assets/js/ui-effects.js"></script>
+</body>
+</html>
