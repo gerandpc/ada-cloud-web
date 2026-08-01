@@ -22,12 +22,12 @@ const roleConfig = {
   directivo: {
     label: "Directivo",
     title: "Panel directivo",
-    description: "Gestión institucional, seguimiento pedagógico, reportes, comunicados, documentos e IA."
+    description: "Gestión institucional, aprobación de programas, seguimiento académico, asistencia, calificaciones, boletines y reportes."
   },
   secretaria: {
     label: "Secretaría",
     title: "Panel de secretaría",
-    description: "Administración escolar, usuarios, documentación, cursos, materias, asistencia y comunicados."
+    description: "Administración escolar, documentación, cursos, materias, asistencia, calificaciones, cierres y boletines."
   }
 };
 

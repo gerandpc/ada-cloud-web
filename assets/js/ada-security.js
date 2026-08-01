@@ -294,6 +294,7 @@ function adaBindExistingSidebar(perfil) {
   }
 
   adaHideUnauthorizedModules(rol);
+  window.dispatchEvent(new CustomEvent("ada:role-applied", { detail: { rol } }));
   return true;
 }
 
