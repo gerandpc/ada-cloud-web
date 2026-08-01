@@ -68,22 +68,82 @@ function b26eApplyRole(){
 }
 
 async function b26eLoad(){
-  const [actRes, entRes, alumRes] = await Promise.all([
-    supabaseClient.from("actividades").select("*, cursos(id,nombre), materias(id,nombre)").in("estado", ["publicada", "cerrada"]).order("fecha_entrega", {ascending:false}).limit(300),
-    supabaseClient.from("entregas_actividades").select("*, actividades(id,titulo,materia_id,curso_id,docente_id), alumno:profiles!entregas_actividades_alumno_id_fkey(id,nombre,apellido,email)").order("entregado_en", {ascending:false}).limit(500),
-    supabaseClient.from("profiles").select("id,nombre,apellido,email,rol,activo").eq("rol", "alumno").eq("activo", true).order("apellido", {ascending:true})
-  ]);
-  for(const r of [actRes, entRes, alumRes]) if(r.error) throw r.error;
+  let cursoIdsAlumno = [];
+
+  if(b26eRol === "alumno"){
+    const { data: inscripciones, error: inscripcionesError } = await supabaseClient
+      .from("alumno_cursos")
+      .select("curso_id")
+      .eq("alumno_id", b26ePerfil.id)
+      .eq("activo", true);
+
+    if(inscripcionesError) throw inscripcionesError;
+    cursoIdsAlumno = [...new Set((inscripciones || []).map(i => i.curso_id).filter(Boolean))];
+  }
+
+  let actividadesQuery = supabaseClient
+    .from("actividades")
+    .select("*, cursos(id,nombre), materias(id,nombre)")
+    .in("estado", ["publicada", "cerrada"])
+    .order("fecha_entrega", {ascending:false})
+    .limit(300);
+
+  if(b26eRol === "docente"){
+    actividadesQuery = actividadesQuery.eq("docente_id", b26ePerfil.id);
+  } else if(b26eRol === "alumno"){
+    if(!cursoIdsAlumno.length){
+      b26eActividades = [];
+      b26eEntregas = [];
+      b26eAlumnos = [];
+      await b26eAttachSignedUrls();
+      renderEntregas();
+      renderRevision();
+      updateKpis();
+      return;
+    }
+    actividadesQuery = actividadesQuery.in("curso_id", cursoIdsAlumno);
+  }
+
+  let entregasQuery = supabaseClient
+    .from("entregas_actividades")
+    .select("*, actividades(id,titulo,materia_id,curso_id,docente_id), alumno:profiles!entregas_actividades_alumno_id_fkey(id,nombre,apellido,email)")
+    .order("entregado_en", {ascending:false})
+    .limit(500);
+
+  if(b26eRol === "alumno"){
+    entregasQuery = entregasQuery.eq("alumno_id", b26ePerfil.id);
+  }
+
+  const requests = [actividadesQuery, entregasQuery];
+
+  if(b26eCanReview()){
+    requests.push(
+      supabaseClient
+        .from("profiles")
+        .select("id,nombre,apellido,email,rol,activo")
+        .eq("rol", "alumno")
+        .eq("activo", true)
+        .order("apellido", {ascending:true})
+    );
+  }
+
+  const results = await Promise.all(requests);
+  const [actRes, entRes, alumRes] = results;
+
+  for(const r of results) if(r?.error) throw r.error;
+
   b26eActividades = actRes.data || [];
   b26eEntregas = entRes.data || [];
-  b26eAlumnos = alumRes.data || [];
-  if(b26eRol === "alumno"){
-    b26eEntregas = b26eEntregas.filter(e=>e.alumno_id === b26ePerfil.id);
-  } else if(b26eRol === "docente"){
-    b26eActividades = b26eActividades.filter(a=>a.docente_id === b26ePerfil.id);
+  b26eAlumnos = alumRes?.data || [];
+
+  if(b26eRol === "docente"){
     const ids = new Set(b26eActividades.map(a=>a.id));
     b26eEntregas = b26eEntregas.filter(e=>ids.has(e.actividad_id));
+  } else if(b26eRol === "alumno"){
+    const ids = new Set(b26eActividades.map(a=>a.id));
+    b26eEntregas = b26eEntregas.filter(e=>ids.has(e.actividad_id) && e.alumno_id === b26ePerfil.id);
   }
+
   await b26eAttachSignedUrls();
   renderEntregas();
   renderRevision();

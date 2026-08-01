@@ -63,7 +63,7 @@ const ADA_PAGE_ACCESS = {
 
   // Flujos pedagógicos y académicos
   "programas.html": ["admin", "directivo", "docente", "alumno", "familia"],
-  "actividades.html": ["admin", "directivo", "docente"],
+  "actividades.html": ["admin", "directivo", "docente", "alumno"],
   "entregas.html": ["admin", "directivo", "docente", "alumno"],
   "boletines.html": ["admin", "directivo", "secretaria", "docente", "alumno", "familia"],
   "documentacion.html": ["admin", "directivo", "secretaria", "preceptor", "familia", "alumno"]
@@ -86,7 +86,7 @@ const ADA_ROLE_MODULES = {
   docente: ["mi-docente", "alumnos", "cursos", "materias", "programas", "actividades", "entregas", "documentos", "ia", "asistencia", "calificaciones", "reportes", "comunicados", "ficha-alumno", "manuscritos"],
   preceptor: ["mi-preceptor", "alumnos", "familias", "asignaciones", "cursos", "documentos", "documentacion", "ia", "asistencia", "libres-materia", "reportes", "comunicados", "convivencia", "ficha-alumno"],
   familia: ["mi-familia", "programas", "boletines", "documentos", "documentacion", "ia", "comunicados", "convivencia", "ficha-alumno"],
-  alumno: ["mi-alumno", "programas", "entregas", "boletines", "documentos", "documentacion", "ia", "comunicados", "ficha-alumno"]
+  alumno: ["mi-alumno", "programas", "actividades", "entregas", "boletines", "documentos", "documentacion", "ia", "comunicados", "ficha-alumno"]
 };
 
 function adaCurrentPageName() {

@@ -89,10 +89,35 @@ async function b26aLoadActividades(){
     .select("*, cursos(id,nombre), materias(id,nombre), creador:profiles!actividades_creado_por_fkey(id,nombre,apellido,email)")
     .order("fecha_entrega", {ascending:false})
     .limit(300);
-  if(b26aRol === "docente") query = query.eq("docente_id", b26aPerfil.id);
-  if(["alumno","familia"].includes(b26aRol)) query = query.eq("estado", "publicada");
+
+  if(b26aRol === "docente"){
+    query = query.eq("docente_id", b26aPerfil.id);
+  }
+
+  if(b26aRol === "alumno"){
+    const { data: inscripciones, error: inscripcionesError } = await supabaseClient
+      .from("alumno_cursos")
+      .select("curso_id")
+      .eq("alumno_id", b26aPerfil.id)
+      .eq("activo", true);
+
+    if(inscripcionesError) throw inscripcionesError;
+
+    const cursoIds = [...new Set((inscripciones || []).map(i => i.curso_id).filter(Boolean))];
+    if(!cursoIds.length){
+      b26aActividades = [];
+      b26aEntregas = [];
+      b26aRenderActividades([]);
+      b26aUpdateKpis();
+      return;
+    }
+
+    query = query.eq("estado", "publicada").in("curso_id", cursoIds);
+  }
+
   const res = await query;
   if(res.error) throw res.error;
+
   b26aActividades = res.data || [];
   await b26aLoadEntregas();
   await b26aAttachSignedUrls();
