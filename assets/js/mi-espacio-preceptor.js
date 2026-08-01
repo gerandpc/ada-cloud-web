@@ -70,7 +70,9 @@ async function cargarPreceptor() {
     }
     alertas[key].cantidad++;
   });
-  const alertasLista = Object.values(alertas).sort((a, b) => b.cantidad - a.cantidad).filter(a => a.cantidad >= 3);
+  const alertasLista = Object.values(alertas)
+    .sort((a, b) => b.cantidad - a.cantidad)
+    .filter(a => a.cantidad >= 3);
 
   qs("statCursos").textContent = cursos.length;
   qs("statAlumnos").textContent = alumnos.length;
@@ -85,7 +87,13 @@ async function cargarPreceptor() {
   qs("alertasPreceptor").innerHTML = alertasLista.length
     ? alertasLista.map(a => {
         const cls = a.cantidad >= 5 ? "alerta-alta" : "alerta-media";
-        return `<div class="alerta-preceptor ${cls}">${escapeHtml(a.alumno)}: ${a.cantidad} ausencias computables.</div>`;
+        return `<article class="alerta-preceptor ${cls}">
+          <div>
+            <strong>${escapeHtml(a.alumno || "Alumno")}</strong>
+            <span>${a.cantidad} ausencias computables</span>
+          </div>
+          <a href="asistencia.html" class="alerta-action">Revisar</a>
+        </article>`;
       }).join("")
     : `<div class="alerta-preceptor alerta-ok">No hay alertas importantes de asistencia.</div>`;
 
@@ -114,5 +122,5 @@ configurarTabs();
 cargarPreceptor().catch((error) => {
   console.error(error);
   const box = qs("tablaCursosPreceptor");
-  if (box) box.textContent = "No se pudo cargar el espacio de preceptoría.";
+  if (box) box.innerHTML = `<div class="preceptor-error">No se pudo cargar el espacio de preceptoría. Verificá la conexión con ADA e intentá nuevamente.</div>`;
 });
