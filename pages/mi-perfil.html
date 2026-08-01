@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi perfil · ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque23-ui-refresh.css">
+  <link rel="stylesheet" href="../assets/css/bloque35-perfil-cuenta.css">
+</head>
+<body class="module-page role-loading">
+  <main class="module-shell">
+    <a href="dashboard.html" class="back-link">← Mi inicio</a>
+
+    <section class="module-view profile-page">
+      <p class="eyebrow">Cuenta personal</p>
+      <h1>Mi perfil y seguridad</h1>
+      <p>Consultá tus datos de acceso, actualizá información personal y cambiá tu contraseña.</p>
+
+      <div class="profile-layout">
+        <aside class="panel-card profile-summary">
+          <div id="profileAvatar" class="profile-avatar">U</div>
+          <h2 id="profileName">Cargando…</h2>
+          <p id="profileEmail" class="profile-email">—</p>
+          <span id="profileRole" class="profile-role">—</span>
+          <dl class="profile-meta">
+            <div><dt>Estado</dt><dd id="profileStatus">—</dd></div>
+            <div><dt>Último acceso</dt><dd id="profileLastAccess">—</dd></div>
+            <div><dt>ID de usuario</dt><dd id="profileUserId">—</dd></div>
+          </dl>
+        </aside>
+
+        <div class="profile-content">
+          <section class="panel-card">
+            <h2>Datos personales</h2>
+            <form id="profileForm" class="ada-form profile-form">
+              <div class="profile-form-grid">
+                <div>
+                  <label for="profileFirstName">Nombre</label>
+                  <input id="profileFirstName" type="text" maxlength="80" required>
+                </div>
+                <div>
+                  <label for="profileLastName">Apellido</label>
+                  <input id="profileLastName" type="text" maxlength="80" required>
+                </div>
+              </div>
+              <label for="profileEmailInput">Correo de acceso</label>
+              <input id="profileEmailInput" type="email" disabled>
+              <p class="helper-text">El correo de acceso solo puede modificarse mediante un proceso administrativo verificado.</p>
+              <button class="btn-primary" type="submit">Guardar datos</button>
+              <p id="profileMessage" class="form-message" aria-live="polite"></p>
+            </form>
+          </section>
+
+          <section class="panel-card">
+            <h2>Cambiar contraseña</h2>
+            <form id="passwordForm" class="ada-form profile-form">
+              <label for="newPassword">Nueva contraseña</label>
+              <div class="password-field">
+                <input id="newPassword" type="password" minlength="8" autocomplete="new-password" required>
+                <button type="button" class="password-toggle" data-toggle-password="newPassword">Mostrar</button>
+              </div>
+              <div id="passwordStrength" class="password-strength" aria-live="polite">
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <p id="passwordRules" class="helper-text">Usá al menos 8 caracteres, mayúscula, minúscula, número y símbolo.</p>
+
+              <label for="repeatPassword">Repetir contraseña</label>
+              <div class="password-field">
+                <input id="repeatPassword" type="password" minlength="8" autocomplete="new-password" required>
+                <button type="button" class="password-toggle" data-toggle-password="repeatPassword">Mostrar</button>
+              </div>
+              <button class="btn-primary" type="submit">Actualizar contraseña</button>
+              <p id="passwordMessage" class="form-message" aria-live="polite"></p>
+            </form>
+          </section>
+
+          <section class="panel-card security-panel">
+            <h2>Sesión</h2>
+            <p>Al cerrar sesión se elimina la sesión de este navegador.</p>
+            <button id="profileLogout" type="button" class="btn-secondary danger-outline">Cerrar sesión</button>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/ada-security.js"></script>
+  <script src="../assets/js/mi-perfil.js"></script>
+  <script src="../assets/js/ui-effects.js"></script>
+</body>
+</html>
