@@ -1,5 +1,13 @@
-
 const qs = (id) => document.getElementById(id);
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
 
 function configurarTabs() {
   document.querySelectorAll(".role-tab").forEach(btn => {
@@ -7,46 +15,62 @@ function configurarTabs() {
       document.querySelectorAll(".role-tab").forEach(b => b.classList.remove("active"));
       document.querySelectorAll(".role-section").forEach(s => s.classList.remove("active"));
       btn.classList.add("active");
-      qs("tab-" + btn.dataset.tab).classList.add("active");
+      const target = qs("tab-" + btn.dataset.tab);
+      if (target) target.classList.add("active");
     });
   });
 }
 
-function item(title, body, extra="") {
-  return `<div class="role-item"><h3>${title}</h3><p>${body}</p>${extra}</div>`;
+function item(title, body, extra = "") {
+  return `<div class="role-item"><h3>${escapeHtml(title)}</h3><p>${escapeHtml(body)}</p>${extra}</div>`;
 }
 
 function tabla(headers, rows) {
   if (!rows.length) return "<p class='helper-text'>No hay datos para mostrar.</p>";
-  return `<table class="ada-table"><thead><tr>${headers.map(h=>`<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.join("")}</tbody></table>`;
+  return `<table class="ada-table"><thead><tr>${headers.map(h => `<th>${escapeHtml(h)}</th>`).join("")}</tr></thead><tbody>${rows.join("")}</tbody></table>`;
+}
+
+function perteneceACursos(row, ids, nombres) {
+  if (!row) return false;
+  if (row.curso_id && ids.has(String(row.curso_id))) return true;
+  if (row.curso && nombres.has(String(row.curso))) return true;
+  return false;
 }
 
 async function cargarPreceptor() {
-  await obtenerSesionPerfil();
+  const contexto = await obtenerSesionPerfil();
+  if (!contexto) return;
+  const perfil = contexto.perfil;
 
-  const [cursosRes, alumnosRes, asistenciaRes, segRes, familiasRes] = await Promise.all([
-    supabaseClient.from("v_preceptor_cursos_resumen").select("*").order("curso"),
+  let cursosQuery = supabaseClient.from("v_preceptor_cursos_resumen").select("*").order("curso");
+  const cursosRes = await cursosQuery;
+  const cursos = (cursosRes.data || []).filter(c => !c.preceptor_id || String(c.preceptor_id) === String(perfil.id));
+  const cursoIds = new Set(cursos.map(c => c.curso_id).filter(Boolean).map(String));
+  const cursoNombres = new Set(cursos.map(c => c.curso).filter(Boolean).map(String));
+
+  const [alumnosRes, asistenciaRes, segRes, familiasRes] = await Promise.all([
     supabaseClient.from("alumno_cursos").select("alumno_id, curso_id, cursos(nombre), profiles(nombre,apellido,email)").eq("activo", true),
-    supabaseClient.from("v_reporte_asistencia_detalle").select("*").order("fecha", { ascending:false }),
-    supabaseClient.from("v_reporte_seguimiento_detalle").select("*").order("creado_en", { ascending:false }).limit(20),
-    supabaseClient.from("familia_alumnos").select("parentesco, familia:profiles!familia_alumnos_familia_id_fkey(nombre,apellido,email), alumno:profiles!familia_alumnos_alumno_id_fkey(nombre,apellido,email)").eq("activo", true)
+    supabaseClient.from("v_reporte_asistencia_detalle").select("*").order("fecha", { ascending: false }).limit(1000),
+    supabaseClient.from("v_reporte_seguimiento_detalle").select("*").order("creado_en", { ascending: false }).limit(200),
+    supabaseClient.from("familia_alumnos").select("parentesco, familia:profiles!familia_alumnos_familia_id_fkey(nombre,apellido,email), alumno:profiles!familia_alumnos_alumno_id_fkey(id,nombre,apellido,email)").eq("activo", true)
   ]);
 
-  const cursos = cursosRes.data || [];
-  const alumnos = alumnosRes.data || [];
-  const asistencia = asistenciaRes.data || [];
-  const seguimientos = segRes.data || [];
-  const familias = familiasRes.data || [];
+  const alumnos = (alumnosRes.data || []).filter(a => cursoIds.has(String(a.curso_id)));
+  const alumnoIds = new Set(alumnos.map(a => a.alumno_id).filter(Boolean).map(String));
+  const asistencia = (asistenciaRes.data || []).filter(a => alumnoIds.has(String(a.alumno_id)) || perteneceACursos(a, cursoIds, cursoNombres));
+  const seguimientos = (segRes.data || []).filter(s => alumnoIds.has(String(s.alumno_id)) || perteneceACursos(s, cursoIds, cursoNombres)).slice(0, 20);
+  const familias = (familiasRes.data || []).filter(f => f.alumno?.id && alumnoIds.has(String(f.alumno.id)));
 
   const ausencias = asistencia.filter(a => a.computa_inasistencia);
   const alertas = {};
   ausencias.forEach(a => {
-    if (!alertas[a.alumno_id]) {
-      alertas[a.alumno_id] = { alumno: `${a.alumno_apellido || ""}, ${a.alumno_nombre || ""}`, cantidad: 0 };
+    const key = a.alumno_id || `${a.alumno_apellido || ""}-${a.alumno_nombre || ""}`;
+    if (!alertas[key]) {
+      alertas[key] = { alumno: `${a.alumno_apellido || ""}, ${a.alumno_nombre || ""}`, cantidad: 0 };
     }
-    alertas[a.alumno_id].cantidad++;
+    alertas[key].cantidad++;
   });
-  const alertasLista = Object.values(alertas).sort((a,b) => b.cantidad - a.cantidad).filter(a => a.cantidad >= 3);
+  const alertasLista = Object.values(alertas).sort((a, b) => b.cantidad - a.cantidad).filter(a => a.cantidad >= 3);
 
   qs("statCursos").textContent = cursos.length;
   qs("statAlumnos").textContent = alumnos.length;
@@ -54,33 +78,41 @@ async function cargarPreceptor() {
   qs("statAlertas").textContent = alertasLista.length;
 
   qs("tablaCursosPreceptor").innerHTML = tabla(
-    ["Curso","Alumnos"],
-    cursos.map(c => `<tr><td>${c.curso || "-"}</td><td>${c.alumnos || 0}</td></tr>`)
+    ["Curso", "Alumnos"],
+    cursos.map(c => `<tr><td>${escapeHtml(c.curso || "-")}</td><td>${escapeHtml(c.alumnos || 0)}</td></tr>`)
   );
 
   qs("alertasPreceptor").innerHTML = alertasLista.length
     ? alertasLista.map(a => {
         const cls = a.cantidad >= 5 ? "alerta-alta" : "alerta-media";
-        return `<div class="alerta-preceptor ${cls}">${a.alumno}: ${a.cantidad} ausencias computables.</div>`;
+        return `<div class="alerta-preceptor ${cls}">${escapeHtml(a.alumno)}: ${a.cantidad} ausencias computables.</div>`;
       }).join("")
     : `<div class="alerta-preceptor alerta-ok">No hay alertas importantes de asistencia.</div>`;
 
   qs("seguimientosPreceptor").innerHTML = seguimientos.length
-    ? seguimientos.map(s => item(`${s.alumno_apellido || ""}, ${s.alumno_nombre || ""}`, `${s.tipo} · ${s.prioridad}<br>${s.descripcion}`, `<span class="role-badge">${s.curso || "-"}</span>`)).join("")
-    : "<p class='helper-text'>No hay seguimientos recientes.</p>";
+    ? seguimientos.map(s => item(
+        `${s.alumno_apellido || ""}, ${s.alumno_nombre || ""}`,
+        `${s.tipo || "Seguimiento"} · ${s.prioridad || "-"} — ${s.descripcion || ""}`,
+        `<span class="role-badge">${escapeHtml(s.curso || "-")}</span>`
+      )).join("")
+    : "<p class='helper-text'>No hay seguimientos recientes de tus cursos.</p>";
 
   qs("tablaFamiliasPreceptor").innerHTML = tabla(
-    ["Alumno","Familia","Email","Parentesco"],
+    ["Alumno", "Familia", "Email", "Parentesco"],
     familias.map(f => `
       <tr>
-        <td>${f.alumno?.apellido || ""}, ${f.alumno?.nombre || ""}</td>
-        <td>${f.familia?.apellido || ""}, ${f.familia?.nombre || ""}</td>
-        <td>${f.familia?.email || ""}</td>
-        <td>${f.parentesco || "-"}</td>
+        <td>${escapeHtml(`${f.alumno?.apellido || ""}, ${f.alumno?.nombre || ""}`)}</td>
+        <td>${escapeHtml(`${f.familia?.apellido || ""}, ${f.familia?.nombre || ""}`)}</td>
+        <td>${escapeHtml(f.familia?.email || "")}</td>
+        <td>${escapeHtml(f.parentesco || "-")}</td>
       </tr>
     `)
   );
 }
 
 configurarTabs();
-cargarPreceptor();
+cargarPreceptor().catch((error) => {
+  console.error(error);
+  const box = qs("tablaCursosPreceptor");
+  if (box) box.textContent = "No se pudo cargar el espacio de preceptoría.";
+});
