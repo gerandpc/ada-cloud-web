@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="../assets/css/style.css">
   <link rel="stylesheet" href="../assets/css/bloque23-ui-refresh.css">
   <link rel="stylesheet" href="../assets/css/bloque20-roles-operativos.css">
+  <link rel="stylesheet" href="../assets/css/bloque41-preceptor.css">
 </head>
 <body class="module-page role-loading">
 
@@ -51,8 +52,9 @@
         <p>Asistencia, alertas, alumnos, familias y seguimiento cotidiano.</p>
         <div class="quick-actions">
           <a class="btn-secondary" href="asistencia.html">Cargar asistencia</a>
+          <a class="btn-secondary" href="convivencia.html">Registrar convivencia</a>
+          <a class="btn-secondary" href="comunicados.html">Enviar comunicado</a>
           <a class="btn-secondary" href="reportes.html">Reportes</a>
-          <a class="btn-secondary" href="ia.html">ADA IA</a>
         </div>
       </div>
 
@@ -79,8 +81,14 @@
 
       <section id="tab-alertas" class="role-section">
         <section class="panel-card">
-          <h2>Alertas de asistencia</h2>
-          <div id="alertasPreceptor"></div>
+          <div class="panel-heading-row">
+            <div>
+              <h2>Alertas de asistencia</h2>
+              <p class="helper-text">Se muestran únicamente estudiantes de los cursos asignados al preceptor.</p>
+            </div>
+            <a class="btn-secondary" href="asistencia.html">Abrir asistencia</a>
+          </div>
+          <div id="alertasPreceptor" class="preceptor-alert-grid"></div>
         </section>
       </section>
 
