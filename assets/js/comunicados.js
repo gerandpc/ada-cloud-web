@@ -6,6 +6,7 @@ let lecturas = [];
 let gestionComunicados = [];
 
 const ROLES_GESTION = ["admin", "directivo", "secretaria", "preceptor"];
+const ROLES_PUBLICACION_GENERAL = ["admin", "directivo", "secretaria"];
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -14,6 +15,15 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+function mensajeUsuario(error, fallback = "No se pudo completar la operación.") {
+  if (error) console.error(error);
+  return fallback;
+}
+
+function puedeGestionarGeneral() {
+  return ROLES_PUBLICACION_GENERAL.includes(perfilActual?.rol);
 }
 
 function getSelectedValues(select) {
@@ -82,6 +92,12 @@ async function cargarBase() {
     document.querySelector('[data-tab="gestion"]')?.remove();
     qs("tab-nuevo")?.remove();
     qs("tab-gestion")?.remove();
+  } else if (!puedeGestionarGeneral()) {
+    document.querySelectorAll('#comRoles option').forEach(option => {
+      if (["admin", "directivo", "secretaria"].includes(option.value)) option.remove();
+    });
+    const ayuda = qs("ayudaDestinatarios");
+    if (ayuda) ayuda.textContent = "Seleccioná al menos un curso. Preceptoría puede comunicar novedades a los cursos bajo su seguimiento.";
   }
 
   await cargarMisComunicados();
@@ -128,7 +144,8 @@ function renderMisComunicados() {
         </div>
         <p>${escapeHtml(c.contenido)}</p>
         <div class="comms-actions">
-          <button class="btn-secondary" type="button" onclick="marcarLeido('${escapeHtml(c.id)}')" ${leido ? "disabled" : ""}>${leido ? "Leído" : "Marcar como leído"}</button>
+          <button class="btn-secondary" type="button" data-action="exportar-comunicado" data-id="${escapeHtml(c.id)}">Exportar PDF</button>
+          <button class="btn-secondary" type="button" data-action="leer" data-id="${escapeHtml(c.id)}" ${leido ? "disabled" : ""}>${leido ? "Leído" : "Marcar como leído"}</button>
         </div>
       </article>`;
   }).join("");
@@ -141,8 +158,7 @@ async function cargarMisComunicados() {
   ]);
 
   if (comRes.error) {
-    qs("listaMisComunicados").innerHTML = `<p class="form-message">Error: ${escapeHtml(comRes.error.message)}</p>`;
-    console.error(comRes.error);
+    qs("listaMisComunicados").innerHTML = `<p class="form-message">${escapeHtml(mensajeUsuario(comRes.error, "No se pudieron cargar los comunicados."))}</p>`;
     return;
   }
 
@@ -161,8 +177,7 @@ async function marcarLeido(comunicadoId) {
     }, { onConflict: "comunicado_id,usuario_id" });
 
   if (error) {
-    alert("Error al marcar lectura: " + error.message);
-    console.error(error);
+    alert(mensajeUsuario(error, "No se pudo registrar la lectura."));
     return;
   }
 
@@ -197,8 +212,9 @@ function renderGestion() {
           <td>${formatearFecha(c.visible_desde)} / ${c.visible_hasta ? formatearFecha(c.visible_hasta) : "sin fin"}</td>
           <td>${escapeHtml(c.profiles?.apellido || "")}${c.profiles?.apellido ? ", " : ""}${escapeHtml(c.profiles?.nombre || "")}</td>
           <td class="comms-table-actions">
-            ${puedeEditar && c.activo !== false ? `<button class="btn-secondary btn-compact" type="button" onclick="cambiarPublicacion('${escapeHtml(c.id)}', ${!c.publicado})">${c.publicado ? "Despublicar" : "Publicar"}</button>` : ""}
-            ${puedeEditar && c.activo !== false ? `<button class="btn-secondary btn-compact danger" type="button" onclick="archivarComunicado('${escapeHtml(c.id)}')">Archivar</button>` : ""}
+            <button class="btn-secondary btn-compact" type="button" data-action="exportar-comunicado" data-id="${escapeHtml(c.id)}">PDF</button>
+            ${puedeEditar && c.activo !== false ? `<button class="btn-secondary btn-compact" type="button" data-action="publicacion" data-id="${escapeHtml(c.id)}" data-value="${!c.publicado}">${c.publicado ? "Despublicar" : "Publicar"}</button>` : ""}
+            ${puedeEditar && c.activo !== false ? `<button class="btn-secondary btn-compact danger" type="button" data-action="archivar" data-id="${escapeHtml(c.id)}">Archivar</button>` : ""}
           </td>
         </tr>`;
     })
@@ -214,8 +230,7 @@ async function cargarGestion() {
     .order("creado_en", { ascending: false });
 
   if (error) {
-    qs("tablaGestionComunicados").innerHTML = `<p class="form-message">Error: ${escapeHtml(error.message)}</p>`;
-    console.error(error);
+    qs("tablaGestionComunicados").innerHTML = `<p class="form-message">${escapeHtml(mensajeUsuario(error, "No se pudo cargar la gestión de comunicados."))}</p>`;
     return;
   }
 
@@ -226,7 +241,7 @@ async function cargarGestion() {
 async function cambiarPublicacion(id, publicado) {
   if (!["admin", "directivo", "secretaria"].includes(perfilActual.rol)) return;
   const { error } = await supabaseClient.from("comunicados").update({ publicado }).eq("id", id);
-  if (error) return alert("No se pudo actualizar el comunicado: " + error.message);
+  if (error) return alert(mensajeUsuario(error, "No se pudo actualizar el comunicado."));
   await Promise.all([cargarGestion(), cargarMisComunicados()]);
 }
 
@@ -234,7 +249,7 @@ async function archivarComunicado(id) {
   if (!["admin", "directivo", "secretaria"].includes(perfilActual.rol)) return;
   if (!confirm("¿Archivar este comunicado? Dejará de mostrarse a los destinatarios.")) return;
   const { error } = await supabaseClient.from("comunicados").update({ activo: false, publicado: false }).eq("id", id);
-  if (error) return alert("No se pudo archivar: " + error.message);
+  if (error) return alert(mensajeUsuario(error, "No se pudo archivar el comunicado."));
   await Promise.all([cargarGestion(), cargarMisComunicados()]);
 }
 
@@ -266,6 +281,21 @@ qs("formComunicado")?.addEventListener("submit", async (e) => {
   const roles = getSelectedValues(qs("comRoles"));
   const cursosSel = getSelectedValues(qs("comCursos"));
 
+  if (!roles.length && !cursosSel.length) {
+    qs("msgComunicado").textContent = "Seleccioná al menos un rol o un curso destinatario.";
+    return;
+  }
+
+  if (!puedeGestionarGeneral() && !cursosSel.length) {
+    qs("msgComunicado").textContent = "Preceptoría debe seleccionar al menos un curso destinatario.";
+    return;
+  }
+
+  if (!puedeGestionarGeneral() && roles.some(rol => ["admin", "directivo", "secretaria"].includes(rol))) {
+    qs("msgComunicado").textContent = "No tenés permisos para seleccionar esos destinatarios.";
+    return;
+  }
+
   const payload = {
     titulo,
     contenido,
@@ -280,8 +310,7 @@ qs("formComunicado")?.addEventListener("submit", async (e) => {
 
   const { data: comunicado, error } = await supabaseClient.from("comunicados").insert(payload).select().single();
   if (error) {
-    qs("msgComunicado").textContent = "Error: " + error.message;
-    console.error(error);
+    qs("msgComunicado").textContent = mensajeUsuario(error, "No se pudo guardar el comunicado.");
     return;
   }
 
@@ -292,8 +321,8 @@ qs("formComunicado")?.addEventListener("submit", async (e) => {
   const results = await Promise.all(inserts);
   const relError = results.find(r => r.error)?.error;
   if (relError) {
-    qs("msgComunicado").textContent = "Comunicado creado, pero hubo un error en los destinatarios: " + relError.message;
-    console.error(relError);
+    await supabaseClient.from("comunicados").delete().eq("id", comunicado.id);
+    qs("msgComunicado").textContent = mensajeUsuario(relError, "No se pudo completar la asignación de destinatarios. El comunicado no fue publicado.");
     return;
   }
 
@@ -302,6 +331,41 @@ qs("formComunicado")?.addEventListener("submit", async (e) => {
   qs("comDesde").value = new Date().toISOString().slice(0, 10);
   await Promise.all([cargarMisComunicados(), cargarGestion()]);
 });
+
+function exportarComunicado(id) {
+  const comunicado = [...misComunicados, ...gestionComunicados].find(item => item.id === id);
+  if (!comunicado || !window.ADAExport) return;
+  const cuerpo = `
+    <table>
+      <tr><th>Título</th><td>${escapeHtml(comunicado.titulo)}</td></tr>
+      <tr><th>Tipo</th><td>${escapeHtml(comunicado.tipo || "-")}</td></tr>
+      <tr><th>Prioridad</th><td>${escapeHtml(comunicado.prioridad || "-")}</td></tr>
+      <tr><th>Vigencia</th><td>${formatearFecha(comunicado.visible_desde)}${comunicado.visible_hasta ? ` al ${formatearFecha(comunicado.visible_hasta)}` : ""}</td></tr>
+    </table>
+    <h2>Contenido</h2>
+    <p>${escapeHtml(comunicado.contenido).replace(/\n/g, "<br>")}</p>`;
+  ADAExport.openDocument(comunicado.titulo || "Comunicado institucional", cuerpo);
+}
+
+function exportarListadoComunicados() {
+  if (!window.ADAExport) return;
+  const fuente = ROLES_GESTION.includes(perfilActual?.rol) ? gestionComunicados : misComunicados;
+  if (!fuente.length) return alert("No hay comunicados para exportar.");
+  const filas = fuente.map(c => `<tr><td>${escapeHtml(c.titulo)}</td><td>${escapeHtml(c.tipo || "-")}</td><td>${escapeHtml(c.prioridad || "-")}</td><td>${formatearFecha(c.visible_desde)}</td><td>${escapeHtml(c.publicado ? "Publicado" : "Borrador")}</td></tr>`).join("");
+  ADAExport.openDocument("Listado de comunicados", `<table><thead><tr><th>Título</th><th>Tipo</th><th>Prioridad</th><th>Desde</th><th>Estado</th></tr></thead><tbody>${filas}</tbody></table>`);
+}
+
+document.addEventListener("click", (event) => {
+  const action = event.target.closest("[data-action]");
+  if (!action) return;
+  const id = action.dataset.id;
+  if (action.dataset.action === "leer") marcarLeido(id);
+  if (action.dataset.action === "publicacion") cambiarPublicacion(id, action.dataset.value === "true");
+  if (action.dataset.action === "archivar") archivarComunicado(id);
+  if (action.dataset.action === "exportar-comunicado") exportarComunicado(id);
+});
+
+qs("btnExportarComunicados")?.addEventListener("click", exportarListadoComunicados);
 
 ["filtroComunicados", "filtroPrioridad", "soloNoLeidos"].forEach(id => qs(id)?.addEventListener("input", renderMisComunicados));
 ["filtroGestion", "filtroEstadoGestion"].forEach(id => qs(id)?.addEventListener("input", renderGestion));
