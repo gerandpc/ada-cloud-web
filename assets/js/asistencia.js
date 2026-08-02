@@ -9,6 +9,8 @@ let alumnosCursoActual = [];
 let asistenciaClaseActualId = null;
 let cursosPermitidos = new Set();
 let materiasPermitidas = new Set();
+let historialActual = [];
+let alertasActuales = [];
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -299,15 +301,17 @@ async function buscarHistorial() {
     .from("asistencia_registros")
     .select("*, profiles(nombre,apellido), asistencia_estados(nombre,codigo,computa_inasistencia), asistencia_clases(fecha, cursos(id,nombre), materias(id,nombre))")
     .order("creado_en", { ascending: false })
-    .limit(500);
+    .limit(2000);
 
   const alumnoId = qs("historialAlumno").value;
   if (alumnoId) query = query.eq("alumno_id", alumnoId);
 
   const { data, error } = await query;
   if (error) {
-    qs("tablaHistorial").innerHTML = `<p class="form-message error">${escapeHtml(error.message)}</p>`;
+    qs("tablaHistorial").innerHTML = "<p class='form-message error'>No se pudo cargar el historial de asistencia.</p>";
     console.error(error);
+    historialActual = [];
+    actualizarResumenHistorial([]);
     return;
   }
 
@@ -323,6 +327,9 @@ async function buscarHistorial() {
   if (desde) rows = rows.filter((r) => r.asistencia_clases?.fecha >= desde);
   if (hasta) rows = rows.filter((r) => r.asistencia_clases?.fecha <= hasta);
 
+  historialActual = rows;
+  actualizarResumenHistorial(rows);
+
   if (!rows.length) {
     qs("tablaHistorial").innerHTML = "<p class='helper-text'>No hay registros para los filtros seleccionados.</p>";
     return;
@@ -337,6 +344,39 @@ async function buscarHistorial() {
       <td>${estadoPill(r.asistencia_estados?.codigo, r.asistencia_estados?.nombre)}</td>
       <td>${escapeHtml(r.observacion || "-")}</td>
     </tr>`).join("")}</tbody></table>`;
+}
+
+function calcularMetricasAsistencia(rows) {
+  const total = rows.length;
+  const ausencias = rows.filter((r) => r.asistencia_estados?.computa_inasistencia).length;
+  const presentes = Math.max(total - ausencias, 0);
+  const porcentaje = total ? Math.round((presentes / total) * 1000) / 10 : 0;
+  return { total, ausencias, presentes, porcentaje };
+}
+
+function actualizarResumenHistorial(rows) {
+  const metricas = calcularMetricasAsistencia(rows);
+  if (qs("historialTotal")) qs("historialTotal").textContent = metricas.total;
+  if (qs("historialPresentes")) qs("historialPresentes").textContent = metricas.presentes;
+  if (qs("historialAusencias")) qs("historialAusencias").textContent = metricas.ausencias;
+  if (qs("historialPorcentaje")) qs("historialPorcentaje").textContent = `${metricas.porcentaje}%`;
+}
+
+function exportarHistorialAsistencia() {
+  if (!historialActual.length) {
+    alert("Primero buscá un historial para exportar.");
+    return;
+  }
+  const metricas = calcularMetricasAsistencia(historialActual);
+  const filtros = [
+    qs("historialCurso")?.selectedOptions?.[0]?.textContent,
+    qs("historialAlumno")?.selectedOptions?.[0]?.textContent,
+    qs("historialDesde")?.value ? `Desde ${qs("historialDesde").value}` : "",
+    qs("historialHasta")?.value ? `Hasta ${qs("historialHasta").value}` : ""
+  ].filter((v) => v && !v.toLowerCase().includes("seleccionar")).join(" · ");
+  const resumen = `<section><h2>Resumen</h2><table><tr><th>Registros</th><th>Presentes</th><th>Ausencias</th><th>Asistencia</th></tr><tr><td>${metricas.total}</td><td>${metricas.presentes}</td><td>${metricas.ausencias}</td><td>${metricas.porcentaje}%</td></tr></table>${filtros ? `<p>${escapeHtml(filtros)}</p>` : ""}</section>`;
+  const tabla = qs("tablaHistorial")?.innerHTML || "";
+  window.ADAExport?.openDocument("Informe de asistencia", resumen + tabla);
 }
 
 async function guardarSeguimiento(event) {
@@ -409,42 +449,60 @@ async function calcularAlertas() {
   qs("resultadoAlertas").innerHTML = "<p class='helper-text'>Calculando alertas...</p>";
   const { data, error } = await supabaseClient
     .from("asistencia_registros")
-    .select("alumno_id, profiles(nombre,apellido), asistencia_estados(computa_inasistencia), asistencia_clases(cursos(id,nombre))")
+    .select("alumno_id, profiles(nombre,apellido), asistencia_estados(computa_inasistencia), asistencia_clases(fecha,cursos(id,nombre))")
     .order("creado_en", { ascending: false })
-    .limit(1000);
+    .limit(3000);
 
   if (error) {
-    qs("resultadoAlertas").innerHTML = `<div class="alert-box alert-red">${escapeHtml(error.message)}</div>`;
+    qs("resultadoAlertas").innerHTML = "<div class='alert-box alert-red'>No se pudieron calcular las alertas de asistencia.</div>";
     console.error(error);
+    alertasActuales = [];
     return;
   }
 
-  const ausencias = {};
+  const resumen = {};
   (data || []).forEach((r) => {
     const cursoRegistro = String(r.asistencia_clases?.cursos?.id || "");
     if (cursosPermitidos.size && !cursosPermitidos.has(cursoRegistro)) return;
-    if (!r.asistencia_estados?.computa_inasistencia) return;
-    const id = r.alumno_id;
-    if (!ausencias[id]) {
-      ausencias[id] = {
-        alumno: `${r.profiles?.apellido || ""}, ${r.profiles?.nombre || ""}`,
+    const id = String(r.alumno_id || "");
+    if (!id) return;
+    if (!resumen[id]) {
+      resumen[id] = {
+        alumno: `${r.profiles?.apellido || ""}, ${r.profiles?.nombre || ""}`.trim(),
         curso: r.asistencia_clases?.cursos?.nombre || "-",
-        cantidad: 0
+        total: 0,
+        ausencias: 0
       };
     }
-    ausencias[id].cantidad += 1;
+    resumen[id].total += 1;
+    if (r.asistencia_estados?.computa_inasistencia) resumen[id].ausencias += 1;
   });
 
-  const items = Object.values(ausencias).sort((a, b) => b.cantidad - a.cantidad);
-  if (!items.length) {
+  alertasActuales = Object.values(resumen)
+    .map((item) => ({ ...item, porcentajeAusencia: item.total ? Math.round((item.ausencias / item.total) * 1000) / 10 : 0 }))
+    .filter((item) => item.ausencias > 0)
+    .sort((a, b) => b.porcentajeAusencia - a.porcentajeAusencia || b.ausencias - a.ausencias);
+
+  if (!alertasActuales.length) {
     qs("resultadoAlertas").innerHTML = "<div class='alert-box alert-green'><strong>Sin alertas.</strong><br>No se detectan ausencias computables cargadas.</div>";
     return;
   }
 
-  qs("resultadoAlertas").innerHTML = items.map((item) => {
-    const clase = item.cantidad >= 5 ? "alert-red" : item.cantidad >= 3 ? "alert-yellow" : "alert-green";
-    return `<div class="alert-box ${clase}"><strong>${escapeHtml(item.alumno)}</strong><br>${escapeHtml(item.curso)} · Ausencias computables: ${item.cantidad}</div>`;
+  qs("resultadoAlertas").innerHTML = alertasActuales.map((item) => {
+    const clase = item.porcentajeAusencia >= 20 ? "alert-red" : item.porcentajeAusencia >= 10 ? "alert-yellow" : "alert-green";
+    const nivel = item.porcentajeAusencia >= 20 ? "Riesgo alto" : item.porcentajeAusencia >= 10 ? "Atención" : "Seguimiento";
+    return `<div class="alert-box ${clase}"><strong>${escapeHtml(item.alumno)}</strong><br>${escapeHtml(item.curso)} · ${item.ausencias} ausencia/s de ${item.total} registros (${item.porcentajeAusencia}%) · ${nivel}</div>`;
   }).join("");
+}
+
+function exportarAlertasAsistencia() {
+  if (!alertasActuales.length) {
+    alert("Primero calculá las alertas para exportarlas.");
+    return;
+  }
+  const rows = alertasActuales.map((item) => `<tr><td>${escapeHtml(item.alumno)}</td><td>${escapeHtml(item.curso)}</td><td>${item.total}</td><td>${item.ausencias}</td><td>${item.porcentajeAusencia}%</td><td>${item.porcentajeAusencia >= 20 ? "Alto" : item.porcentajeAusencia >= 10 ? "Medio" : "Bajo"}</td></tr>`).join("");
+  const body = `<table><thead><tr><th>Alumno</th><th>Curso</th><th>Registros</th><th>Ausencias</th><th>% ausencia</th><th>Nivel</th></tr></thead><tbody>${rows}</tbody></table>`;
+  window.ADAExport?.openDocument("Alertas de asistencia", body);
 }
 
 configurarTabs();
@@ -456,30 +514,6 @@ qs("formGuardarAsistencia")?.addEventListener("submit", guardarAsistencia);
 qs("btnBuscarHistorial")?.addEventListener("click", buscarHistorial);
 qs("formSeguimiento")?.addEventListener("submit", guardarSeguimiento);
 qs("btnCalcularAlertas")?.addEventListener("click", calcularAlertas);
+qs("btnExportarHistorial")?.addEventListener("click", exportarHistorialAsistencia);
+qs("btnExportarAlertas")?.addEventListener("click", exportarAlertasAsistencia);
 cargarBase();
-
-function exportarHistorialPdf() {
-  const tabla = qs("tablaHistorial");
-  if (!window.ADAExport || !tabla || !(tabla.textContent || "").trim()) {
-    mostrarMensaje("msgCargaAlumnos", "Buscá un historial antes de exportar.", "error");
-    return;
-  }
-  const curso = qs("historialCurso")?.selectedOptions?.[0]?.textContent || "Todos los cursos";
-  const alumno = qs("historialAlumno")?.selectedOptions?.[0]?.textContent || "Todos los alumnos";
-  const desde = qs("historialDesde")?.value || "-";
-  const hasta = qs("historialHasta")?.value || "-";
-  const meta = `<table><tr><th>Curso</th><td>${escapeHtml(curso)}</td><th>Alumno</th><td>${escapeHtml(alumno)}</td></tr><tr><th>Desde</th><td>${escapeHtml(desde)}</td><th>Hasta</th><td>${escapeHtml(hasta)}</td></tr></table>`;
-  window.ADAExport.openDocument("Historial de asistencia", meta + window.ADAExport.cloneClean(tabla));
-}
-
-function exportarAlertasPdf() {
-  const bloque = qs("resultadoAlertas");
-  if (!window.ADAExport || !bloque || !(bloque.textContent || "").trim()) {
-    mostrarMensaje("msgCargaAlumnos", "Calculá las alertas antes de exportar.", "error");
-    return;
-  }
-  window.ADAExport.openDocument("Alertas de asistencia", window.ADAExport.cloneClean(bloque));
-}
-
-qs("btnExportarHistorialPdf")?.addEventListener("click", exportarHistorialPdf);
-qs("btnExportarAlertasPdf")?.addEventListener("click", exportarAlertasPdf);
