@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>QA integral de Gestión Académica | ADA Cloud</title>
+  <title>ADA Test Center | Control integral</title>
   <link rel="stylesheet" href="../assets/css/style.css">
   <link rel="stylesheet" href="../assets/css/bloque23-ui-refresh.css">
   <link rel="stylesheet" href="../assets/css/qa-academica.css">
@@ -11,61 +11,103 @@
 <body class="module-page role-loading">
   <main class="module-shell">
     <a href="dashboard.html" class="back-link">← Mi inicio</a>
-    <section class="module-view qa-ac-shell">
-      <header class="qa-ac-heading">
+    <section class="module-view qa-center-shell">
+      <header class="qa-center-heading">
         <div>
           <p class="eyebrow">ADA Quality Assurance</p>
-          <h1>QA integral de Gestión Académica</h1>
-          <p>Ejecuta verificaciones de solo lectura sobre sesión, Supabase, permisos, páginas, controles, acciones, enlaces, exportaciones y circuitos académicos.</p>
+          <h1>ADA Test Center</h1>
+          <p>Control automático de infraestructura, seguridad, datos, navegación, flujos académicos, exportaciones y calidad de interfaz.</p>
         </div>
-        <div class="qa-ac-score" aria-label="Índice de control">
-          <strong id="qaAcScore">0%</strong>
-          <span>cobertura verificada</span>
+        <div class="qa-center-score" aria-label="Puntaje de calidad">
+          <strong id="qaScore">0%</strong>
+          <span id="qaCertification">Sin ejecutar</span>
         </div>
       </header>
 
-      <div class="qa-ac-progress" aria-hidden="true"><span id="qaAcProgress"></span></div>
-
-      <div class="qa-ac-actions">
-        <button class="btn-primary" id="qaAcRun" type="button">Ejecutar control integral</button>
-        <button class="btn-secondary" id="qaAcExport" type="button" disabled>Descargar JSON</button>
-        <button class="btn-secondary" id="qaAcExportCsv" type="button" disabled>Descargar CSV</button>
-      </div>
-
-      <div class="qa-ac-grid">
-        <div class="qa-ac-kpi"><span>Pruebas</span><strong id="qaAcTotal">0</strong></div>
-        <div class="qa-ac-kpi is-ok"><span>Correctas</span><strong id="qaAcOk">0</strong></div>
-        <div class="qa-ac-kpi is-warn"><span>Advertencias</span><strong id="qaAcWarn">0</strong></div>
-        <div class="qa-ac-kpi is-error"><span>Errores</span><strong id="qaAcError">0</strong></div>
-      </div>
-
-      <section class="panel-card qa-ac-panel">
-        <div class="qa-ac-toolbar">
-          <div>
-            <h2>Resultado detallado</h2>
-            <div id="qaAcStatus" class="helper-text" aria-live="polite">Ejecutá el control integral para comenzar.</div>
-          </div>
-          <div class="qa-ac-filters">
-            <label>Estado
-              <select id="qaAcFilter">
-                <option value="all">Todos</option><option value="error">Errores</option><option value="warn">Advertencias</option><option value="ok">Correctos</option>
-              </select>
-            </label>
-            <label>Categoría
-              <select id="qaAcCategory">
-                <option value="all">Todas</option><option>Base</option><option>Seguridad</option><option>Datos</option><option>Estructura</option><option>Recursos</option><option>Navegación</option><option>Permisos</option><option>Calidad</option><option>Exportaciones</option><option>Código</option><option>Flujos</option>
-              </select>
-            </label>
-          </div>
-        </div>
-        <div id="qaAcList" class="qa-ac-list" aria-live="polite"></div>
+      <section class="qa-center-summary" aria-label="Resumen de control">
+        <article><span>Pruebas</span><strong id="qaTotal">0</strong></article>
+        <article class="ok"><span>Correctas</span><strong id="qaOk">0</strong></article>
+        <article class="warn"><span>Advertencias</span><strong id="qaWarn">0</strong></article>
+        <article class="error"><span>Errores</span><strong id="qaError">0</strong></article>
+        <article class="info"><span>Omitidas</span><strong id="qaSkipped">0</strong></article>
       </section>
 
-      <aside class="qa-ac-note">
-        <strong>Alcance:</strong> este control no modifica registros. Verifica estructura e integración mediante lecturas. Las acciones que crean, aprueban, corrigen o publican información deben completarse con usuarios de prueba en la validación funcional institucional.
+      <div class="qa-center-progress" aria-hidden="true"><span id="qaProgress"></span></div>
+
+      <section class="panel-card qa-center-controls">
+        <div class="qa-run-actions">
+          <button class="btn-primary" id="qaRunAll" type="button">▶ Ejecutar todos los tests</button>
+          <button class="btn-secondary" id="qaStop" type="button" disabled>Detener</button>
+          <button class="btn-secondary" id="qaClear" type="button">Limpiar</button>
+        </div>
+        <div class="qa-export-actions">
+          <button class="btn-secondary" id="qaExportJson" type="button" disabled>Descargar JSON</button>
+          <button class="btn-secondary" id="qaExportCsv" type="button" disabled>Descargar CSV</button>
+          <button class="btn-secondary" id="qaPrintReport" type="button" disabled>Informe imprimible</button>
+        </div>
+      </section>
+
+      <section class="qa-center-layout">
+        <aside class="panel-card qa-suite-panel">
+          <div class="qa-suite-title">
+            <h2>Suites de prueba</h2>
+            <button id="qaToggleSuites" type="button" class="qa-link-button">Seleccionar todas</button>
+          </div>
+          <div id="qaSuites" class="qa-suite-list"></div>
+          <p class="helper-text">Las pruebas son de solo lectura: no crean, modifican ni eliminan registros.</p>
+        </aside>
+
+        <section class="panel-card qa-results-panel">
+          <div class="qa-results-toolbar">
+            <div>
+              <h2>Resultado detallado</h2>
+              <p id="qaStatus" class="helper-text" aria-live="polite">Seleccioná las suites y ejecutá el control.</p>
+            </div>
+            <div class="qa-filters">
+              <label>Estado
+                <select id="qaFilterStatus">
+                  <option value="all">Todos</option>
+                  <option value="error">Errores</option>
+                  <option value="warn">Advertencias</option>
+                  <option value="ok">Correctos</option>
+                  <option value="skipped">Omitidos</option>
+                </select>
+              </label>
+              <label>Suite
+                <select id="qaFilterSuite"><option value="all">Todas</option></select>
+              </label>
+              <label>Buscar
+                <input id="qaSearch" type="search" placeholder="Prueba o detalle">
+              </label>
+            </div>
+          </div>
+          <div id="qaResults" class="qa-results-list" aria-live="polite"></div>
+        </section>
+      </section>
+
+      <section class="panel-card qa-workflows-panel">
+        <div>
+          <p class="eyebrow">Circuitos académicos</p>
+          <h2>Certificación automática de integración</h2>
+          <p>El Test Center verifica estructura, estados existentes, relaciones, permisos declarados y disponibilidad de acciones. No suplanta usuarios ni realiza escrituras sobre la base.</p>
+        </div>
+        <div id="qaWorkflowCards" class="qa-workflow-grid"></div>
+      </section>
+
+      <section class="panel-card qa-history-panel">
+        <div class="qa-history-heading">
+          <div><p class="eyebrow">Historial local</p><h2>Últimas ejecuciones</h2></div>
+          <button id="qaClearHistory" class="btn-secondary" type="button">Borrar historial</button>
+        </div>
+        <div id="qaHistory" class="qa-history-list"></div>
+      </section>
+
+      <aside class="qa-center-note">
+        <strong>Alcance real:</strong> este centro automatiza las verificaciones seguras que pueden ejecutarse desde el navegador. La validación de una acción completa entre siete cuentas distintas requiere usuarios de prueba o un entorno de staging; el informe identifica esos casos como evidencia funcional pendiente, no como aprobados ficticios.
       </aside>
     </section>
   </main>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../assets/js/supabase-config.js"></script>
   <script src="../assets/js/ada-security.js"></script>
