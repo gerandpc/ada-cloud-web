@@ -404,52 +404,6 @@ function adaInjectGlobalLogout(perfil) {
 }
 
 
-function adaEnsurePrintStyles() {
-  if (document.querySelector('link[data-ada-print-styles]')) return;
-  const link = document.createElement("link");
-  link.rel = "stylesheet";
-  link.href = "../assets/css/ada-print.css";
-  link.dataset.adaPrintStyles = "true";
-  document.head.appendChild(link);
-}
-
-function adaPrintableTitle() {
-  const heading = document.querySelector("h1");
-  return (heading?.textContent || document.title || "ADA").trim();
-}
-
-function adaExportCurrentViewToPdf() {
-  const previousTitle = document.title;
-  const cleanTitle = adaPrintableTitle().replace(/[\\/:*?"<>|]+/g, "-");
-  document.title = `${cleanTitle} - ADA`;
-  document.body.classList.add("ada-printing");
-  window.setTimeout(() => window.print(), 80);
-  window.setTimeout(() => {
-    document.body.classList.remove("ada-printing");
-    document.title = previousTitle;
-  }, 800);
-}
-
-function adaInjectPdfExport(perfil) {
-  if (adaIsLoginOrIndex() || document.querySelector(".ada-pdf-export")) return;
-  adaEnsurePrintStyles();
-
-  const button = document.createElement("button");
-  button.type = "button";
-  button.className = "ada-pdf-export no-print";
-  button.title = "Imprimir o guardar esta vista como PDF";
-  button.setAttribute("aria-label", "Imprimir o guardar esta vista como PDF");
-  button.innerHTML = '<span aria-hidden="true">▣</span><span>Guardar PDF</span>';
-  button.addEventListener("click", adaExportCurrentViewToPdf);
-  document.body.appendChild(button);
-
-  const meta = document.createElement("div");
-  meta.className = "ada-print-header print-only";
-  const fullName = `${perfil?.nombre || ""} ${perfil?.apellido || ""}`.trim();
-  meta.innerHTML = `<strong>ADA · ${adaPrintableTitle()}</strong><span>${fullName ? `Usuario: ${fullName} · ` : ""}${new Date().toLocaleString("es-AR")}</span>`;
-  document.body.prepend(meta);
-}
-
 function adaBuildAccessDenied(perfil, pagina) {
   const rol = adaNormalizeRole(perfil.rol);
   document.body.classList.remove("role-loading");
@@ -522,7 +476,6 @@ async function adaGetSessionAndProfile() {
   adaHideUnauthorizedModules(perfil.rol);
   adaInjectGlobalLogout(perfil);
   adaInjectAccountAccess(perfil);
-  adaInjectPdfExport(perfil);
 
   return { session, perfil };
 }
@@ -564,6 +517,5 @@ window.adaGetSessionAndProfile = adaGetSessionAndProfile;
 window.obtenerSesionPerfil = obtenerSesionPerfil;
 window.adaHideUnauthorizedModules = adaHideUnauthorizedModules;
 window.adaInjectAccountAccess = adaInjectAccountAccess;
-window.adaExportCurrentViewToPdf = adaExportCurrentViewToPdf;
 window.ADA_ROLE_HOME = ADA_ROLE_HOME;
 window.ADA_ROLE_MODULES = ADA_ROLE_MODULES;
