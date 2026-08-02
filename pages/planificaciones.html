@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planificaciones didácticas - ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque23-ui-refresh.css">
+  <link rel="stylesheet" href="../assets/css/academic-suite.css">
+  <link rel="stylesheet" href="../assets/css/planificaciones.css">
+</head>
+<body class="module-page role-loading">
+  <main class="module-shell">
+    <a href="dashboard.html" class="back-link">← Mi inicio</a>
+    <section class="module-view">
+      <h1>Planificaciones didácticas</h1>
+      <p>Diseño, revisión, aprobación y consulta de la planificación anual o por período.</p>
+
+      <div class="plan-grid" aria-label="Resumen de planificaciones">
+        <div class="plan-kpi"><span>Total</span><strong id="planKpiTotal">0</strong></div>
+        <div class="plan-kpi"><span>Borradores</span><strong id="planKpiBorrador">0</strong></div>
+        <div class="plan-kpi"><span>En revisión</span><strong id="planKpiPendiente">0</strong></div>
+        <div class="plan-kpi"><span>Aprobadas</span><strong id="planKpiAprobado">0</strong></div>
+      </div>
+
+      <section class="panel-card">
+        <div class="form-grid">
+          <div><label for="planFiltroCurso">Curso</label><select id="planFiltroCurso"></select></div>
+          <div><label for="planFiltroMateria">Materia</label><select id="planFiltroMateria"></select></div>
+          <div><label for="planFiltroEstado">Estado</label><select id="planFiltroEstado"><option value="">Todos</option><option value="borrador">Borrador</option><option value="pendiente">En revisión</option><option value="observado">Observada</option><option value="aprobado">Aprobada</option></select></div>
+        </div>
+        <div class="plan-actions"><button type="button" id="planBtnFiltrar" class="btn-primary">Aplicar filtros</button><button type="button" id="planBtnLimpiar" class="btn-secondary">Limpiar</button></div>
+      </section>
+
+      <div class="plan-layout">
+        <section class="panel-card">
+          <div class="section-heading-actions"><h2>Planificaciones</h2><button type="button" id="planBtnNueva" class="btn-primary">Nueva planificación</button></div>
+          <div id="planLista" class="plan-list" aria-live="polite"></div>
+        </section>
+
+        <section class="panel-card plan-hidden" id="planEditorPanel">
+          <h2 id="planEditorTitle">Nueva planificación</h2>
+          <form id="planForm" class="ada-form plan-form">
+            <div class="form-grid">
+              <div><label for="planCurso">Curso</label><select id="planCurso" required></select></div>
+              <div><label for="planMateria">Materia</label><select id="planMateria" required></select></div>
+              <div><label for="planPrograma">Programa asociado</label><select id="planPrograma"></select></div>
+              <div><label for="planAnio">Año lectivo</label><input id="planAnio" type="number" min="2024" max="2100" required></div>
+              <div><label for="planPeriodo">Período</label><select id="planPeriodo"><option value="anual">Anual</option><option value="primer_bimestre">Primer bimestre</option><option value="segundo_bimestre">Segundo bimestre</option><option value="primer_cuatrimestre">Primer cuatrimestre</option><option value="segundo_cuatrimestre">Segundo cuatrimestre</option><option value="unidad">Unidad didáctica</option></select></div>
+              <div><label for="planVersion">Versión</label><input id="planVersion" value="1.00" required></div>
+            </div>
+            <label for="planTitulo">Título</label><input id="planTitulo" required>
+            <label for="planPropositos">Propósitos</label><textarea id="planPropositos"></textarea>
+            <label for="planObjetivos">Objetivos</label><textarea id="planObjetivos"></textarea>
+            <label for="planContenidos">Contenidos</label><textarea id="planContenidos" required></textarea>
+            <label for="planEstrategias">Estrategias de enseñanza</label><textarea id="planEstrategias"></textarea>
+            <label for="planActividades">Actividades previstas</label><textarea id="planActividades"></textarea>
+            <label for="planRecursos">Recursos</label><textarea id="planRecursos"></textarea>
+            <label for="planEvaluacion">Evaluación</label><textarea id="planEvaluacion"></textarea>
+            <label for="planCronograma">Cronograma</label><textarea id="planCronograma"></textarea>
+            <label for="planAdecuaciones">Adecuaciones y accesibilidad</label><textarea id="planAdecuaciones"></textarea>
+            <div class="plan-actions"><button type="submit" class="btn-primary">Guardar planificación</button><button type="button" id="planBtnCancelar" class="btn-secondary">Cancelar</button></div>
+            <p id="planMensaje" class="form-message" aria-live="polite"></p>
+          </form>
+        </section>
+      </div>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/ada-security.js"></script>
+  <script src="../assets/js/planificaciones.js"></script>
+  <script src="../assets/js/academic-suite.js"></script>
+</body>
+</html>
