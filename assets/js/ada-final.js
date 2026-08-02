@@ -83,8 +83,16 @@
   }
 
   function injectUtilityBar() {
-    // Las acciones flotantes se administran de forma centralizada en ada-theme-11.js.
-    document.querySelectorAll(".ada-final-utilities").forEach((node) => node.remove());
+    if (document.querySelector(".ada-final-utilities")) return;
+    const page = location.pathname.split("/").pop();
+    if (["login.html", "recuperar-clave.html"].includes(page)) return;
+    const bar = document.createElement("div");
+    bar.className = "ada-final-utilities";
+    bar.innerHTML = `
+      <a class="ada-help-link" href="ayuda.html" title="Ayuda y guía de uso" aria-label="Ayuda">?</a>
+      <a class="ada-brand-orb" href="acerca.html" title="Acerca de Ada" aria-label="Acerca de Ada"><img src="../assets/img/ada-logo.jpg" alt="Logo de Ada"></a>
+    `;
+    document.body.appendChild(bar);
   }
 
   function addVersionMeta() {
