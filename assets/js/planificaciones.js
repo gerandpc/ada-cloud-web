@@ -215,11 +215,25 @@
   }
 
   function exportPdf(row) {
-    const popup = window.open("", "_blank", "noopener,noreferrer,width=900,height=700");
-    if (!popup) return;
-    const field = (label, value) => value ? `<section><h2>${esc(label)}</h2><p>${esc(value).replace(/\n/g, "<br>")}</p></section>` : "";
-    popup.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>${esc(row.titulo)}</title><style>body{font-family:Arial,sans-serif;color:#1f2937;margin:36px;line-height:1.5}h1{margin-bottom:4px}h2{font-size:15px;margin:22px 0 6px;border-bottom:1px solid #d8dee6;padding-bottom:5px}.meta{color:#64748b;margin-bottom:22px}section{break-inside:avoid}button{margin-top:24px;padding:10px 14px}@media print{button{display:none}}</style></head><body><h1>${esc(row.titulo)}</h1><p class="meta">${esc(row.cursos?.nombre || "Curso")} · ${esc(row.materias?.nombre || "Materia")} · ${esc(row.anio_lectivo)} · ${esc(text(row.estado))} · Versión ${esc(row.version)}</p>${field("Propósitos",row.propositos)}${field("Objetivos",row.objetivos)}${field("Contenidos",row.contenidos)}${field("Estrategias de enseñanza",row.estrategias)}${field("Actividades previstas",row.actividades_previstas)}${field("Recursos",row.recursos)}${field("Evaluación",row.evaluacion)}${field("Cronograma",row.cronograma)}${field("Adecuaciones y accesibilidad",row.adecuaciones)}${field("Observaciones de revisión",row.observaciones_revision)}<button onclick="window.print()">Guardar como PDF / Imprimir</button></body></html>`);
-    popup.document.close();
+    if (!window.ADA_PDF) return alert("El motor PDF de ADA no está disponible. Recargá la página.");
+    window.ADA_PDF.download({
+      title: row.titulo || "Planificación didáctica",
+      subtitle: `${row.cursos?.nombre || "Curso"} · ${row.materias?.nombre || "Materia"} · ${row.anio_lectivo || ""} · ${text(row.estado)} · Versión ${row.version || 1}`,
+      filename: `ADA_Planificacion_${String(row.titulo || "didactica").replace(/[^a-zA-Z0-9_-]+/g,"_")}_${new Date().toISOString().slice(0,10)}.pdf`,
+      sections: [
+        { title: "Información general", keyValues: [["Curso",row.cursos?.nombre],["Materia",row.materias?.nombre],["Año lectivo",row.anio_lectivo],["Estado",text(row.estado)],["Versión",row.version]] },
+        { title: "Propósitos", text: row.propositos },
+        { title: "Objetivos", text: row.objetivos },
+        { title: "Contenidos", text: row.contenidos },
+        { title: "Estrategias de enseñanza", text: row.estrategias },
+        { title: "Actividades previstas", text: row.actividades_previstas },
+        { title: "Recursos", text: row.recursos },
+        { title: "Evaluación", text: row.evaluacion },
+        { title: "Cronograma", text: row.cronograma },
+        { title: "Adecuaciones y accesibilidad", text: row.adecuaciones },
+        { title: "Observaciones de revisión", text: row.observaciones_revision }
+      ].filter(x => x.keyValues || x.text)
+    });
   }
 
   async function onListClick(event) {

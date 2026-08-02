@@ -420,7 +420,11 @@
     $("qaClear").addEventListener("click",clearResults);
     $("qaExportJson").addEventListener("click",exportJson);
     $("qaExportCsv").addEventListener("click",exportCsv);
-    $("qaPrintReport").addEventListener("click",()=>window.print());
+    $("qaPrintReport").addEventListener("click",()=>{
+      if(!window.ADA_PDF)return alert("El motor PDF de ADA no está disponible. Recargá la página.");
+      const blocks=[document.querySelector(".qa-summary"),document.getElementById("qaResults")].filter(Boolean);
+      window.ADA_PDF.fromElements("ADA Test Center - Informe de resultados",blocks,{filename:`ADA_Test_Center_${new Date().toISOString().slice(0,10)}.pdf`,orientation:"landscape"});
+    });
     $("qaToggleSuites").addEventListener("click",toggleSuites);
     $("qaClearHistory").addEventListener("click",clearHistory);
     ["qaFilterStatus","qaFilterSuite","qaSearch"].forEach(id=>$(id).addEventListener(id==="qaSearch"?"input":"change",renderResults));

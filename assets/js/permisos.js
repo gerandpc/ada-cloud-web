@@ -43,12 +43,15 @@ function permissionCsv() {
 }
 
 function permissionPdf() {
+  if (!window.ADA_PDF) return alert("El motor PDF de ADA no está disponible. Recargá la página.");
   const rows = permissionFilteredRows();
-  const w = window.open("", "_blank", "width=1200,height=800");
-  if (!w) return;
-  const table = rows.map(row => `<tr><td>${permissionEsc(row.page)}</td><td>${permissionEsc(row.module)}</td>${ADA_PERMISSION_ROLES.map(role => `<td>${row.roles.includes(role) ? "Sí" : "No"}</td>`).join("")}</tr>`).join("");
-  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Matriz de permisos ADA</title><style>body{font-family:Arial,sans-serif;color:#172033;padding:28px}h1{color:#b91c1c}table{width:100%;border-collapse:collapse;font-size:10px}th,td{border:1px solid #d7dde7;padding:6px;text-align:left}th{background:#f3f6fa}@media print{button{display:none}}</style></head><body><h1>Matriz de permisos ADA</h1><p>Generado el ${new Date().toLocaleString("es-AR")}</p><table><thead><tr><th>Página</th><th>Módulo</th>${ADA_PERMISSION_ROLES.map(r=>`<th>${ADA_PERMISSION_LABELS[r]}</th>`).join("")}</tr></thead><tbody>${table}</tbody></table><script>window.onload=()=>window.print()<\/script></body></html>`);
-  w.document.close();
+  window.ADA_PDF.download({
+    title: "Matriz de permisos ADA",
+    subtitle: `Generado el ${new Date().toLocaleString("es-AR")}`,
+    orientation: "landscape",
+    filename: `ADA_Matriz_Permisos_${new Date().toISOString().slice(0,10)}.pdf`,
+    sections: [{ table: { headers: ["Página","Módulo",...ADA_PERMISSION_ROLES.map(r=>ADA_PERMISSION_LABELS[r])], rows: rows.map(row=>[row.page,row.module,...ADA_PERMISSION_ROLES.map(role=>row.roles.includes(role)?"Sí":"No")]), options:{fontSize:6} } }]
+  });
 }
 
 document.addEventListener("DOMContentLoaded", async () => {

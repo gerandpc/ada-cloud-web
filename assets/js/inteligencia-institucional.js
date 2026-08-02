@@ -165,10 +165,35 @@ async function intelLoad(){
 }
 
 function intelExecutiveReport(){
-  const m=intelState.metrics||intelCompute();const generated=new Date().toLocaleString('es-AR');const f=intelFilters();const critical=m.subjects.filter(x=>x.value<7||x.failedPct>=25).slice(0,12);const priorityCourses=m.courseMetrics.sort((a,b)=>b.alerts-a.alerts).slice(0,10);
-  const popup=window.open('','_blank','width=1100,height=850');if(!popup)return alert('El navegador bloqueó la ventana del informe.');
-  popup.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Informe ejecutivo ADA</title><style>body{font-family:Arial,sans-serif;color:#1c2f40;margin:36px}h1{margin-bottom:4px;color:#7a1f2b}h2{margin-top:28px;border-bottom:1px solid #ccd6df;padding-bottom:7px}.meta{color:#647487}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.k{border:1px solid #d8e0e8;border-radius:10px;padding:14px}.k strong{display:block;font-size:24px;margin-top:6px}table{width:100%;border-collapse:collapse}th,td{padding:8px;border-bottom:1px solid #e2e8ee;text-align:left;font-size:12px}.note{background:#f2f6f9;padding:12px;border-radius:8px;margin-top:24px}.conclusion{border-left:5px solid #7a1f2b;padding:12px;background:#fff5f6}@media print{button{display:none}.grid{grid-template-columns:repeat(4,1fr)}}</style></head><body><h1>Informe ejecutivo institucional</h1><p class="meta">Generado por ADA Intelligence · ${intelText(generated)} · Curso: ${intelText(f.curso?intelCourseName(f.curso):'Todos')} · Materia: ${intelText(f.materia?intelSubjectName(f.materia):'Todas')}</p><div class="conclusion"><strong>ADA Score: ${m.score===null?'—':Math.round(m.score)}/100</strong><br>${intelText(m.scoreLabel)}</div><div class="grid"><div class="k">Matrícula<strong>${m.uniqueStudents.size}</strong></div><div class="k">Asistencia<strong>${intelPct(m.attendancePct)}</strong></div><div class="k">Promedio<strong>${m.avg===null?'—':m.avg.toFixed(2)}</strong></div><div class="k">Alertas<strong>${m.alerts.length}</strong></div><div class="k">Programas aprobados<strong>${m.programs.length?`${m.approved}/${m.programs.length}`:'—'}</strong></div><div class="k">Entregas<strong>${intelPct(m.deliveryPct)}</strong></div><div class="k">Carga docente<strong>${m.avgLoad===null?'—':m.avgLoad.toFixed(1)}</strong></div><div class="k">Riesgo alto<strong>${m.riskCounts.Alto}</strong></div></div><h2>Cursos prioritarios</h2><table><thead><tr><th>Curso</th><th>Asistencia</th><th>Promedio</th><th>Alertas</th></tr></thead><tbody>${priorityCourses.map(x=>`<tr><td>${intelText(x.label)}</td><td>${intelPct(x.attendance)}</td><td>${x.avg===null?'—':x.avg.toFixed(2)}</td><td>${x.alerts}</td></tr>`).join('')||'<tr><td colspan="4">Sin datos suficientes.</td></tr>'}</tbody></table><h2>Materias que requieren atención</h2><table><thead><tr><th>Materia</th><th>Promedio</th><th>Desaprobación</th></tr></thead><tbody>${critical.map(x=>`<tr><td>${intelText(x.label)}</td><td>${x.value.toFixed(2)}</td><td>${x.failedPct.toFixed(1)}%</td></tr>`).join('')||'<tr><td colspan="3">Sin alertas.</td></tr>'}</tbody></table><h2>Trayectorias priorizadas</h2><table><thead><tr><th>Estudiante</th><th>Curso</th><th>Ausentismo</th><th>Promedio</th><th>Nivel</th></tr></thead><tbody>${m.alerts.slice(0,20).map(x=>`<tr><td>${intelText(intelProfileName(x.profile))}</td><td>${intelText(intelCourseName(x.courseId))}</td><td>${(x.absentee*100).toFixed(1)}%</td><td>${x.avg===null?'—':x.avg.toFixed(2)}</td><td>${x.level}</td></tr>`).join('')||'<tr><td colspan="5">Sin alertas.</td></tr>'}</tbody></table><p class="note">Los indicadores son orientativos y deben interpretarse junto con el criterio profesional de los equipos institucionales.</p><button onclick="window.print()">Guardar como PDF / Imprimir</button></body></html>`);popup.document.close();
+  if(!window.ADA_PDF)return alert('El motor PDF de ADA no está disponible. Recargá la página.');
+  const m=intelState.metrics||intelCompute();
+  const f=intelFilters();
+  const critical=m.subjects.filter(x=>x.value<7||x.failedPct>=25).slice(0,12);
+  const priorityCourses=[...m.courseMetrics].sort((a,b)=>b.alerts-a.alerts).slice(0,10);
+  window.ADA_PDF.download({
+    title:'Informe ejecutivo institucional',
+    subtitle:`ADA Intelligence · ${new Date().toLocaleString('es-AR')} · Curso: ${f.curso?intelCourseName(f.curso):'Todos'} · Materia: ${f.materia?intelSubjectName(f.materia):'Todas'}`,
+    filename:`ADA_Informe_Ejecutivo_${new Date().toISOString().slice(0,10)}.pdf`,
+    cards:[
+      {label:'ADA Score',value:m.score===null?'—':`${Math.round(m.score)}/100`},
+      {label:'Matrícula',value:m.uniqueStudents.size},
+      {label:'Asistencia',value:intelPct(m.attendancePct)},
+      {label:'Promedio',value:m.avg===null?'—':m.avg.toFixed(2)},
+      {label:'Alertas',value:m.alerts.length},
+      {label:'Programas aprobados',value:m.programs.length?`${m.approved}/${m.programs.length}`:'—'},
+      {label:'Entregas',value:intelPct(m.deliveryPct)},
+      {label:'Carga docente',value:m.avgLoad===null?'—':m.avgLoad.toFixed(1)}
+    ],
+    sections:[
+      {title:'Estado institucional',text:`ADA Score ${m.score===null?'sin cálculo':Math.round(m.score)+'/100'} · ${m.scoreLabel}.`},
+      {title:'Cursos prioritarios',table:{headers:['Curso','Asistencia','Promedio','Alertas'],rows:priorityCourses.map(x=>[x.label,intelPct(x.attendance),x.avg===null?'—':x.avg.toFixed(2),x.alerts])}},
+      {title:'Materias que requieren atención',table:{headers:['Materia','Promedio','Desaprobación'],rows:critical.map(x=>[x.label,x.value.toFixed(2),`${x.failedPct.toFixed(1)}%`])}},
+      {title:'Trayectorias priorizadas',table:{headers:['Estudiante','Curso','Ausentismo','Promedio','Nivel'],rows:m.alerts.slice(0,20).map(x=>[intelProfileName(x.profile),intelCourseName(x.courseId),`${(x.absentee*100).toFixed(1)}%`,x.avg===null?'—':x.avg.toFixed(2),x.level])}}
+    ],
+    note:'Los indicadores son orientativos y deben interpretarse junto con el criterio profesional de los equipos institucionales.'
+  });
 }
+
 function intelExportCSV(){
   const m=intelState.metrics||intelCompute();const rows=[['Indicador','Valor'],['ADA Score',m.score===null?'':Math.round(m.score)],['Matrícula',m.uniqueStudents.size],['Asistencia',m.attendancePct??''],['Promedio',m.avg??''],['Alertas',m.alerts.length],['Programas aprobados',m.approved],['Programas totales',m.programs.length],['Entregas',m.deliveryPct??''],['Carga docente promedio',m.avgLoad??''],[],['Curso','Estudiantes','Asistencia','Promedio','Alertas'],...m.courseMetrics.map(x=>[x.label,x.students,x.attendance??'',x.avg??'',x.alerts]),[],['Materia','Promedio','Desaprobación'],...m.subjects.map(x=>[x.label,x.value,x.failedPct])];
   const csv=rows.map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(';')).join('\n');const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ADA_Intelligence_${new Date().toISOString().slice(0,10)}.csv`;a.click();URL.revokeObjectURL(a.href);

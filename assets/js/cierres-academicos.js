@@ -450,18 +450,15 @@ function exportarActaPdf() {
 }
 
 function imprimirDocumento(titulo, encabezados, filas) {
-  const ventana = window.open("", "_blank", "noopener,noreferrer");
-  if (!ventana) return mensaje("El navegador bloqueó la ventana del documento. Habilitá las ventanas emergentes.", "error");
-
-  const cabecera = encabezados.map((item) => `<th>${escapeHtml(item)}</th>`).join("");
-  const cuerpo = filas.map((fila) => `<tr>${fila.map((item) => `<td>${escapeHtml(item)}</td>`).join("")}</tr>`).join("");
+  if (!window.ADA_PDF) return mensaje("El motor PDF de ADA no está disponible. Recargá la página.", "error");
   const institucion = normalizar(perfilCierre?.institucion_nombre || perfilCierre?.institucion || "ADA Cloud");
-
-  ventana.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>${escapeHtml(titulo)}</title><style>
-    @page{size:A4 landscape;margin:14mm}body{font-family:Arial,sans-serif;color:#172033;margin:0}h1{font-size:20px;margin:0 0 4px}.meta{color:#526174;font-size:12px;margin-bottom:18px}table{width:100%;border-collapse:collapse;font-size:11px}th,td{border:1px solid #cbd5e1;padding:7px;text-align:left;vertical-align:top}th{background:#eef2f7}.firmas{display:flex;gap:70px;margin-top:55px}.firma{width:220px;border-top:1px solid #444;padding-top:6px;text-align:center;font-size:11px}</style></head><body>
-    <h1>${escapeHtml(titulo)}</h1><div class="meta">${escapeHtml(institucion)} · Emitido el ${new Date().toLocaleString("es-AR")}</div>
-    <table><thead><tr>${cabecera}</tr></thead><tbody>${cuerpo}</tbody></table>
-    <div class="firmas"><div class="firma">Responsable institucional</div><div class="firma">Dirección</div></div>
-    <script>window.addEventListener('load',()=>setTimeout(()=>window.print(),250));<\/script></body></html>`);
-  ventana.document.close();
+  window.ADA_PDF.download({
+    title: titulo,
+    subtitle: `${institucion} · Emitido el ${new Date().toLocaleString("es-AR")}`,
+    institution: institucion,
+    orientation: "landscape",
+    filename: `ADA_${String(titulo).replace(/[^a-zA-Z0-9_-]+/g,"_")}_${new Date().toISOString().slice(0,10)}.pdf`,
+    sections: [{ table: { headers: encabezados, rows: filas, options:{fontSize:7} } }],
+    note: "Documento académico generado por ADA Cloud."
+  });
 }

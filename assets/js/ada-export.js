@@ -23,14 +23,8 @@
   }
   function institution(){return document.querySelector('[data-institution-name]')?.textContent?.trim()||'ADA Cloud';}
   function openDocument(title,body){
-    const w=window.open('','_blank','noopener,noreferrer');
-    if(!w){alert('El navegador bloqueó la ventana del documento. Habilitá ventanas emergentes para ADA.');return;}
-    const date=new Intl.DateTimeFormat('es-AR',{dateStyle:'long',timeStyle:'short'}).format(new Date());
-    w.document.open();
-    w.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>${esc(title)}</title><style>
-      @page{size:A4;margin:16mm} body{font-family:Arial,sans-serif;color:#1f2937;margin:0;font-size:11pt} header{border-bottom:2px solid #149187;padding-bottom:10px;margin-bottom:18px} h1{font-size:20pt;margin:0 0 5px} .meta{color:#64748b;font-size:9pt} h2{font-size:14pt;margin:18px 0 8px} table{width:100%;border-collapse:collapse;margin:8px 0 18px;page-break-inside:auto} tr{page-break-inside:avoid} th,td{border:1px solid #cbd5e1;padding:6px 7px;text-align:left;vertical-align:top} th{background:#eaf7f5} article,.panel-card,.b27-card{border:1px solid #cbd5e1;border-radius:8px;padding:12px;margin:10px 0;page-break-inside:avoid} .btn-primary,.btn-secondary,.b27-card-actions,.back-link,.sidebar{display:none!important} footer{margin-top:20px;border-top:1px solid #cbd5e1;padding-top:8px;color:#64748b;font-size:8pt}
-    </style></head><body><header><h1>${esc(title)}</h1><div class="meta">${esc(institution())} · Generado el ${esc(date)}</div></header>${body}<footer>Documento generado por ADA Cloud.</footer><script>window.onload=()=>setTimeout(()=>window.print(),250)<\/script></body></html>`);
-    w.document.close();
+    if(!window.ADA_PDF){ alert('El motor PDF de ADA no está disponible. Recargá la página.'); return; }
+    window.ADA_PDF.fromHTML(title,body,{institution:institution(),filename:`${title.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ_-]+/g,'_')}_${new Date().toISOString().slice(0,10)}.pdf`});
   }
   function exportMapped(){
     const cfg=PAGE_MAP[page()]; if(!cfg)return;

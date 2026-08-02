@@ -208,10 +208,8 @@ async function b26aLoadEntregas(){
 
 
 function b26aPrintDocument(title, body){
-  const win = window.open("", "_blank", "width=960,height=760");
-  if(!win){ alert("El navegador bloqueó la ventana del documento. Habilitá las ventanas emergentes para ADA."); return; }
-  win.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>${b26aEscape(title)}</title><style>body{font-family:Arial,sans-serif;color:#1f2937;margin:32px}h1{font-size:24px;margin:0 0 6px}h2{font-size:18px;margin:24px 0 8px}.meta{color:#52606d;margin-bottom:22px}.box{border:1px solid #d8e1ea;border-radius:10px;padding:14px;margin:12px 0;white-space:pre-wrap}.badge{display:inline-block;border:1px solid #cbd5e1;border-radius:999px;padding:4px 9px;margin:0 6px 6px 0;font-size:12px}table{width:100%;border-collapse:collapse;margin-top:14px}th,td{border:1px solid #d8e1ea;padding:8px;text-align:left;font-size:12px}th{background:#f3f6f9}@media print{button{display:none}}</style></head><body>${body}<script>window.onload=()=>window.print()<\/script></body></html>`);
-  win.document.close();
+  if(!window.ADA_PDF){ alert("El motor PDF de ADA no está disponible. Recargá la página."); return; }
+  window.ADA_PDF.fromHTML(title, body, { filename: `${title.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ_-]+/g,"_")}_${new Date().toISOString().slice(0,10)}.pdf` });
 }
 function b26aExportActividad(id){
   const a = b26aActividades.find(x=>String(x.id)===String(id));

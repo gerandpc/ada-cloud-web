@@ -526,11 +526,12 @@ function cvAbrirTabla(title, headers, rows) {
 }
 
 function cvAbrirVentana(html) {
-  const popup = window.open('', '_blank', 'noopener,noreferrer');
-  if (!popup) return setMensaje('El navegador bloqueó la ventana de exportación.', 'error');
-  popup.document.open();
-  popup.document.write(html);
-  popup.document.close();
+  if (!window.ADA_PDF) return setMensaje('El motor PDF de ADA no está disponible. Recargá la página.', 'error');
+  const parsed = new DOMParser().parseFromString(html, 'text/html');
+  const title = parsed.title || parsed.querySelector('h1')?.textContent || 'Informe de convivencia';
+  window.ADA_PDF.fromHTML(title, parsed.body?.innerHTML || html, {
+    filename: `ADA_${String(title).replace(/[^a-zA-Z0-9_-]+/g, '_')}_${new Date().toISOString().slice(0,10)}.pdf`
+  });
 }
 
 function setMensaje(text, type = 'info') {
