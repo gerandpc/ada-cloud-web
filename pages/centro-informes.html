@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Centro de Informes | ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque23-ui-refresh.css">
+  <link rel="stylesheet" href="../assets/css/ada-reports.css">
+</head>
+<body class="module-page role-loading">
+  <main class="reports-shell">
+    <a href="dashboard.html" class="back-link">← Volver a mi inicio</a>
+    <section class="reports-view">
+      <header class="reports-header">
+        <div><p class="eyebrow">ADA Reports 2.0</p><h1>Centro de Informes</h1><p>Generación directa de documentos institucionales con portada, indicadores, observaciones, recomendaciones, tablas, metadatos y paginación.</p></div>
+        <div class="report-actions"><a class="btn-secondary" href="inteligencia-institucional.html">Abrir Intelligence</a><a class="btn-secondary" href="reportes.html">Ver reportes de datos</a></div>
+      </header>
+      <div id="reportsStatus" class="reports-status">Consultando información disponible...</div>
+      <section class="reports-grid">
+        <article class="report-card" data-role-report="admin,directivo"><span class="report-type">Dirección</span><h2>Informe Ejecutivo Institucional</h2><p>Síntesis estratégica de ADA Score, matrícula, asistencia, rendimiento, alertas y gestión académica.</p><ul><li>Portada institucional</li><li>Resumen y recomendaciones</li><li>Cursos y materias prioritarias</li></ul><button class="btn-primary" data-ada-report="ejecutivo">Generar PDF</button></article>
+        <article class="report-card" data-role-report="admin,directivo"><span class="report-type">Pedagógico</span><h2>Informe Pedagógico</h2><p>Análisis de rendimiento, asistencia, planificación, actividades y líneas de intervención.</p><ul><li>Rendimiento por materia</li><li>Situación por curso</li><li>Líneas de acción</li></ul><button class="btn-primary" data-ada-report="pedagogico">Generar PDF</button></article>
+        <article class="report-card" data-role-report="admin,directivo"><span class="report-type">Supervisión</span><h2>Informe para Supervisión</h2><p>Reporte consolidado con estructura institucional, indicadores, desagregación y metodología.</p><ul><li>Formato institucional</li><li>Indicadores académicos</li><li>Recomendaciones</li></ul><button class="btn-primary" data-ada-report="supervision">Generar PDF</button></article>
+        <article class="report-card" data-role-report="docente"><span class="report-type">Docente</span><h2>Informe Docente</h2><p>Carga académica, asignaciones, programas y actividades correspondientes al usuario autenticado.</p><ul><li>Asignaciones</li><li>Programas</li><li>Actividades</li></ul><button class="btn-primary" data-ada-report="docente">Generar PDF</button></article>
+        <article class="report-card" data-role-report="alumno"><span class="report-type">Trayectoria</span><h2>Informe del Estudiante</h2><p>Resumen académico disponible: boletines, actividades, entregas, asistencia y seguimiento.</p><button class="btn-primary" data-ada-report="alumno">Generar PDF</button></article>
+        <article class="report-card" data-role-report="familia"><span class="report-type">Familia</span><h2>Informe de Seguimiento Familiar</h2><p>Documento claro y visual con la información disponible para los estudiantes vinculados.</p><button class="btn-primary" data-ada-report="familia">Generar PDF</button></article>
+      </section>
+      <p class="reports-note"><strong>Privacidad:</strong> los informes usan únicamente la información que Supabase permite consultar al usuario autenticado. No amplían permisos ni exponen datos adicionales.</p>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/ada-security.js"></script>
+  <script src="../assets/js/ada-pdf.js"></script>
+  <script src="../assets/js/ada-reports.js"></script>
+  <script src="../assets/js/ui-effects.js"></script>
+</body>
+</html>
