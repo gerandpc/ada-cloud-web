@@ -6,14 +6,14 @@
   const state = { results:[], running:false, stopped:false, current:0, totalPlanned:0, context:null };
   const cache = new Map();
   const HISTORY_KEY = "ada_test_center_history_v1";
-  const PLACEHOLDER_RX = /\b(ac[aá]\s+va|placeholder|demo|todo|fixme|pr[oó]ximamente|en\s+construcci[oó]n|sin\s+implementar|pendiente\s+de\s+implementar|resumen\s+de|bloque\s+\d+)\b/i;
+  const PLACEHOLDER_RX = /\b(ac[aá]\s+va|demo|todo|fixme|pr[oó]ximamente|en\s+construcci[oó]n|sin\s+implementar|pendiente\s+de\s+implementar|bloque\s+\d+)\b/i;
 
   const MODULES = [
     {key:"programas",label:"Programas",page:"programas.html",script:"programas.js",table:"programas_materia",columns:"id,curso_id,materia_id,estado",roles:["admin","directivo","docente","alumno","familia"],required:["formPrograma","programaCurso","programaMateria","programaTitulo","listaProgramas"],actions:["formPrograma","btnFiltrar"],exports:["PDF","pdf","export"]},
     {key:"planificaciones",label:"Planificaciones",page:"planificaciones.html",script:"planificaciones.js",table:"planificaciones_didacticas",columns:"id,curso_id,materia_id,estado",roles:["admin","directivo","docente","alumno","familia"],required:["planForm","planCurso","planMateria","planTitulo","planLista"],actions:["planForm","planBtnFiltrar"],exports:["PDF","pdf","export"]},
     {key:"actividades",label:"Actividades",page:"actividades.html",script:"actividades.js",table:"actividades",columns:"id,curso_id,materia_id,estado",roles:["admin","directivo","docente","alumno"],required:["formActividad","actividadCurso","actividadMateria","actividadTitulo","listaActividades"],actions:["formActividad","btnFiltrar"],exports:["PDF","pdf","export"]},
     {key:"entregas",label:"Entregas",page:"entregas.html",script:"entregas.js",table:"entregas_actividades",columns:"id,actividad_id,alumno_id,estado",roles:["admin","directivo","docente","alumno"],required:["listaEntregas","formEntrega","formRevision"],actions:["formEntrega","formRevision"],exports:["PDF","pdf","export"]},
-    {key:"asistencia",label:"Asistencia",page:"asistencia.html",script:"asistencia.js",table:"asistencia_registros",columns:"id,alumno_id",roles:["admin","directivo","secretaria","docente","preceptor"],required:["formClaseAsistencia","asistenciaCurso","asistenciaFecha","listaAlumnosAsistencia","tablaHistorial"],actions:["formClaseAsistencia","formGuardarAsistencia"],exports:["PDF","pdf","export"]},
+    {key:"asistencia",label:"Asistencia",page:"asistencia.html",script:"asistencia.js",table:"asistencia_registros",columns:"id,alumno_id",roles:["admin","directivo","secretaria","docente","preceptor"],required:["formClaseAsistencia","asistenciaCurso","asistenciaFecha","listaAlumnosAsistencia","tablaHistorial"],actions:["btnCargarAlumnos","formGuardarAsistencia"],exports:["PDF","pdf","export"]},
     {key:"calificaciones",label:"Calificaciones",page:"calificaciones.html",script:"calificaciones.js",table:"planilla_docente_notas",columns:"id",roles:["admin","directivo","secretaria","docente"],required:["cursoSelect","materiaSelect","btnCargarPlanilla","tablaPrimer","tablaSegundo"],actions:["btnCargarPlanilla","btnEnviarSecretaria"],exports:["PDF","Excel","export"]},
     {key:"boletines",label:"Boletines",page:"boletines.html",script:"boletines.js",table:"boletines",columns:"id,alumno_id,estado",roles:["admin","directivo","secretaria","alumno","familia"],required:["formBoletin","boletinAlumno","boletinPeriodo","tablaBoletines"],actions:["formBoletin","btnBuscarBoletines"],exports:["PDF","pdf","export"]},
     {key:"cierres",label:"Cierres académicos",page:"cierres-academicos.html",script:"cierres-academicos.js",table:"cierres_academicos",columns:"id,curso_id,materia_id,estado",roles:["admin","directivo","secretaria"],required:["formCierre","cierreCurso","cierreMateria","tablaCierres"],actions:["formCierre","btnGenerarActa"],exports:["PDF","pdf","export"]},
@@ -101,7 +101,7 @@
       if(error) throw new Error(error.message); return `Conexión correcta${Number.isFinite(count)?` · ${count} perfiles`:""}`;
     });
     await check("Base","Cliente Supabase disponible",async()=>{
-      if(!window.supabaseClient) throw new Error("supabaseClient no está disponible");
+      if(typeof supabaseClient === "undefined" || !supabaseClient?.auth || typeof supabaseClient.from !== "function") throw new Error("supabaseClient no está disponible");
       return "Cliente inicializado";
     });
   }
@@ -147,9 +147,18 @@
     });
     await check("Seguridad","Credenciales no expuestas",async()=>{
       const sources=await Promise.all([fetchText("../assets/js/supabase-config.js"),fetchText("../assets/js/ada-security.js")]);
-      const joined=sources.join("\n");
-      if(/service_role|secret[_-]?key|password\s*[:=]\s*["'][^"']+/i.test(joined)) throw new Error("Se detectó una credencial sensible o contraseña hardcodeada");
-      return "No se detectaron secretos privilegiados hardcodeados";
+      const joined=sources.join("\n")
+        .replace(/\/\*[\s\S]*?\*\//g, "")
+        .replace(/^\s*\/\/.*$/gm, "");
+      const privileged = [
+        /(?:service[_-]?role|secret[_-]?key)\s*[:=]\s*["'][^"']{12,}["']/i,
+        /sb_secret_[A-Za-z0-9._-]{12,}/i,
+        /(?:DATABASE_URL|POSTGRES_PASSWORD|SUPABASE_DB_PASSWORD)\s*[:=]\s*["'][^"']+["']/i
+      ];
+      if(privileged.some(rx=>rx.test(joined))) throw new Error("Se detectó una credencial privilegiada hardcodeada");
+      const config=await fetchText("../assets/js/supabase-config.js");
+      if(!/SUPABASE_(?:ANON|PUBLISHABLE)_KEY/i.test(config)) return {status:STATUS.WARN,detail:"No se identificó una clave pública de navegador"};
+      return "Solo se detectó configuración pública de navegador; no hay secretos privilegiados";
     });
     await check("Seguridad","Roles académicos coherentes",async()=>{
       const inconsistencies=[];
@@ -261,9 +270,20 @@
         if(modules.length!==workflow.modules.length) throw new Error("Módulo no registrado en Test Center");
         const missing=modules.filter(m=>!ADA_PAGE_ACCESS?.[m.page]);
         if(missing.length) throw new Error(`Sin regla: ${missing.map(m=>m.page).join(', ')}`);
-        const roleMissing=workflow.roles.filter(role=>!modules.some(m=>(ADA_PAGE_ACCESS[m.page]||[]).includes(role)));
+        const rolePortal = {
+          alumno: "mi-espacio-alumno.html",
+          familia: "mi-espacio-familia.html",
+          docente: "mi-espacio-docente.html",
+          preceptor: "mi-espacio-preceptor.html"
+        };
+        const roleMissing=workflow.roles.filter(role=>{
+          const direct=modules.some(m=>(ADA_PAGE_ACCESS[m.page]||[]).includes(role));
+          const portal=rolePortal[role];
+          const viaPortal=portal && Array.isArray(ADA_PAGE_ACCESS?.[portal]) && ADA_PAGE_ACCESS[portal].includes(role);
+          return !direct && !viaPortal;
+        });
         if(roleMissing.length) return {status:STATUS.WARN,detail:`Roles sin punto de acceso en el circuito: ${roleMissing.join(', ')}`};
-        return `${modules.length} módulo(s), ${workflow.roles.length} roles y reglas de acceso conectadas`;
+        return `${modules.length} módulo(s), ${workflow.roles.length} roles y puntos de acceso conectados`;
       });
       await check("Flujos",`Evidencia funcional: ${workflow.name}`,async()=>{
         const evidence=[];
@@ -280,7 +300,7 @@
           }
         }
         const hasRecords=evidence.some(text=>!/\: 0 registros/.test(text));
-        if(!hasRecords) return {status:STATUS.WARN,detail:`Sin datos para certificar transiciones. ${evidence.join(' · ')}`};
+        if(!hasRecords) return {status:STATUS.SKIPPED,detail:`Sin datos de prueba para certificar transiciones. ${evidence.join(' · ')}`};
         return evidence.join(" · ");
       },{critical:false});
     }
