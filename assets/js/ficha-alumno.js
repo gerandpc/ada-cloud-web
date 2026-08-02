@@ -1,20 +1,44 @@
+"use strict";
 
 let fichaPerfil = null;
 let fichaAlumnos = [];
 let fichaCursos = [];
 let fichaAlumnoActual = null;
+let fichaDatosActuales = null;
+
+const FICHA_ROLES = new Set(["admin", "directivo", "secretaria", "preceptor", "docente"]);
+
+function fichaEsc(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+  }[char]));
+}
+
+function fichaRol() {
+  return String(fichaPerfil?.rol || "").trim().toLowerCase();
+}
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
     fichaPerfil = await obtenerSesionPerfil();
     if (!fichaPerfil) return;
+    if (!FICHA_ROLES.has(fichaRol())) {
+      setMensajeFicha("No tenés permisos para consultar fichas integrales.", "error");
+      return;
+    }
+
     setupFichaTabs();
-    await cargarCatalogosFicha();
     bindFichaEvents();
-    setMensajeFicha("Seleccioná un alumno para consultar la ficha integral.", "info");
+    await cargarCatalogosFicha();
+    setMensajeFicha(
+      fichaAlumnos.length
+        ? "Seleccioná un alumno para consultar la ficha integral."
+        : "No hay alumnos habilitados para tu perfil.",
+      fichaAlumnos.length ? "info" : "error"
+    );
   } catch (error) {
     console.error(error);
-    setMensajeFicha(error.message || "No se pudo cargar la ficha integral.", "error");
+    setMensajeFicha("No se pudo cargar la ficha integral.", "error");
   }
 });
 
@@ -22,13 +46,14 @@ function bindFichaEvents() {
   document.getElementById("btnCargarFicha")?.addEventListener("click", cargarFichaSeleccionada);
   document.getElementById("selectorAlumno")?.addEventListener("change", cargarFichaSeleccionada);
   document.getElementById("busquedaAlumno")?.addEventListener("input", filtrarAlumnosFicha);
+  document.getElementById("btnExportarFicha")?.addEventListener("click", exportarFichaPDF);
 }
 
 function setupFichaTabs() {
   document.querySelectorAll(".ficha-tab").forEach((tab) => {
     tab.addEventListener("click", () => {
-      document.querySelectorAll(".ficha-tab").forEach(t => t.classList.remove("active"));
-      document.querySelectorAll(".ficha-panel").forEach(p => p.classList.remove("active"));
+      document.querySelectorAll(".ficha-tab").forEach((item) => item.classList.remove("active"));
+      document.querySelectorAll(".ficha-panel").forEach((panel) => panel.classList.remove("active"));
       tab.classList.add("active");
       document.getElementById(tab.dataset.tab)?.classList.add("active");
     });
@@ -41,177 +66,293 @@ async function cargarCatalogosFicha() {
     safeSelect("cursos", "id,nombre,anio,division,turno,nivel", "anio")
   ]);
 
-  fichaAlumnos = alumnosRes || [];
+  fichaAlumnos = (alumnosRes || []).filter((alumno) => alumno.activo !== false);
   fichaCursos = cursosRes || [];
-
-  // Para familia/alumno intentamos limitar visualmente si existen vínculos en el perfil.
-  const rol = (fichaPerfil?.rol || "").toLowerCase();
-  if (rol === "familia" && fichaPerfil.familia_id) {
-    fichaAlumnos = fichaAlumnos.filter(a => String(a.familia_id || "") === String(fichaPerfil.familia_id));
-  }
-  if (rol === "alumno" && fichaPerfil.alumno_id) {
-    fichaAlumnos = fichaAlumnos.filter(a => String(a.id || "") === String(fichaPerfil.alumno_id));
-  }
+  fichaAlumnos = await limitarAlumnosPorRol(fichaAlumnos);
 
   renderSelectorAlumnos(fichaAlumnos);
   if (fichaAlumnos.length === 1) {
-    document.getElementById("selectorAlumno").value = fichaAlumnos[0].id;
+    const selector = document.getElementById("selectorAlumno");
+    if (selector) selector.value = fichaAlumnos[0].id;
     await cargarFichaSeleccionada();
   }
+}
+
+async function limitarAlumnosPorRol(alumnos) {
+  const rol = fichaRol();
+  if (["admin", "directivo", "secretaria"].includes(rol)) return alumnos;
+
+  if (rol === "docente") {
+    const asignados = await safeSelectWhere("v_docente_mis_alumnos", "alumno_id", "docente_id", fichaPerfil.id);
+    const ids = new Set(asignados.map((item) => String(item.alumno_id || item.id || "")).filter(Boolean));
+    return alumnos.filter((alumno) => ids.has(String(alumno.id)));
+  }
+
+  if (rol === "preceptor") {
+    const asignados = await safeSelectWhere("v_preceptor_mis_alumnos", "alumno_id", "preceptor_id", fichaPerfil.id);
+    if (asignados.length) {
+      const ids = new Set(asignados.map((item) => String(item.alumno_id || item.id || "")).filter(Boolean));
+      return alumnos.filter((alumno) => ids.has(String(alumno.id)));
+    }
+    if (fichaPerfil.curso_id) {
+      return alumnos.filter((alumno) => String(alumno.curso_id || "") === String(fichaPerfil.curso_id));
+    }
+  }
+
+  return alumnos;
 }
 
 function renderSelectorAlumnos(lista) {
   const select = document.getElementById("selectorAlumno");
   if (!select) return;
-  select.innerHTML = `<option value="">Seleccionar alumno...</option>` + lista.map(a => {
-    const doc = a.documento || a.dni || "";
-    return `<option value="${a.id}">${a.apellido || ""}, ${a.nombre || ""}${doc ? " · " + doc : ""}</option>`;
-  }).join("");
+
+  select.replaceChildren();
+  const initial = document.createElement("option");
+  initial.value = "";
+  initial.textContent = lista.length ? "Seleccionar alumno..." : "Sin alumnos disponibles";
+  select.appendChild(initial);
+
+  lista.forEach((alumno) => {
+    const option = document.createElement("option");
+    option.value = alumno.id;
+    const documento = alumno.documento || alumno.dni || "";
+    option.textContent = `${alumno.apellido || ""}, ${alumno.nombre || ""}${documento ? ` · ${documento}` : ""}`;
+    select.appendChild(option);
+  });
 }
 
 function filtrarAlumnosFicha() {
-  const q = (document.getElementById("busquedaAlumno")?.value || "").toLowerCase().trim();
-  const filtrados = fichaAlumnos.filter(a => `${a.apellido || ""} ${a.nombre || ""} ${a.documento || ""} ${a.dni || ""}`.toLowerCase().includes(q));
+  const consulta = (document.getElementById("busquedaAlumno")?.value || "").toLowerCase().trim();
+  const filtrados = fichaAlumnos.filter((alumno) =>
+    `${alumno.apellido || ""} ${alumno.nombre || ""} ${alumno.documento || ""} ${alumno.dni || ""}`
+      .toLowerCase()
+      .includes(consulta)
+  );
   renderSelectorAlumnos(filtrados);
 }
 
 async function cargarFichaSeleccionada() {
   const id = document.getElementById("selectorAlumno")?.value;
-  if (!id) return;
-  fichaAlumnoActual = fichaAlumnos.find(a => String(a.id) === String(id));
-  if (!fichaAlumnoActual) return;
+  if (!id) {
+    fichaAlumnoActual = null;
+    fichaDatosActuales = null;
+    document.getElementById("fichaContenido")?.classList.add("hidden");
+    return;
+  }
 
-  document.getElementById("fichaContenido")?.classList.remove("hidden");
+  fichaAlumnoActual = fichaAlumnos.find((alumno) => String(alumno.id) === String(id));
+  if (!fichaAlumnoActual) {
+    setMensajeFicha("El alumno seleccionado no está habilitado para tu perfil.", "error");
+    return;
+  }
+
+  setMensajeFicha("Cargando información...", "info");
   renderCabeceraAlumno(fichaAlumnoActual);
 
   const [notas, asistencia, actividades, documentacion, convivencia] = await Promise.all([
-    cargarNotas(id),
-    cargarAsistencia(id),
-    cargarActividades(id),
-    cargarDocumentacion(id),
-    cargarConvivencia(id)
+    cargarNotas(id), cargarAsistencia(id), cargarActividades(id), cargarDocumentacion(id), cargarConvivencia(id)
   ]);
 
+  fichaDatosActuales = { notas, asistencia, actividades, documentacion, convivencia };
+  document.getElementById("fichaContenido")?.classList.remove("hidden");
   renderResumen(fichaAlumnoActual, notas, asistencia, actividades, documentacion, convivencia);
-  renderTabla("tablaNotas", notas, n => `<tr><td>${n.materia_nombre || n.materia || "-"}</td><td>${n.evaluacion_nombre || n.evaluacion || "-"}</td><td>${n.nota ?? "-"}</td><td>${fecha(n.fecha || n.created_at)}</td><td>${n.observacion || ""}</td></tr>`);
-  renderTabla("tablaAsistencia", asistencia, a => `<tr><td>${fecha(a.fecha || a.created_at)}</td><td>${a.estado || a.estado_asistencia || "-"}</td><td>${a.materia_nombre || a.clase || "-"}</td><td>${a.observacion || ""}</td></tr>`);
-  renderTabla("tablaActividades", actividades, e => `<tr><td>${e.actividad_titulo || e.titulo || "-"}</td><td>${e.materia_nombre || "-"}</td><td>${e.estado || "-"}</td><td>${fecha(e.fecha_entrega || e.created_at)}</td><td>${e.calificacion ?? "-"}</td></tr>`);
-  renderTabla("tablaDocumentacion", documentacion, d => `<tr><td>${d.titulo || d.tipo_tramite || "-"}</td><td>${d.origen_area || d.origen || "-"}</td><td>${d.estado || "-"}</td><td>${fecha(d.created_at || d.fecha_envio)}</td><td>${d.observacion_revision || d.observacion || ""}</td></tr>`);
-  renderTabla("tablaConvivencia", convivencia, c => `<tr><td>${fecha(c.fecha_hecho || c.created_at)}</td><td>${c.gravedad || "-"}</td><td>${c.descripcion || "-"}</td><td>${c.sancion_aplicada || "-"}</td><td>${c.descreditos || 0}</td><td>${c.estado || "-"}</td></tr>`);
+
+  renderTabla("tablaNotas", notas, (nota) => `<tr><td>${fichaEsc(nota.materia_nombre || nota.materia || "-")}</td><td>${fichaEsc(nota.evaluacion_nombre || nota.evaluacion || "-")}</td><td>${fichaEsc(nota.nota ?? "-")}</td><td>${fichaEsc(fecha(nota.fecha || nota.created_at))}</td><td>${fichaEsc(nota.observacion || "")}</td></tr>`, 5);
+  renderTabla("tablaAsistencia", asistencia, (registro) => `<tr><td>${fichaEsc(fecha(registro.fecha || registro.created_at))}</td><td>${fichaEsc(registro.estado || registro.estado_asistencia || "-")}</td><td>${fichaEsc(registro.materia_nombre || registro.clase || "-")}</td><td>${fichaEsc(registro.observacion || "")}</td></tr>`, 4);
+  renderTabla("tablaActividades", actividades, (entrega) => `<tr><td>${fichaEsc(entrega.actividad_titulo || entrega.titulo || "-")}</td><td>${fichaEsc(entrega.materia_nombre || "-")}</td><td>${fichaEsc(entrega.estado || "-")}</td><td>${fichaEsc(fecha(entrega.fecha_entrega || entrega.created_at))}</td><td>${fichaEsc(entrega.calificacion ?? "-")}</td></tr>`, 5);
+  renderTabla("tablaDocumentacion", documentacion, (doc) => `<tr><td>${fichaEsc(doc.titulo || doc.tipo_tramite || "-")}</td><td>${fichaEsc(doc.origen_area || doc.origen || "-")}</td><td>${fichaEsc(doc.estado || "-")}</td><td>${fichaEsc(fecha(doc.created_at || doc.fecha_envio))}</td><td>${fichaEsc(doc.observacion_revision || doc.observacion || "")}</td></tr>`, 5);
+  renderTabla("tablaConvivencia", convivencia, (caso) => `<tr><td>${fichaEsc(fecha(caso.fecha_hecho || caso.created_at))}</td><td>${fichaEsc(caso.gravedad || "-")}</td><td>${fichaEsc(caso.descripcion || "-")}</td><td>${fichaEsc(caso.sancion_aplicada || "-")}</td><td>${fichaEsc(caso.descreditos || 0)}</td><td>${fichaEsc(caso.estado || "-")}</td></tr>`, 6);
 
   setMensajeFicha("Ficha cargada correctamente.", "success");
 }
 
-function renderCabeceraAlumno(a) {
-  const curso = fichaCursos.find(c => String(c.id) === String(a.curso_id));
-  const nombre = `${a.apellido || ""}, ${a.nombre || ""}`.trim().replace(/^,/, "");
-  document.getElementById("nombreAlumno").textContent = nombre || "Alumno";
-  document.getElementById("avatarAlumno").textContent = (a.apellido || a.nombre || "A").charAt(0).toUpperCase();
-  document.getElementById("datosAlumno").textContent = `${curso?.nombre || curso?.anio || "Curso no definido"} · ${a.email || a.documento || a.dni || ""}`;
-  document.getElementById("badgeCurso").textContent = curso?.nombre || `${curso?.anio || ""} ${curso?.division || ""}`.trim() || "Sin curso";
-  document.getElementById("badgeEstado").textContent = a.activo === false ? "Inactivo" : "Activo";
+function renderCabeceraAlumno(alumno) {
+  const curso = fichaCursos.find((item) => String(item.id) === String(alumno.curso_id));
+  const nombre = `${alumno.apellido || ""}, ${alumno.nombre || ""}`.trim().replace(/^,/, "");
+  setText("nombreAlumno", nombre || "Alumno");
+  setText("avatarAlumno", (alumno.apellido || alumno.nombre || "A").charAt(0).toUpperCase());
+  setText("datosAlumno", `${curso?.nombre || curso?.anio || "Curso no definido"} · ${alumno.email || alumno.documento || alumno.dni || "Sin contacto"}`);
+  setText("badgeCurso", curso?.nombre || `${curso?.anio || ""} ${curso?.division || ""}`.trim() || "Sin curso");
+  setText("badgeEstado", alumno.activo === false ? "Inactivo" : "Activo");
 }
 
-function renderResumen(alumno, notas, asistencia, actividades, docs, conv) {
+function renderResumen(alumno, notas, asistencia, actividades, documentos, convivencia) {
   const promedio = calcularPromedio(notas);
-  const inasistencias = asistencia.filter(a => `${a.estado || a.estado_asistencia || ""}`.toLowerCase().includes("aus") || `${a.estado || ""}`.toLowerCase().includes("inas")).length;
-  const entregasPend = actividades.filter(e => ["pendiente","sin_entregar","observado"].includes(`${e.estado || ""}`.toLowerCase())).length;
-  const docsPend = docs.filter(d => ["pendiente","observado","vencido","notificado"].includes(`${d.estado || ""}`.toLowerCase())).length;
-  const descreditos = conv.reduce((acc,c) => acc + Number(c.descreditos || 0), 0);
+  const inasistencias = asistencia.filter((item) => /aus|inas/.test(`${item.estado || item.estado_asistencia || ""}`.toLowerCase())).length;
+  const entregasPendientes = actividades.filter((item) => ["pendiente", "sin_entregar", "observado"].includes(`${item.estado || ""}`.toLowerCase())).length;
+  const documentosPendientes = documentos.filter((item) => ["pendiente", "observado", "vencido", "notificado"].includes(`${item.estado || ""}`.toLowerCase())).length;
+  const descreditos = convivencia.reduce((total, item) => total + Number(item.descreditos || 0), 0);
 
   setText("kpiPromedio", promedio || "-");
   setText("kpiInasistencias", inasistencias);
-  setText("kpiEntregas", entregasPend);
-  setText("kpiDocumentos", docsPend);
+  setText("kpiEntregas", entregasPendientes);
+  setText("kpiDocumentos", documentosPendientes);
   setText("kpiDescreditos", descreditos);
-  setText("kpiConvivencia", conv.length);
+  setText("kpiConvivencia", convivencia.length);
 
-  const curso = fichaCursos.find(c => String(c.id) === String(alumno.curso_id));
-  document.getElementById("resumenDatos").innerHTML = `
-    <div class="detail-item"><strong>Nombre</strong><span>${alumno.nombre || "-"}</span></div>
-    <div class="detail-item"><strong>Apellido</strong><span>${alumno.apellido || "-"}</span></div>
-    <div class="detail-item"><strong>Documento</strong><span>${alumno.documento || alumno.dni || "-"}</span></div>
-    <div class="detail-item"><strong>Curso</strong><span>${curso?.nombre || "-"}</span></div>
-    <div class="detail-item"><strong>Email</strong><span>${alumno.email || "-"}</span></div>`;
+  const curso = fichaCursos.find((item) => String(item.id) === String(alumno.curso_id));
+  renderDetalles("resumenDatos", [
+    ["Nombre", alumno.nombre || "-"], ["Apellido", alumno.apellido || "-"],
+    ["Documento", alumno.documento || alumno.dni || "-"], ["Curso", curso?.nombre || "-"],
+    ["Email", alumno.email || "-"]
+  ]);
 
-  document.getElementById("resumenFamilia").innerHTML = `
-    <div class="detail-item"><strong>Familia ID</strong><span>${alumno.familia_id || "-"}</span></div>
-    <div class="detail-item"><strong>Contacto</strong><span>Ver módulo Familias</span></div>`;
+  renderDetalles("resumenFamilia", [
+    ["Vínculo familiar", alumno.familia_id ? "Registrado" : "Sin vínculo registrado"],
+    ["Consulta de responsables", "Disponible en el módulo Familias"]
+  ]);
 
-  const alerts = [];
-  if (descreditos > 0) alerts.push(`<div class="alert-pill danger">Tiene ${descreditos} descrédito/s acumulado/s.</div>`);
-  if (docsPend > 0) alerts.push(`<div class="alert-pill warn">Tiene ${docsPend} documentación/es pendiente/s.</div>`);
-  if (entregasPend > 0) alerts.push(`<div class="alert-pill warn">Tiene ${entregasPend} entrega/s pendiente/s.</div>`);
-  if (inasistencias > 0) alerts.push(`<div class="alert-pill warn">Registra ${inasistencias} inasistencia/s.</div>`);
-  document.getElementById("resumenAlertas").innerHTML = alerts.join("") || `<div class="alert-pill">Sin alertas críticas registradas.</div>`;
+  const alertas = [];
+  if (descreditos > 0) alertas.push(["danger", `Tiene ${descreditos} descrédito/s acumulado/s.`]);
+  if (documentosPendientes > 0) alertas.push(["warn", `Tiene ${documentosPendientes} documento/s pendiente/s.`]);
+  if (entregasPendientes > 0) alertas.push(["warn", `Tiene ${entregasPendientes} entrega/s pendiente/s.`]);
+  if (inasistencias > 0) alertas.push(["warn", `Registra ${inasistencias} inasistencia/s.`]);
+  renderAlertas(alertas);
+}
+
+function renderDetalles(containerId, items) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.replaceChildren();
+  items.forEach(([label, value]) => {
+    const row = document.createElement("div");
+    row.className = "detail-item";
+    const strong = document.createElement("strong");
+    strong.textContent = label;
+    const span = document.createElement("span");
+    span.textContent = String(value ?? "-");
+    row.append(strong, span);
+    container.appendChild(row);
+  });
+}
+
+function renderAlertas(alertas) {
+  const container = document.getElementById("resumenAlertas");
+  if (!container) return;
+  container.replaceChildren();
+  const lista = alertas.length ? alertas : [["", "Sin alertas críticas registradas."]];
+  lista.forEach(([tipo, texto]) => {
+    const item = document.createElement("div");
+    item.className = `alert-pill${tipo ? ` ${tipo}` : ""}`;
+    item.textContent = texto;
+    container.appendChild(item);
+  });
 }
 
 async function cargarNotas(alumnoId) {
-  const data = await safeSelectWhere("calificaciones", "*", "alumno_id", alumnoId, "created_at");
-  return data || [];
+  return await safeSelectWhere("calificaciones", "*", "alumno_id", alumnoId, "created_at");
 }
+
 async function cargarAsistencia(alumnoId) {
-  let data = await safeSelectWhere("asistencia_registros", "*", "alumno_id", alumnoId, "created_at");
-  if (!data?.length) data = await safeSelectWhere("asistencias", "*", "alumno_id", alumnoId, "created_at");
-  return data || [];
+  let datos = await safeSelectWhere("asistencia_registros", "*", "alumno_id", alumnoId, "created_at");
+  if (!datos.length) datos = await safeSelectWhere("asistencias", "*", "alumno_id", alumnoId, "created_at");
+  return datos;
 }
+
 async function cargarActividades(alumnoId) {
-  let data = await safeSelectWhere("entregas_actividades", "*", "alumno_id", alumnoId, "created_at");
-  if (!data?.length) data = await safeSelectWhere("entregas", "*", "alumno_id", alumnoId, "created_at");
-  return data || [];
+  let datos = await safeSelectWhere("entregas_actividades", "*", "alumno_id", alumnoId, "created_at");
+  if (!datos.length) datos = await safeSelectWhere("entregas", "*", "alumno_id", alumnoId, "created_at");
+  return datos;
 }
+
 async function cargarDocumentacion(alumnoId) {
-  let data = await safeSelectWhere("documentacion_destinatarios", "*", "alumno_id", alumnoId, "created_at");
-  if (!data?.length) data = await safeSelectWhere("documentacion_devoluciones", "*", "alumno_id", alumnoId, "created_at");
-  return data || [];
+  let datos = await safeSelectWhere("documentacion_destinatarios", "*", "alumno_id", alumnoId, "created_at");
+  if (!datos.length) datos = await safeSelectWhere("documentacion_devoluciones", "*", "alumno_id", alumnoId, "created_at");
+  return datos;
 }
+
 async function cargarConvivencia(alumnoId) {
-  return await safeSelectWhere("convivencia_casos", "*", "alumno_id", alumnoId, "fecha_hecho") || [];
+  return await safeSelectWhere("convivencia_casos", "*", "alumno_id", alumnoId, "fecha_hecho");
 }
 
-async function safeSelect(table, columns="*", orderCol=null) {
+async function safeSelect(table, columns = "*", orderCol = null) {
   try {
-    let q = supabaseClient.from(table).select(columns);
-    if (orderCol) q = q.order(orderCol, { ascending:true });
-    const { data, error } = await q;
+    let query = supabaseClient.from(table).select(columns);
+    if (orderCol) query = query.order(orderCol, { ascending: true });
+    const { data, error } = await query;
     if (error) throw error;
     return data || [];
-  } catch (e) {
-    console.warn(`No se pudo leer ${table}:`, e.message);
-    return [];
-  }
-}
-async function safeSelectWhere(table, columns, field, value, orderCol=null) {
-  try {
-    let q = supabaseClient.from(table).select(columns).eq(field, value);
-    if (orderCol) q = q.order(orderCol, { ascending:false });
-    const { data, error } = await q;
-    if (error) throw error;
-    return data || [];
-  } catch (e) {
-    console.warn(`No se pudo leer ${table}:`, e.message);
+  } catch (error) {
+    console.warn(`No se pudo leer ${table}.`);
     return [];
   }
 }
 
-function renderTabla(id, rows, rowFn) {
+async function safeSelectWhere(table, columns, field, value, orderCol = null) {
+  try {
+    let query = supabaseClient.from(table).select(columns).eq(field, value);
+    if (orderCol) query = query.order(orderCol, { ascending: false });
+    const { data, error } = await query;
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.warn(`No se pudo leer ${table}.`);
+    return [];
+  }
+}
+
+function renderTabla(id, rows, rowFn, colspan) {
   const tbody = document.getElementById(id);
   if (!tbody) return;
-  tbody.innerHTML = rows?.length ? rows.map(rowFn).join("") : `<tr><td colspan="6">Sin datos registrados.</td></tr>`;
+  tbody.innerHTML = rows?.length
+    ? rows.map(rowFn).join("")
+    : `<tr><td colspan="${colspan}">Sin datos registrados.</td></tr>`;
 }
+
 function calcularPromedio(notas) {
-  const nums = notas.map(n => Number(n.nota)).filter(n => !Number.isNaN(n));
-  if (!nums.length) return "";
-  return (nums.reduce((a,b)=>a+b,0) / nums.length).toFixed(2);
+  const valores = notas.map((item) => Number(item.nota)).filter((valor) => Number.isFinite(valor));
+  if (!valores.length) return "";
+  return (valores.reduce((total, valor) => total + valor, 0) / valores.length).toFixed(2);
 }
-function fecha(v) {
-  if (!v) return "-";
-  try { return new Date(v).toLocaleDateString("es-AR"); } catch { return v; }
+
+function fecha(value) {
+  if (!value) return "-";
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? String(value) : parsed.toLocaleDateString("es-AR");
 }
-function setText(id, value) { const el = document.getElementById(id); if (el) el.textContent = value; }
-function setMensajeFicha(text, type="info") {
-  const el = document.getElementById("mensajeFicha");
-  if (!el) return;
-  el.textContent = text;
-  el.className = `form-message ${type}`;
+
+function setText(id, value) {
+  const element = document.getElementById(id);
+  if (element) element.textContent = String(value ?? "");
+}
+
+function setMensajeFicha(text, type = "info") {
+  const element = document.getElementById("mensajeFicha");
+  if (!element) return;
+  element.textContent = text;
+  element.className = `form-message ${type}`;
+}
+
+function exportarFichaPDF() {
+  if (!fichaAlumnoActual || !fichaDatosActuales) {
+    setMensajeFicha("Primero cargá una ficha para generar el informe.", "error");
+    return;
+  }
+  if (!window.ADAExport?.openDocument) {
+    setMensajeFicha("No se pudo iniciar la exportación del informe.", "error");
+    return;
+  }
+
+  const curso = fichaCursos.find((item) => String(item.id) === String(fichaAlumnoActual.curso_id));
+  const nombre = `${fichaAlumnoActual.apellido || ""}, ${fichaAlumnoActual.nombre || ""}`.trim().replace(/^,/, "");
+  const { notas, asistencia, actividades, documentacion, convivencia } = fichaDatosActuales;
+  const tabla = (titulo, encabezados, filas) => `
+    <h2>${fichaEsc(titulo)}</h2>
+    <table><thead><tr>${encabezados.map((item) => `<th>${fichaEsc(item)}</th>`).join("")}</tr></thead>
+    <tbody>${filas.length ? filas.join("") : `<tr><td colspan="${encabezados.length}">Sin datos registrados.</td></tr>`}</tbody></table>`;
+
+  const body = `
+    <table>
+      <tr><th>Alumno</th><td>${fichaEsc(nombre || "-")}</td></tr>
+      <tr><th>Documento</th><td>${fichaEsc(fichaAlumnoActual.documento || fichaAlumnoActual.dni || "-")}</td></tr>
+      <tr><th>Curso</th><td>${fichaEsc(curso?.nombre || "-")}</td></tr>
+      <tr><th>Promedio</th><td>${fichaEsc(calcularPromedio(notas) || "-")}</td></tr>
+    </table>
+    ${tabla("Calificaciones", ["Materia", "Evaluación", "Nota", "Fecha"], notas.map((item) => `<tr><td>${fichaEsc(item.materia_nombre || item.materia || "-")}</td><td>${fichaEsc(item.evaluacion_nombre || item.evaluacion || "-")}</td><td>${fichaEsc(item.nota ?? "-")}</td><td>${fichaEsc(fecha(item.fecha || item.created_at))}</td></tr>`))}
+    ${tabla("Asistencia", ["Fecha", "Estado", "Clase", "Observación"], asistencia.map((item) => `<tr><td>${fichaEsc(fecha(item.fecha || item.created_at))}</td><td>${fichaEsc(item.estado || item.estado_asistencia || "-")}</td><td>${fichaEsc(item.materia_nombre || item.clase || "-")}</td><td>${fichaEsc(item.observacion || "")}</td></tr>`))}
+    ${tabla("Actividades y entregas", ["Actividad", "Materia", "Estado", "Calificación"], actividades.map((item) => `<tr><td>${fichaEsc(item.actividad_titulo || item.titulo || "-")}</td><td>${fichaEsc(item.materia_nombre || "-")}</td><td>${fichaEsc(item.estado || "-")}</td><td>${fichaEsc(item.calificacion ?? "-")}</td></tr>`))}
+    ${tabla("Documentación", ["Trámite", "Estado", "Fecha", "Observación"], documentacion.map((item) => `<tr><td>${fichaEsc(item.titulo || item.tipo_tramite || "-")}</td><td>${fichaEsc(item.estado || "-")}</td><td>${fichaEsc(fecha(item.created_at || item.fecha_envio))}</td><td>${fichaEsc(item.observacion_revision || item.observacion || "")}</td></tr>`))}
+    ${tabla("Convivencia", ["Fecha", "Gravedad", "Hecho", "Estado"], convivencia.map((item) => `<tr><td>${fichaEsc(fecha(item.fecha_hecho || item.created_at))}</td><td>${fichaEsc(item.gravedad || "-")}</td><td>${fichaEsc(item.descripcion || "-")}</td><td>${fichaEsc(item.estado || "-")}</td></tr>`))}`;
+
+  window.ADAExport.openDocument(`Ficha integral — ${nombre || "Alumno"}`, body);
 }
