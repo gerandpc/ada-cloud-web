@@ -290,7 +290,7 @@ async function guardarRevision(ev){
 }
 
 function b26eSetupError(error){
-  const msg = `No se pudo cargar el Bloque 26. Verificá que hayas ejecutado docs/sql/ada_bloque_26b_archivos_actividades_entregas.sql. Detalle: ${error.message}`;
+  const msg = `No se pudo cargar el módulo de entregas. Verificá la conexión y la configuración de la base de datos. Detalle: ${error.message}`;
   ["listaEntregas","tablaRevision"].forEach(id=>{ if(b26e(id)) b26e(id).innerHTML = `<p class="form-message is-error">${b26eEscape(msg)}</p>`; });
 }
 

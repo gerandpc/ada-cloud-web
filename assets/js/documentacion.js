@@ -427,7 +427,7 @@ async function adaDocLoadSeguimiento() {
     adaDocRenderList(revision, adaDoc$("listaRevision"), true);
   } catch (error) {
     console.error(error);
-    adaDocSetMessage("No se pudo cargar la documentación. Revisá que el SQL del Bloque 28 esté ejecutado.", "error");
+    adaDocSetMessage("No se pudo cargar la documentación. Verificá la conexión y la configuración del módulo.", "error");
   }
 }
 
@@ -613,7 +613,7 @@ async function adaDocInit() {
     adaDocSetMessage("Módulo listo.", "success");
   } catch (error) {
     console.error(error);
-    adaDocSetMessage("El módulo cargó, pero falta ejecutar o revisar el SQL del Bloque 28.", "error");
+    adaDocSetMessage("El módulo no pudo inicializarse correctamente. Verificá la configuración de la base de datos.", "error");
   }
 }
 

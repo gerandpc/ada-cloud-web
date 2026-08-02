@@ -311,7 +311,7 @@ function b26aFiltrar(){
 }
 
 function b26aSetupError(error){
-  const msg = `No se pudo cargar el Bloque 26. Verificá que hayas ejecutado docs/sql/ada_bloque_26b_archivos_actividades_entregas.sql. Detalle: ${error.message}`;
+  const msg = `No se pudo cargar el módulo de actividades. Verificá la conexión y la configuración de la base de datos. Detalle: ${error.message}`;
   ["listaActividades","tablaSeguimiento"].forEach(id=>{ if(b26a(id)) b26a(id).innerHTML = `<p class="form-message is-error">${b26aEscape(msg)}</p>`; });
 }
 
