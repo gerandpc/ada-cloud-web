@@ -13,20 +13,21 @@
     <section class="module-view">
       <p class="eyebrow">Módulo ADA</p>
       <h1>Institución</h1>
-      <p>Configuración general de la institución educativa.</p>
+      <p>Datos generales, identidad y localización de la institución educativa.</p>
 
       <form id="formInstitucion" class="ada-form panel-card">
         <h2>Datos institucionales</h2>
+        <p id="ayudaInstitucion" class="form-help">Actualizá los datos generales que identifican a la institución.</p>
 
         <div class="form-grid">
           <div>
             <label for="nombre">Nombre de la institución</label>
-            <input type="text" id="nombre" required placeholder="Ej. Colegio ADA">
+            <input type="text" id="nombre" required maxlength="160" autocomplete="organization">
           </div>
 
           <div>
             <label for="nivel">Nivel educativo</label>
-            <input type="text" id="nivel" placeholder="Inicial, Primario, Secundario, Superior">
+            <input type="text" id="nivel" maxlength="120" placeholder="Inicial, Primario, Secundario o Superior">
           </div>
 
           <div>
@@ -41,21 +42,24 @@
 
           <div>
             <label for="localidad">Localidad</label>
-            <input type="text" id="localidad" placeholder="Localidad">
+            <input type="text" id="localidad" maxlength="120" autocomplete="address-level2">
           </div>
 
           <div>
             <label for="provincia">Provincia</label>
-            <input type="text" id="provincia" placeholder="Provincia">
+            <input type="text" id="provincia" maxlength="120" autocomplete="address-level1">
           </div>
 
           <div class="full">
             <label for="descripcion">Descripción</label>
-            <textarea id="descripcion" placeholder="Descripción institucional breve"></textarea>
+            <textarea id="descripcion" maxlength="1200" rows="5" placeholder="Descripción institucional"></textarea>
           </div>
         </div>
 
-        <button type="submit" class="btn-primary">Guardar institución</button>
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Guardar institución</button>
+          <button type="button" id="exportarInstitucionBtn" class="btn-secondary" disabled>Exportar ficha institucional a PDF</button>
+        </div>
         <p id="mensajeInstitucion" class="form-message"></p>
       </form>
     </section>
@@ -64,6 +68,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../assets/js/supabase-config.js"></script>
 <script src="../assets/js/ada-security.js"></script>
+  <script src="../assets/js/ada-export.js"></script>
   <script src="../assets/js/institucion.js"></script>
   <script src="../assets/js/ui-effects.js"></script>
 </body>
