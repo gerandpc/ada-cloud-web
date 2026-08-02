@@ -208,15 +208,46 @@ function downloadCSV(filename, rows) {
   URL.revokeObjectURL(url);
 }
 
+function extraerTabla(elemento) {
+  const table = elemento?.querySelector?.("table") || (elemento?.tagName === "TABLE" ? elemento : null);
+  if (!table) return null;
+  const headers = [...table.querySelectorAll("thead th")].map((cell) => cell.textContent.trim());
+  const rows = [...table.querySelectorAll("tbody tr")].map((row) =>
+    [...row.querySelectorAll("td")].map((cell) => cell.textContent.replace(/\s+/g, " ").trim())
+  );
+  return headers.length ? { headers, rows } : null;
+}
+
 function exportarPDF(title, selectors) {
   const blocks = selectors.map((selector) => document.querySelector(selector)).filter((element) => element && element.textContent.trim());
   if (!blocks.length) {
     alert("Primero generá el reporte que querés exportar.");
     return;
   }
-  const body = blocks.map((element) => element.outerHTML).join("");
-  if (window.ADAExport?.openDocument) window.ADAExport.openDocument(title, body);
-  else window.print();
+  if (!window.ADA_PDF?.create) {
+    alert("El motor PDF de ADA no está disponible. Recargá la página e intentá nuevamente.");
+    return;
+  }
+
+  const pdf = window.ADA_PDF.create({
+    title,
+    subtitle: `Generado ${new Date().toLocaleString("es-AR")}`,
+    filename: `${title.replace(/[^a-z0-9]+/gi, "_")}_${new Date().toISOString().slice(0, 10)}.pdf`,
+    institution: "ADA Cloud"
+  });
+
+  pdf.heading("Síntesis del reporte", 1);
+  blocks.forEach((element) => {
+    const tablaDetectada = extraerTabla(element);
+    if (tablaDetectada) {
+      pdf.table(tablaDetectada.headers, tablaDetectada.rows, { fontSize: tablaDetectada.headers.length >= 6 ? 6.8 : 8 });
+      return;
+    }
+    const texto = element.textContent.replace(/\s+/g, " ").trim();
+    if (texto) pdf.paragraph(texto);
+  });
+  pdf.note("Documento generado automáticamente por ADA Cloud. Los datos deben interpretarse conforme a los criterios institucionales vigentes.");
+  pdf.download();
 }
 
 function bindEvents() {
