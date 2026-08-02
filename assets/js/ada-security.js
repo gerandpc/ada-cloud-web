@@ -37,7 +37,7 @@ const ADA_PAGE_ACCESS = {
 
   "cursos.html": ["admin", "directivo", "secretaria", "preceptor", "docente"],
   "materias.html": ["admin", "directivo", "secretaria", "docente"],
-  "asignaciones.html": ["admin", "directivo", "secretaria", "preceptor"],
+  "asignaciones.html": ["admin", "directivo", "secretaria"],
 
   "documentos.html": ["admin", "directivo", "secretaria", "docente", "preceptor", "familia", "alumno"],
   "ia.html": ["admin", "directivo", "secretaria", "docente", "preceptor", "familia", "alumno"],
@@ -60,7 +60,7 @@ const ADA_PAGE_ACCESS = {
   "planillas-secretaria.html": ["admin", "directivo", "secretaria"],
   "libres-materia.html": ["admin", "directivo", "secretaria", "preceptor"],
   "cierres-academicos.html": ["admin", "directivo", "secretaria"],
-  "boletines-actas.html": ["admin", "directivo", "secretaria", "familia", "alumno"],
+  "boletines-actas.html": ["admin", "directivo", "secretaria"],
 
   // Flujos pedagógicos y académicos
   "programas.html": ["admin", "directivo", "docente", "alumno", "familia"],
@@ -89,7 +89,7 @@ const ADA_ROLE_MODULES = {
   directivo: ["mi-perfil", "dashboard", "institucion", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "programas", "actividades", "entregas", "documentos", "documentacion", "ia", "horarios", "asistencia", "calificaciones", "libro-calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines", "boletines-actas", "reportes", "inteligencia-institucional", "comunicados", "convivencia", "ficha-alumno", "auditoria", "estado-sistema"],
   secretaria: ["mi-perfil", "secretaria", "institucion", "usuarios", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "documentacion", "asistencia", "calificaciones", "libro-calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines", "boletines-actas", "reportes", "comunicados", "convivencia", "ficha-alumno", "estado-sistema"],
   docente: ["mi-perfil", "mi-docente", "cursos", "materias", "programas", "actividades", "entregas", "documentos", "ia", "asistencia", "calificaciones", "libro-calificaciones", "reportes", "comunicados", "ficha-alumno"],
-  preceptor: ["mi-perfil", "mi-preceptor", "alumnos", "familias", "asignaciones", "cursos", "documentos", "documentacion", "ia", "asistencia", "libres-materia", "reportes", "comunicados"],
+  preceptor: ["mi-perfil", "mi-preceptor", "alumnos", "familias", "cursos", "documentos", "documentacion", "ia", "asistencia", "libres-materia", "reportes", "comunicados"],
   familia: ["mi-perfil", "mi-familia", "programas", "boletines", "documentos", "documentacion", "ia", "comunicados"],
   alumno: ["mi-perfil", "mi-alumno", "programas", "actividades", "entregas", "boletines", "documentos", "documentacion", "ia", "comunicados"]
 };
@@ -520,6 +520,5 @@ window.adaGetSessionAndProfile = adaGetSessionAndProfile;
 window.obtenerSesionPerfil = obtenerSesionPerfil;
 window.adaHideUnauthorizedModules = adaHideUnauthorizedModules;
 window.adaInjectAccountAccess = adaInjectAccountAccess;
-window.adaExportCurrentViewToPdf = adaExportCurrentViewToPdf;
 window.ADA_ROLE_HOME = ADA_ROLE_HOME;
 window.ADA_ROLE_MODULES = ADA_ROLE_MODULES;
