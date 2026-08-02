@@ -1,0 +1,16 @@
+ID,Área,Prueba,Resultado esperado,Estado
+QA-001,Autenticación,Inicio de sesión válido,Acceso al portal del rol,Pendiente
+QA-002,Autenticación,Usuario inactivo,Acceso bloqueado,Pendiente
+QA-003,Permisos,URL no autorizada,Pantalla de acceso restringido,Pendiente
+QA-004,Docente,Crear programa,Programa guardado como borrador,Pendiente
+QA-005,Directivo,Aprobar programa,Programa publicado para destinatarios,Pendiente
+QA-006,Alumno,Ver programa,Únicamente programas aprobados,Pendiente
+QA-007,Actividad,Crear y publicar,Visible para curso asignado,Pendiente
+QA-008,Entrega,Enviar actividad,Entrega vinculada al alumno,Pendiente
+QA-009,Calificación,Cargar nota,Nota validada y guardada,Pendiente
+QA-010,Asistencia,Registrar presente/ausente,Resumen y alertas actualizados,Pendiente
+QA-011,Boletín,Emitir boletín,Visible solo cuando está emitido,Pendiente
+QA-012,Familia,Consultar hijo,Únicamente hijos vinculados,Pendiente
+QA-013,Exportaciones,Generar documento,PDF/CSV contextual sin menús,Pendiente
+QA-014,Responsive,Usar en celular,Navegación y tablas utilizables,Pendiente
+QA-015,Conectividad,Desconectar Internet,Mensaje de conexión visible,Pendiente
