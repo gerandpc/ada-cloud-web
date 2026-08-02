@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="../assets/css/style.css">
   <link rel="stylesheet" href="../assets/css/bloque23-ui-refresh.css">
   <link rel="stylesheet" href="../assets/css/inteligencia-institucional.css">
+  <link rel="stylesheet" href="../assets/css/portal-suite.css">
 </head>
 <body class="module-page role-loading">
   <main class="module-shell intelligence-shell">
@@ -44,6 +45,7 @@
       </section>
 
       <section class="intelligence-kpis" aria-label="Indicadores principales">
+        <article class="intel-kpi intel-score-card" id="intelScoreCard" data-level="medio"><span>ADA Score institucional</span><strong id="intelScore">—</strong><small id="intelScoreLabel">Síntesis de asistencia, rendimiento y gestión académica</small></article>
         <article class="intel-kpi"><span>Matrícula activa</span><strong id="intelMatricula">—</strong><small>Estudiantes vinculados a cursos</small></article>
         <article class="intel-kpi"><span>Asistencia registrada</span><strong id="intelAsistencia">—</strong><small>Porcentaje de presentes</small></article>
         <article class="intel-kpi"><span>Promedio general</span><strong id="intelPromedio">—</strong><small>Sobre calificaciones numéricas</small></article>
@@ -75,7 +77,7 @@
         </article>
         <article class="intel-panel">
           <div class="intel-panel-title"><h2>Evolución institucional</h2><span>Comparación temporal disponible</span></div>
-          <div id="evolucionInstitucional" class="intel-empty">Se mostrará cuando existan registros con fechas comparables.</div>
+          <div id="evolucionInstitucional" class="intel-trend-grid"><div class="intel-empty">Se calculará con los registros fechados disponibles.</div></div>
         </article>
       </section>
 
@@ -90,6 +92,7 @@
   <script src="../assets/js/supabase-config.js"></script>
   <script src="../assets/js/ada-security.js"></script>
   <script src="../assets/js/inteligencia-institucional.js"></script>
+  <script src="../assets/js/portal-suite.js"></script>
   <script src="../assets/js/ui-effects.js"></script>
 </body>
 </html>
