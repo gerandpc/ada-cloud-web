@@ -15,7 +15,7 @@
       <div class="cv-hero">
         <div>
 <h1>Convivencia, sanciones y descréditos</h1>
-          <p class="cv-subtitle">Registro de hechos disciplinarios, notificación a la familia, firma/devolución y seguimiento institucional por alumno.</p>
+          <p class="cv-subtitle">Registro, notificación familiar y seguimiento institucional de situaciones de convivencia.</p>
         </div>
         <div class="cv-hero-badges">
           <span>⚠️ Seguimiento</span>
@@ -48,7 +48,7 @@
       <div class="cv-tabs" role="tablist" aria-label="Secciones de convivencia">
         <button class="cv-tab active" type="button" data-tab="tab-seguimiento">Seguimiento</button>
         <button class="cv-tab" type="button" data-tab="tab-nuevo" data-area-only="gestion">Nuevo caso</button>
-        <button class="cv-tab" type="button" data-tab="tab-firma" data-area-only="familia">Firmar / responder</button>
+        <button class="cv-tab" type="button" data-tab="tab-firma" data-area-only="familia">Confirmar lectura</button>
         <button class="cv-tab" type="button" data-tab="tab-alumnos" data-area-only="gestion">Resumen por alumno</button>
       </div>
 
@@ -74,6 +74,7 @@
               <option value="grave">Grave</option>
             </select>
             <button type="button" id="btnActualizarConvivencia" class="btn-secondary">Actualizar</button>
+            <button type="button" id="btnExportarResumenCv" class="btn-secondary" data-area-only="gestion">Exportar informe PDF</button>
           </div>
         </div>
         <div id="listaConvivencia" class="cv-grid"></div>
@@ -82,7 +83,7 @@
       <section id="tab-nuevo" class="cv-tab-panel">
         <div class="panel-card cv-form-card">
           <h2>Registrar hecho disciplinario o sanción</h2>
-          <p class="helper-text">Preceptoría registra el caso, asigna descréditos y define si requiere notificación/firma de la familia.</p>
+          <p class="helper-text">Registrá el hecho, la medida adoptada y si corresponde solicitar confirmación de lectura a la familia.</p>
           <form id="formConvivencia" class="cv-form">
             <div class="form-grid">
               <label>Alumno
@@ -147,7 +148,7 @@
         <div class="cv-toolbar">
           <div>
             <h2>Notificaciones para la familia</h2>
-            <p>Casos pendientes de lectura, firma o devolución de la familia.</p>
+            <p>Notificaciones pendientes de lectura y confirmación por parte de la familia.</p>
           </div>
         </div>
         <div id="listaFirmaFamilia" class="cv-grid"></div>
