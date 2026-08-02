@@ -137,3 +137,173 @@ body.ada-ui2 .ada-final-utilities img{width:64px!important;height:64px!important
 @media(max-width:480px){body.ada-ui2 :is(.role-grid,.portal-grid,.stats-grid,.kpi-grid){grid-template-columns:1fr!important}.ada-ui2-topbar{padding:10px 12px}.ada-ui2-brand span{display:none}}
 @media(prefers-reduced-motion:reduce){body.ada-ui2 *,body.ada-ui2::before,body.ada-ui2::after{animation:none!important;transition:none!important}}
 @media print{.ada-ui2-aurora,.ada-ui2-topbar,.sidebar,.ada-role-sidebar,.ada-final-utilities{display:none!important}body.ada-ui2 .module-shell{margin:0!important;width:100%!important;padding:0!important}}
+
+/* =========================================================
+   ADA UI 2.1 — corrección de layout, contraste y superficies
+   ========================================================= */
+:root{--ada-sidebar:218px;--ada-content-max:1440px}
+html[data-theme="dark"],body.ada-dark{
+  --ada-glass:rgba(11,15,42,.74);
+  --ada-glass-strong:rgba(11,15,42,.90);
+  --ada-line:rgba(145,103,255,.30);
+}
+
+/* El contenido nunca vuelve a quedar debajo del sidebar */
+body.ada-ui2 .module-shell,
+body.ada-ui2 main.module-shell,
+body.ada-ui2 .secretaria-shell{
+  position:relative!important;
+  left:auto!important;
+  right:auto!important;
+  transform:none!important;
+  margin-left:var(--ada-sidebar)!important;
+  width:calc(100% - var(--ada-sidebar))!important;
+  max-width:none!important;
+  min-width:0!important;
+  padding:28px clamp(24px,3vw,48px) 88px!important;
+  overflow:visible!important;
+}
+body.ada-ui2 .module-shell > *,
+body.ada-ui2 .module-view,
+body.ada-ui2 .secretaria-shell > *,
+body.ada-ui2 .dashboard-shell > *{
+  position:relative!important;
+  left:auto!important;
+  right:auto!important;
+  transform:none!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+  width:100%!important;
+  max-width:var(--ada-content-max)!important;
+  min-width:0!important;
+}
+body.ada-ui2 .module-view{
+  display:block!important;
+  overflow:visible!important;
+}
+body.ada-ui2 :is(.role-grid,.portal-grid,.stats-grid,.kpi-grid,.dashboard-grid,.directivo-kpis,.secretaria-kpis){
+  width:100%!important;
+  min-width:0!important;
+}
+body.ada-ui2 :is(.role-section-grid,.portal-section-grid,.dashboard-grid,.content-grid,.directivo-board,.secretaria-grid){
+  width:100%!important;
+  min-width:0!important;
+}
+body.ada-ui2 :is(.role-section-grid,.portal-section-grid,.dashboard-grid,.content-grid,.directivo-board,.secretaria-grid)>*{
+  min-width:0!important;
+}
+
+/* Una sola barra superior, sin duplicados ni barras cortadas */
+body.ada-ui2 .ada-product-switcher{display:none!important}
+body.ada-ui2 .ada-ui2-topbar{
+  width:100%!important;
+  max-width:var(--ada-content-max)!important;
+  margin:0 auto 22px!important;
+  min-height:58px!important;
+  background:var(--ada-glass-strong)!important;
+  border-color:var(--ada-line)!important;
+}
+body.ada-ui2 .ada-ui2-topbar .ada-ui2-product-links{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+body.ada-ui2 .ada-ui2-topbar .ada-ui2-product-links a{
+  padding:9px 14px;border-radius:12px;text-decoration:none;font-weight:800;
+  color:var(--ada-violet);border:1px solid var(--ada-line);background:rgba(255,255,255,.06)
+}
+body.ada-ui2 .ada-ui2-topbar .ada-ui2-product-links a.active{color:#fff;background:linear-gradient(135deg,#743cf5,#526de8)}
+
+/* Se elimina el gran "marco" exterior: contenido más limpio y respirable */
+body.ada-ui2 :is(.module-view,.dashboard-group,.institutional-suite,.secretaria-shell){
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+}
+body.ada-ui2 .dashboard-group{padding:0!important;margin:0 0 26px!important}
+body.ada-ui2 .dashboard-group>h2{margin:0 0 14px!important}
+
+/* Superficies internas coherentes: glass oscuro/claro, sin bloques blancos aislados */
+body.ada-ui2 :is(
+ .panel-card,.role-card,.portal-card,.dashboard-card,.card,.section-card,.form-card,.table-card,
+ .settings-card,.report-card,.stat-card,.kpi-card,.data-card,.access-card,.module-card,
+ .directivo-panel,.directivo-kpi,.secretaria-kpi,.secretaria-actions-grid>a,
+ .institutional-card,.institutional-suite-card,.dashboard-panel
+){
+  background:var(--ada-glass)!important;
+  border:1px solid var(--ada-line)!important;
+  color:var(--ada-ink)!important;
+  box-shadow:0 16px 38px rgba(7,10,34,.16)!important;
+  backdrop-filter:blur(18px)!important;
+  border-radius:20px!important;
+}
+html[data-theme="dark"] body.ada-ui2 :is(
+ .panel-card,.role-card,.portal-card,.dashboard-card,.card,.section-card,.form-card,.table-card,
+ .settings-card,.report-card,.stat-card,.kpi-card,.data-card,.access-card,.module-card,
+ .directivo-panel,.directivo-kpi,.secretaria-kpi,.secretaria-actions-grid>a,
+ .institutional-card,.institutional-suite-card,.dashboard-panel
+){
+  background:linear-gradient(145deg,rgba(16,20,55,.86),rgba(9,13,38,.82))!important;
+}
+body.ada-ui2 :is(.module-card,.secretaria-actions-grid>a){
+  text-decoration:none!important;padding:20px!important;transition:.22s ease!important
+}
+body.ada-ui2 :is(.module-card,.secretaria-actions-grid>a):hover{
+  transform:translateY(-4px)!important;border-color:rgba(151,111,255,.58)!important;
+  box-shadow:0 22px 48px rgba(80,52,188,.24)!important
+}
+body.ada-ui2 :is(.module-card,.panel-card,.role-card,.portal-card,.directivo-panel,.secretaria-kpi) :is(h1,h2,h3,strong){color:var(--ada-ink)!important}
+body.ada-ui2 :is(.module-card,.panel-card,.role-card,.portal-card,.directivo-panel,.secretaria-kpi) :is(p,span,small){color:var(--ada-muted)!important}
+
+/* Hero más sobrio y consistente */
+body.ada-ui2 :is(.role-hero,.portal-hero,.dashboard-hero,.page-hero,.welcome-card,.hero-card,.secretaria-hero){
+  width:100%!important;max-width:none!important;margin:0 0 22px!important;
+  padding:28px clamp(24px,3vw,38px)!important;
+  background:linear-gradient(118deg,#643ff0 0%,#496ee8 52%,#20b9c8 100%)!important;
+  border:1px solid rgba(190,160,255,.36)!important;
+  box-shadow:0 20px 48px rgba(62,49,177,.25)!important;
+}
+body.ada-ui2 :is(.role-hero,.portal-hero,.dashboard-hero,.page-hero,.welcome-card,.hero-card,.secretaria-hero) :is(h1,h2,h3,p,span,strong){color:#fff!important}
+
+/* Panel institucional: deja de ser una placa gris gigante */
+body.ada-ui2 :is(.dashboard-welcome,.dashboard-header,.directivo-header,.institutional-header){
+  background:linear-gradient(135deg,rgba(19,24,62,.84),rgba(35,37,88,.72))!important;
+  color:#fff!important;border:1px solid var(--ada-line)!important;border-radius:22px!important;
+  box-shadow:0 18px 42px rgba(7,10,34,.22)!important;backdrop-filter:blur(18px)!important
+}
+body.ada-ui2 :is(.dashboard-welcome,.dashboard-header,.directivo-header,.institutional-header) :is(h1,h2,h3,p,span,strong){color:#fff!important}
+
+/* Grillas estables y legibles */
+body.ada-ui2 .dashboard-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+body.ada-ui2 .directivo-kpis{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:14px!important}
+body.ada-ui2 .secretaria-kpis{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:14px!important}
+body.ada-ui2 .role-grid{grid-template-columns:repeat(auto-fit,minmax(145px,1fr))!important}
+body.ada-ui2 .portal-grid{grid-template-columns:repeat(auto-fit,minmax(175px,1fr))!important}
+body.ada-ui2 .role-section-grid,body.ada-ui2 .portal-section-grid,body.ada-ui2 .directivo-board,body.ada-ui2 .secretaria-grid{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:18px!important
+}
+
+/* Quita marcos internos y fondos blancos heredados */
+body.ada-ui2 :is(.role-list,.portal-list,.alumno-task-list,.directivo-list,.secretaria-priority-list,.table-wrap){
+  background:transparent!important;color:var(--ada-ink)!important
+}
+body.ada-ui2 :is(.role-card,.portal-card,.stat-card,.kpi-card){min-height:104px!important}
+
+/* Sidebar sin tapar contenido */
+body.ada-ui2 .sidebar,body.ada-ui2 .ada-role-sidebar{width:var(--ada-sidebar)!important}
+body.ada-ui2 .sidebar-logo{padding-left:8px!important;padding-right:8px!important}
+
+/* Modo claro: no usar placas grises lavadas */
+html:not([data-theme="dark"]) body.ada-ui2 :is(.panel-card,.module-card,.role-card,.portal-card,.directivo-panel,.directivo-kpi,.secretaria-kpi){
+  background:rgba(255,255,255,.76)!important;color:#15182d!important
+}
+
+@media(max-width:1180px){
+ body.ada-ui2 .dashboard-grid,body.ada-ui2 .directivo-kpis,body.ada-ui2 .secretaria-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:860px){
+ :root{--ada-sidebar:0px}
+ body.ada-ui2 .sidebar,body.ada-ui2 .ada-role-sidebar{position:relative!important;width:100%!important;height:auto!important}
+ body.ada-ui2 .module-shell,body.ada-ui2 main.module-shell,body.ada-ui2 .secretaria-shell{margin-left:0!important;width:100%!important;padding:18px 14px 82px!important}
+ body.ada-ui2 .role-section-grid,body.ada-ui2 .portal-section-grid,body.ada-ui2 .directivo-board,body.ada-ui2 .secretaria-grid{grid-template-columns:1fr!important}
+}
+@media(max-width:560px){
+ body.ada-ui2 .dashboard-grid,body.ada-ui2 .directivo-kpis,body.ada-ui2 .secretaria-kpis{grid-template-columns:1fr!important}
+}
