@@ -1,0 +1,14 @@
+:root{--ada-focus:#2563eb;--ada-danger:#b91c1c;--ada-success:#047857}
+*:focus-visible{outline:3px solid color-mix(in srgb,var(--ada-focus) 65%,transparent);outline-offset:2px}
+.ada-table-scroll{width:100%;overflow:auto;-webkit-overflow-scrolling:touch;border-radius:inherit}
+.ada-table-scroll table{min-width:680px}
+.ada-network-banner{position:fixed;left:50%;bottom:18px;z-index:9999;transform:translate(-50%,140%);padding:10px 16px;border-radius:999px;background:#7f1d1d;color:#fff;font-weight:700;box-shadow:0 12px 32px rgba(0,0,0,.2);transition:transform .2s ease}
+.ada-network-banner.is-visible{transform:translate(-50%,0)}
+.ada-network-banner.is-success{background:var(--ada-success)}
+.ada-final-utilities{position:fixed;right:18px;bottom:18px;z-index:900;display:flex;gap:8px}
+.ada-final-utilities a{display:grid;place-items:center;min-width:40px;height:40px;padding:0 10px;border-radius:999px;background:#fff;color:#5b1421;border:1px solid rgba(91,20,33,.18);box-shadow:0 8px 24px rgba(15,23,42,.14);font-weight:800;text-decoration:none}
+.ada-final-utilities a:hover{transform:translateY(-1px)}
+[hidden],.ada-hidden-by-role{display:none!important}
+@media(max-width:900px){.dashboard-body,.ada-with-sidebar{padding-left:0!important}.sidebar{position:relative!important;width:100%!important;min-height:auto!important}.main-content,.dashboard-main,.module-shell{margin-left:0!important;width:100%!important}.ada-final-utilities{right:10px;bottom:10px}.grid,.cards-grid,.dashboard-grid{grid-template-columns:1fr!important}}
+@media(max-width:600px){.module-view,.main-content,.dashboard-main{padding:14px!important}.panel-card,.card{border-radius:14px!important}.btn-primary,.btn-secondary,button,input,select,textarea{min-height:42px}.ada-table-scroll table{min-width:560px}}
+@media print{.sidebar,.ada-final-utilities,.ada-network-banner,.sidebar-logout,.no-print{display:none!important}.main-content,.dashboard-main,.module-shell{margin:0!important;padding:0!important;width:100%!important}body{background:#fff!important;color:#111!important}.panel-card,.card{box-shadow:none!important;border:1px solid #ddd!important;break-inside:avoid}}

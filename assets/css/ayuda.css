@@ -1,0 +1,1 @@
+.help-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:22px}.help-card{background:#fff;border:1px solid rgba(91,20,33,.12);border-radius:18px;padding:20px;box-shadow:0 8px 24px rgba(15,23,42,.07)}.help-card h2{margin:0 0 8px;font-size:1.05rem}.help-card p{margin:0;color:#64748b;line-height:1.5}
