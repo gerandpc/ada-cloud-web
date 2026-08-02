@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Centro de Inteligencia Institucional - ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque23-ui-refresh.css">
+  <link rel="stylesheet" href="../assets/css/inteligencia-institucional.css">
+</head>
+<body class="module-page role-loading">
+  <main class="module-shell intelligence-shell">
+    <a href="dashboard.html" class="back-link">← Volver al panel</a>
+
+    <section class="module-view intelligence-view">
+      <header class="intelligence-header">
+        <div>
+          <p class="eyebrow">Analítica institucional</p>
+          <h1>Centro de Inteligencia Institucional</h1>
+          <p>Indicadores académicos y de trayectoria construidos con la información disponible en ADA.</p>
+        </div>
+        <div class="intelligence-actions">
+          <button type="button" class="btn-secondary" id="btnActualizarInteligencia">Actualizar</button>
+          <button type="button" class="btn-primary" id="btnInformeEjecutivo">Generar informe ejecutivo</button>
+        </div>
+      </header>
+
+      <div id="estadoInteligencia" class="intelligence-status">Consultando información institucional...</div>
+
+      <section class="intelligence-filters" aria-label="Filtros de análisis">
+        <label>Curso
+          <select id="filtroInteligenciaCurso"><option value="">Todos los cursos</option></select>
+        </label>
+        <label>Materia
+          <select id="filtroInteligenciaMateria"><option value="">Todas las materias</option></select>
+        </label>
+        <label>Desde
+          <input type="date" id="filtroInteligenciaDesde">
+        </label>
+        <label>Hasta
+          <input type="date" id="filtroInteligenciaHasta">
+        </label>
+        <button type="button" class="btn-secondary" id="btnAplicarFiltrosInteligencia">Aplicar filtros</button>
+      </section>
+
+      <section class="intelligence-kpis" aria-label="Indicadores principales">
+        <article class="intel-kpi"><span>Matrícula activa</span><strong id="intelMatricula">—</strong><small>Estudiantes vinculados a cursos</small></article>
+        <article class="intel-kpi"><span>Asistencia registrada</span><strong id="intelAsistencia">—</strong><small>Porcentaje de presentes</small></article>
+        <article class="intel-kpi"><span>Promedio general</span><strong id="intelPromedio">—</strong><small>Sobre calificaciones numéricas</small></article>
+        <article class="intel-kpi risk"><span>Alertas de trayectoria</span><strong id="intelRiesgo">—</strong><small>Ausentismo, bajo desempeño o seguimiento prioritario</small></article>
+        <article class="intel-kpi"><span>Programas aprobados</span><strong id="intelProgramas">—</strong><small>Proporción sobre programas registrados</small></article>
+        <article class="intel-kpi"><span>Carga docente</span><strong id="intelCargaDocente">—</strong><small>Asignaciones promedio por docente</small></article>
+      </section>
+
+      <section class="intelligence-grid">
+        <article class="intel-panel">
+          <div class="intel-panel-title"><h2>Ausentismo por curso</h2><span>Mayor a menor</span></div>
+          <div id="graficoAusentismoCurso" class="intel-bars"></div>
+        </article>
+        <article class="intel-panel">
+          <div class="intel-panel-title"><h2>Rendimiento por materia</h2><span>Promedio registrado</span></div>
+          <div id="graficoRendimientoMateria" class="intel-bars"></div>
+        </article>
+        <article class="intel-panel">
+          <div class="intel-panel-title"><h2>Materias críticas</h2><span>Promedio bajo o alta desaprobación</span></div>
+          <div id="tablaMateriasCriticas" class="intel-table-wrap"></div>
+        </article>
+        <article class="intel-panel">
+          <div class="intel-panel-title"><h2>Estudiantes con alertas</h2><span>Priorización institucional</span></div>
+          <div id="tablaAlertasAlumnos" class="intel-table-wrap"></div>
+        </article>
+        <article class="intel-panel">
+          <div class="intel-panel-title"><h2>Carga docente</h2><span>Asignaciones por docente</span></div>
+          <div id="graficoCargaDocente" class="intel-bars"></div>
+        </article>
+        <article class="intel-panel">
+          <div class="intel-panel-title"><h2>Evolución institucional</h2><span>Comparación temporal disponible</span></div>
+          <div id="evolucionInstitucional" class="intel-empty">Se mostrará cuando existan registros con fechas comparables.</div>
+        </article>
+      </section>
+
+      <section class="intel-methodology">
+        <h2>Criterios de lectura</h2>
+        <p>Las alertas son orientativas y no reemplazan la evaluación profesional. Se construyen únicamente con registros disponibles para el usuario y pueden variar si faltan datos o existen políticas RLS que limiten la consulta.</p>
+      </section>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/ada-security.js"></script>
+  <script src="../assets/js/inteligencia-institucional.js"></script>
+  <script src="../assets/js/ui-effects.js"></script>
+</body>
+</html>
