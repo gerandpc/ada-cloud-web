@@ -162,6 +162,39 @@
       }
     }
 
+    barChart(items = [], options = {}) {
+      const rows = (items || []).filter(Boolean).slice(0, options.maxItems || 12);
+      if (!rows.length) { this.note(options.emptyText || 'Sin datos suficientes para representar.'); return; }
+      const max = Number(options.maxValue || Math.max(...rows.map(x => Number(x.value) || 0), 1));
+      const labelW = options.labelWidth || 150;
+      const valueW = 48;
+      const barW = this.contentW - labelW - valueW - 20;
+      rows.forEach(item => {
+        this.ensure(25);
+        const value = Math.max(0, Number(item.value) || 0);
+        const ratio = Math.min(1, value / max);
+        this.text(item.label || '', this.margin, this.y - 8, { size: 8.5, color: TEXT, maxChars: 27, leading: 10 });
+        this.rect(this.margin + labelW, this.y - 13, barW, 10, LIGHT, true);
+        this.rect(this.margin + labelW, this.y - 13, Math.max(2, barW * ratio), 10, options.color || BRAND, true);
+        this.text(item.display ?? String(value), this.margin + labelW + barW + 8, this.y - 9, { size: 8.5, bold: true, color: BRAND, maxChars: 10, leading: 10 });
+        this.y -= 24;
+      });
+      this.y -= 6;
+    }
+
+    scoreBand(score, label = '') {
+      const value = Number(score);
+      const safe = Number.isFinite(value) ? Math.max(0, Math.min(100, value)) : 0;
+      const color = safe >= 90 ? {r:36,g:139,b:91} : safe >= 70 ? {r:217,g:145,b:30} : {r:185,g:28,b:28};
+      this.ensure(58);
+      this.text('ADA Score institucional', this.margin, this.y, { size: 10, bold: true, color: MUTED, maxChars: 32 });
+      this.text(Number.isFinite(value) ? `${Math.round(safe)}/100` : 'Sin cálculo', this.margin, this.y - 24, { size: 22, bold: true, color, maxChars: 18 });
+      this.rect(this.margin + 150, this.y - 26, this.contentW - 150, 13, LIGHT, true);
+      if (Number.isFinite(value)) this.rect(this.margin + 150, this.y - 26, (this.contentW - 150) * safe / 100, 13, color, true);
+      if (label) this.text(label, this.margin + 150, this.y - 44, { size: 8.5, color: MUTED, maxChars: 55 });
+      this.y -= 62;
+    }
+
     table(headers = [], rows = [], options = {}) {
       if (!headers.length) return;
       const cols = headers.length;

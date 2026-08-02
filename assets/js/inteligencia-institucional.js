@@ -165,33 +165,8 @@ async function intelLoad(){
 }
 
 function intelExecutiveReport(){
-  if(!window.ADA_PDF)return alert('El motor PDF de ADA no está disponible. Recargá la página.');
-  const m=intelState.metrics||intelCompute();
-  const f=intelFilters();
-  const critical=m.subjects.filter(x=>x.value<7||x.failedPct>=25).slice(0,12);
-  const priorityCourses=[...m.courseMetrics].sort((a,b)=>b.alerts-a.alerts).slice(0,10);
-  window.ADA_PDF.download({
-    title:'Informe ejecutivo institucional',
-    subtitle:`ADA Intelligence · ${new Date().toLocaleString('es-AR')} · Curso: ${f.curso?intelCourseName(f.curso):'Todos'} · Materia: ${f.materia?intelSubjectName(f.materia):'Todas'}`,
-    filename:`ADA_Informe_Ejecutivo_${new Date().toISOString().slice(0,10)}.pdf`,
-    cards:[
-      {label:'ADA Score',value:m.score===null?'—':`${Math.round(m.score)}/100`},
-      {label:'Matrícula',value:m.uniqueStudents.size},
-      {label:'Asistencia',value:intelPct(m.attendancePct)},
-      {label:'Promedio',value:m.avg===null?'—':m.avg.toFixed(2)},
-      {label:'Alertas',value:m.alerts.length},
-      {label:'Programas aprobados',value:m.programs.length?`${m.approved}/${m.programs.length}`:'—'},
-      {label:'Entregas',value:intelPct(m.deliveryPct)},
-      {label:'Carga docente',value:m.avgLoad===null?'—':m.avgLoad.toFixed(1)}
-    ],
-    sections:[
-      {title:'Estado institucional',text:`ADA Score ${m.score===null?'sin cálculo':Math.round(m.score)+'/100'} · ${m.scoreLabel}.`},
-      {title:'Cursos prioritarios',table:{headers:['Curso','Asistencia','Promedio','Alertas'],rows:priorityCourses.map(x=>[x.label,intelPct(x.attendance),x.avg===null?'—':x.avg.toFixed(2),x.alerts])}},
-      {title:'Materias que requieren atención',table:{headers:['Materia','Promedio','Desaprobación'],rows:critical.map(x=>[x.label,x.value.toFixed(2),`${x.failedPct.toFixed(1)}%`])}},
-      {title:'Trayectorias priorizadas',table:{headers:['Estudiante','Curso','Ausentismo','Promedio','Nivel'],rows:m.alerts.slice(0,20).map(x=>[intelProfileName(x.profile),intelCourseName(x.courseId),`${(x.absentee*100).toFixed(1)}%`,x.avg===null?'—':x.avg.toFixed(2),x.level])}}
-    ],
-    note:'Los indicadores son orientativos y deben interpretarse junto con el criterio profesional de los equipos institucionales.'
-  });
+  if(window.ADA_REPORTS?.executive){window.ADA_REPORTS.executive();return;}
+  alert('El Centro de Informes no está disponible. Recargá la página.');
 }
 
 function intelExportCSV(){

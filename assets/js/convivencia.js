@@ -512,7 +512,7 @@ function cvEscapePrint(value) {
 }
 
 function cvDocumentoBase(title, body) {
-  return `<!doctype html><html lang="es"><head><meta charset="utf-8"><title>${cvEscapePrint(title)}</title><style>body{font-family:Arial,sans-serif;color:#1f2937;margin:32px}h1{color:#a71919;border-bottom:3px solid #a71919;padding-bottom:10px}table{width:100%;border-collapse:collapse;margin-top:18px}th,td{border:1px solid #d1d5db;padding:8px;text-align:left;vertical-align:top}th{background:#f3f4f6}.meta{color:#64748b;font-size:12px;margin-bottom:20px}@media print{button{display:none}}</style></head><body><h1>${cvEscapePrint(title)}</h1><div class="meta">Generado por ADA · ${new Date().toLocaleString('es-AR')}</div>${body}<script>window.onload=()=>window.print();<\/script></body></html>`;
+  return `<!doctype html><html lang="es"><head><meta charset="utf-8"><title>${cvEscapePrint(title)}</title><style>body{font-family:Arial,sans-serif;color:#1f2937;margin:32px}h1{color:#a71919;border-bottom:3px solid #a71919;padding-bottom:10px}table{width:100%;border-collapse:collapse;margin-top:18px}th,td{border:1px solid #d1d5db;padding:8px;text-align:left;vertical-align:top}th{background:#f3f4f6}.meta{color:#64748b;font-size:12px;margin-bottom:20px}@media print{button{display:none}}</style></head><body><h1>${cvEscapePrint(title)}</h1><div class="meta">Generado por ADA · ${new Date().toLocaleString('es-AR')}</div>${body}</body></html>`;
 }
 
 function cvAbrirDocumento(title, rows) {
