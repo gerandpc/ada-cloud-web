@@ -14,7 +14,11 @@
 
     <section class="module-view">
 <h1>Horarios docentes</h1>
-      <p>Gestión de disponibilidad, franjas, aulas, restricciones y detección inicial de conflictos.</p>
+      <p>Organización de franjas, aulas, disponibilidad docente, restricciones y clases institucionales.</p>
+      <div class="module-actions">
+        <button type="button" class="btn-secondary" id="btnPdfHorarios">Exportar horario a PDF</button>
+        <button type="button" class="btn-secondary" id="btnPdfDisponibilidad">Exportar disponibilidad a PDF</button>
+      </div>
 
       <div class="schedule-tabs">
         <button class="schedule-tab active" data-tab="franjas">Franjas</button>
@@ -218,6 +222,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../assets/js/supabase-config.js"></script>
 <script src="../assets/js/ada-security.js"></script>
+  <script src="../assets/js/ada-export.js"></script>
   <script src="../assets/js/horarios.js"></script>
   <script src="../assets/js/ui-effects.js"></script>
 </body>
