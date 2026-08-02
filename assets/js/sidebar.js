@@ -56,6 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 window.addEventListener("ada:role-applied", () => {
+  inicializarSidebar();
   marcarEnlaceActivo();
   abrirSeccionesConActivo();
   ocultarSeccionesVacias();

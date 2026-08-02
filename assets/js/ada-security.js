@@ -292,12 +292,6 @@ function adaBindExistingSidebar(perfil) {
     link.href = home;
   });
 
-  sidebar.querySelectorAll(".sidebar-section-button").forEach((button) => {
-    if (button.dataset.adaBound === "1") return;
-    button.dataset.adaBound = "1";
-    button.addEventListener("click", () => button.closest(".sidebar-section").classList.toggle("open"));
-  });
-
   sidebar.querySelectorAll(".sidebar-logout, [data-logout]").forEach((button) => {
     if (button.dataset.adaBound === "1") return;
     button.dataset.adaBound = "1";
@@ -341,7 +335,7 @@ function adaInjectRoleSidebar(perfil) {
     <nav class="sidebar-nav">
       <a href="${home}" class="sidebar-link ${page === home ? "active" : ""}">Inicio</a>
       ${groups.map(group => `
-        <div class="sidebar-section open">
+        <div class="sidebar-section">
           <button class="sidebar-section-button" type="button">${group.title} <span class="chevron">›</span></button>
           <div class="sidebar-submenu">
             ${group.modules.map(m => {
@@ -358,9 +352,7 @@ function adaInjectRoleSidebar(perfil) {
   document.body.insertBefore(sidebar, document.body.firstChild);
   document.body.classList.add("dashboard-body", "ada-with-sidebar");
 
-  sidebar.querySelectorAll(".sidebar-section-button").forEach((button) => {
-    button.addEventListener("click", () => button.closest(".sidebar-section").classList.toggle("open"));
-  });
+  window.dispatchEvent(new CustomEvent("ada:role-applied", { detail: { rol } }));
 
   const logout = sidebar.querySelector("#adaSidebarLogout");
   if (logout) logout.addEventListener("click", adaLogout);
