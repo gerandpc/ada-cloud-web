@@ -13,42 +13,67 @@
   <main class="module-shell">
     <a href="dashboard.html" class="back-link">← Volver al panel</a>
     <section class="module-view">
-<h1>Boletines</h1>
-      <p>Generación inicial de boletines por alumno y período, tomando como base las calificaciones cargadas.</p>
+      <h1>Boletines</h1>
+      <p>Preparación, revisión, aprobación, emisión y consulta de boletines académicos.</p>
 
       <div class="b25-tabs" role="tablist">
-        <button class="b25-tab active" data-tab="generar" type="button">Generar boletín</button>
-        <button class="b25-tab" data-tab="consulta" type="button">Boletines emitidos</button>
+        <button class="b25-tab active" data-tab="generar" type="button" data-boletin-management>Preparar boletín</button>
+        <button class="b25-tab" data-tab="revision" type="button" data-boletin-management>Revisión y aprobación</button>
+        <button class="b25-tab" data-tab="consulta" type="button">Consulta</button>
       </div>
 
-      <section id="tab-generar" class="b25-section active">
+      <section id="tab-generar" class="b25-section active" data-boletin-management>
         <div class="b25-layout">
-          <section class="panel-card" data-b25-boletin-manage>
+          <section class="panel-card" data-boletin-draft>
             <h2>Nuevo boletín</h2>
             <form id="formBoletin" class="ada-form">
               <label>Alumno</label><select id="boletinAlumno" required></select>
               <label>Curso</label><select id="boletinCurso"></select>
               <label>Período</label><select id="boletinPeriodo" required></select>
-              <label>Observación general</label><textarea id="boletinObservacion"></textarea>
-              <button type="submit" class="btn-primary">Generar boletín</button>
+              <label>Observación general</label><textarea id="boletinObservacion" rows="4"></textarea>
+              <button type="submit" class="btn-primary">Guardar borrador</button>
               <p id="msgBoletin" class="form-message"></p>
             </form>
           </section>
           <section class="panel-card">
-            <h2>Vista previa / detalle</h2>
-            <div id="vistaPreviaBoletin" class="table-wrap"><p class="helper-text">Seleccioná alumno y período para generar o consultar boletines.</p></div>
+            <h2>Detalle del boletín</h2>
+            <div id="vistaPreviaBoletin" class="table-wrap">
+              <p class="helper-text">Seleccioná un boletín para consultar su detalle.</p>
+            </div>
           </section>
         </div>
       </section>
 
+      <section id="tab-revision" class="b25-section" data-boletin-management>
+        <section class="panel-card">
+          <h2>Revisión, aprobación y emisión</h2>
+          <p class="helper-text">Los boletines se publican para alumnos y familias únicamente después de su aprobación y emisión.</p>
+          <div id="tablaRevisionBoletines" class="table-wrap"></div>
+        </section>
+      </section>
+
       <section id="tab-consulta" class="b25-section">
         <section class="panel-card">
-          <h2>Boletines emitidos</h2>
+          <h2>Boletines</h2>
           <div class="form-grid">
             <div><label>Alumno</label><select id="filtroBoletinAlumno"></select></div>
             <div><label>Período</label><select id="filtroBoletinPeriodo"></select></div>
+            <div data-boletin-management>
+              <label>Estado</label>
+              <select id="filtroBoletinEstado">
+                <option value="">Todos</option>
+                <option value="borrador">Borrador</option>
+                <option value="revision">En revisión</option>
+                <option value="observado">Observado</option>
+                <option value="aprobado">Aprobado</option>
+                <option value="emitido">Emitido</option>
+              </select>
+            </div>
           </div>
-          <div class="b25-actions"><button class="btn-primary" id="btnBuscarBoletines" type="button">Buscar</button><button class="btn-secondary" id="btnLimpiarBoletines" type="button">Limpiar</button><button class="btn-secondary" id="btnExportarListadoBoletines" type="button">Exportar listado a PDF</button></div>
+          <div class="b25-actions">
+            <button class="btn-primary" id="btnBuscarBoletines" type="button">Buscar</button>
+            <button class="btn-secondary" id="btnLimpiarBoletines" type="button">Limpiar</button>
+          </div>
           <div id="tablaBoletines" class="table-wrap" style="margin-top:16px;"></div>
         </section>
       </section>
@@ -57,7 +82,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../assets/js/supabase-config.js"></script>
   <script src="../assets/js/ada-security.js"></script>
-  <script src="../assets/js/boletines.js"></script>
   <script src="../assets/js/ada-export.js"></script>
+  <script src="../assets/js/boletines.js"></script>
 </body>
 </html>
