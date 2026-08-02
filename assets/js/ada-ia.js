@@ -39,7 +39,7 @@ async function cargarConfiguracionIA() {
     aiStatus.textContent = `IA configurada. Modelo sugerido: ${data.modelo || "sin definir"}.`;
   } else {
     aiStatus.classList.remove("ai-ready");
-    aiStatus.textContent = "API key pendiente. ADA IA queda preparada, pero aún responde en modo simulación segura.";
+    aiStatus.textContent = "El servicio de inteligencia artificial todavía no está habilitado para esta institución.";
   }
 }
 
@@ -115,8 +115,8 @@ function respuestaSimulada(question) {
   const lista = documentosIA.slice(0, 5).map(d => `• ${d.titulo}`).join("<br>");
 
   return `
-    <p><strong>Modo simulación segura:</strong> la API key todavía no está conectada.</p>
-    <p>Cuando se active la API desde Supabase Edge Functions, responderé usando solo los documentos habilitados para tu rol, curso o materia.</p>
+    <p><strong>Asistencia no habilitada:</strong> el servicio de inteligencia artificial aún no fue configurado por la institución.</p>
+    <p>Cuando el servicio sea habilitado, ADA IA utilizará únicamente los documentos autorizados para tu rol, curso o materia.</p>
     <p><strong>Documentos actualmente disponibles para contexto:</strong><br>${lista}</p>
     <p><strong>Tu pregunta registrada:</strong> ${question}</p>
   `;
@@ -137,7 +137,7 @@ aiForm.addEventListener("submit", async (event) => {
   if (!apiKeyConfigurada) {
     answer = respuestaSimulada(question);
   } else {
-    answer = "La API key figura como configurada, pero la Edge Function final de OpenAI todavía no fue conectada en este bloque.";
+    answer = "La configuración institucional está registrada, pero el servicio de respuesta todavía no está disponible. Contactá al administrador del sistema.";
   }
 
   addMessage("assistant", answer);
@@ -150,7 +150,7 @@ async function inicializarIA() {
 
   perfilActual = contexto.perfil;
 
-  addMessage("assistant", "Hola, soy ADA IA. Estoy preparada para trabajar con documentos habilitados y permisos por rol. Por ahora funciono en modo simulación hasta conectar la API key segura.");
+  addMessage("assistant", "Hola, soy ADA IA. Puedo trabajar con los documentos habilitados para tu perfil cuando el servicio institucional esté activo.");
   await cargarConfiguracionIA();
   await cargarDocumentosIA();
 }
