@@ -206,6 +206,25 @@ async function b26aLoadEntregas(){
   }
 }
 
+
+function b26aPrintDocument(title, body){
+  const win = window.open("", "_blank", "width=960,height=760");
+  if(!win){ alert("El navegador bloqueó la ventana del documento. Habilitá las ventanas emergentes para ADA."); return; }
+  win.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>${b26aEscape(title)}</title><style>body{font-family:Arial,sans-serif;color:#1f2937;margin:32px}h1{font-size:24px;margin:0 0 6px}h2{font-size:18px;margin:24px 0 8px}.meta{color:#52606d;margin-bottom:22px}.box{border:1px solid #d8e1ea;border-radius:10px;padding:14px;margin:12px 0;white-space:pre-wrap}.badge{display:inline-block;border:1px solid #cbd5e1;border-radius:999px;padding:4px 9px;margin:0 6px 6px 0;font-size:12px}table{width:100%;border-collapse:collapse;margin-top:14px}th,td{border:1px solid #d8e1ea;padding:8px;text-align:left;font-size:12px}th{background:#f3f6f9}@media print{button{display:none}}</style></head><body>${body}<script>window.onload=()=>window.print()<\/script></body></html>`);
+  win.document.close();
+}
+function b26aExportActividad(id){
+  const a = b26aActividades.find(x=>String(x.id)===String(id));
+  if(!a) return;
+  const body = `<h1>${b26aEscape(a.titulo)}</h1><div class="meta">${b26aEscape(a.cursos?.nombre || "Curso")} · ${b26aEscape(a.materias?.nombre || "Materia")}</div><div><span class="badge">Estado: ${b26aEscape(a.estado || "-")}</span><span class="badge">Tipo: ${b26aEscape(a.tipo || "-")}</span><span class="badge">Puntaje máximo: ${b26aEscape(a.puntaje_maximo || "-")}</span></div><h2>Consigna</h2><div class="box">${b26aEscape(a.descripcion || "Sin consigna cargada.")}</div><h2>Fechas</h2><div class="box">Publicación: ${b26aEscape(a.fecha_publicacion || "-")}\nEntrega: ${b26aEscape(a.fecha_entrega || "-")}</div>`;
+  b26aPrintDocument(`Actividad - ${a.titulo}`, body);
+}
+function b26aExportSeguimiento(){
+  const rows = b26aEntregas.map(e=>`<tr><td>${b26aEscape(e.actividades?.titulo || "-")}</td><td>${b26aEscape((e.alumno?.apellido || "") + ", " + (e.alumno?.nombre || ""))}</td><td>${b26aEscape(e.estado || "pendiente")}</td><td>${b26aEscape(e.calificacion ?? "-")}</td><td>${b26aEscape(e.entregado_en ? new Date(e.entregado_en).toLocaleString("es-AR") : "-")}</td></tr>`).join("");
+  const body = `<h1>Seguimiento de entregas</h1><div class="meta">Fecha de emisión: ${new Date().toLocaleString("es-AR")}</div><table><thead><tr><th>Actividad</th><th>Alumno</th><th>Estado</th><th>Nota</th><th>Fecha</th></tr></thead><tbody>${rows || '<tr><td colspan="5">Sin entregas registradas</td></tr>'}</tbody></table>`;
+  b26aPrintDocument("Seguimiento de entregas", body);
+}
+
 function b26aRenderActividades(rows){
   const cont = b26a("listaActividades");
   if(!rows.length){ cont.innerHTML = `<div class="b26-empty">No hay actividades para mostrar.</div>`; return; }
@@ -225,6 +244,7 @@ function b26aRenderActividades(rows){
       </div>
       ${archivo ? `<div class="b26-attachment-row">${archivo}</div>` : ""}
       <p class="b26-status-line">Tipo: ${b26aEscape(a.tipo || "-")} · Puntaje: ${b26aEscape(a.puntaje_maximo || "-")} · Creada por: ${b26aEscape((a.creador?.nombre || "") + " " + (a.creador?.apellido || ""))}</p>
+      <div class="b26-actions"><button class="btn-secondary" type="button" data-export-actividad="${b26aEscape(a.id)}">Exportar actividad a PDF</button></div>
       ${b26aCanManage() ? `<div class="b26-actions">
         <button class="btn-secondary" type="button" data-edit-actividad="${b26aEscape(a.id)}">Editar</button>
         ${a.estado === "publicada" ? `<button class="btn-secondary" type="button" data-state-actividad="${b26aEscape(a.id)}" data-state="cerrada">Cerrar</button>` : `<button class="btn-secondary" type="button" data-state-actividad="${b26aEscape(a.id)}" data-state="publicada">Publicar</button>`}
@@ -232,6 +252,7 @@ function b26aRenderActividades(rows){
       </div>` : ""}
     </article>`;
   }).join("");
+  cont.querySelectorAll("[data-export-actividad]").forEach(btn=>btn.addEventListener("click",()=>b26aExportActividad(btn.dataset.exportActividad)));
   cont.querySelectorAll("[data-edit-actividad]").forEach(btn=>btn.addEventListener("click",()=>b26aEditarActividad(btn.dataset.editActividad)));
   cont.querySelectorAll("[data-state-actividad]").forEach(btn=>btn.addEventListener("click",()=>b26aCambiarEstado(btn.dataset.stateActividad, btn.dataset.state)));
   cont.querySelectorAll("[data-delete-actividad]").forEach(btn=>btn.addEventListener("click",()=>b26aEliminarActividad(btn.dataset.deleteActividad)));
@@ -243,7 +264,8 @@ function b26aRenderSeguimiento(){
   if(!el) return;
   if(!b26aEntregas.length){ el.innerHTML = `<p class="helper-text">Todavía no hay entregas registradas.</p>`; return; }
   const rows = b26aEntregas.map(e=>`<tr><td>${b26aEscape(e.actividades?.titulo || "-")}</td><td>${b26aEscape((e.alumno?.apellido || "") + ", " + (e.alumno?.nombre || ""))}</td><td>${b26aPill(e.estado || "pendiente", e.estado === "revisada" ? "ok" : e.estado === "devuelta" ? "warn" : "info")}</td><td>${e.calificacion ?? "-"}</td><td>${e.entregado_en ? new Date(e.entregado_en).toLocaleString("es-AR") : "-"}</td><td>${b26aFileLink(e, "Archivo") || "-"}</td></tr>`).join("");
-  el.innerHTML = `<table class="ada-table"><thead><tr><th>Actividad</th><th>Alumno</th><th>Estado</th><th>Nota</th><th>Fecha</th><th>Archivo</th></tr></thead><tbody>${rows}</tbody></table>`;
+  el.innerHTML = `<div class="b26-actions"><button class="btn-secondary" type="button" id="btnExportarSeguimiento">Exportar seguimiento a PDF</button></div><table class="ada-table"><thead><tr><th>Actividad</th><th>Alumno</th><th>Estado</th><th>Nota</th><th>Fecha</th><th>Archivo</th></tr></thead><tbody>${rows}</tbody></table>`;
+  b26a("btnExportarSeguimiento")?.addEventListener("click", b26aExportSeguimiento);
 }
 
 function b26aUpdateKpis(){
