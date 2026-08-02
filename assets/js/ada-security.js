@@ -45,6 +45,7 @@ const ADA_PAGE_ACCESS = {
   "horarios.html": ["admin", "directivo", "secretaria"],
   "asistencia.html": ["admin", "directivo", "secretaria", "docente", "preceptor"],
   "reportes.html": ["admin", "directivo", "secretaria", "docente", "preceptor"],
+  "inteligencia-institucional.html": ["admin", "directivo"],
   "comunicados.html": ["admin", "directivo", "secretaria", "docente", "preceptor", "familia", "alumno"],
 
   "mi-espacio-alumno.html": ["alumno"],
@@ -84,8 +85,8 @@ const ADA_ROLE_HOME = {
 };
 
 const ADA_ROLE_MODULES = {
-  admin: ["mi-perfil", "dashboard", "institucion", "usuarios", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "programas", "actividades", "entregas", "documentos", "documentacion", "ia", "horarios", "asistencia", "calificaciones", "libro-calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines", "boletines-actas", "reportes", "comunicados", "convivencia", "ficha-alumno", "importar", "auditoria", "logs", "estado-sistema"],
-  directivo: ["mi-perfil", "dashboard", "institucion", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "programas", "actividades", "entregas", "documentos", "documentacion", "ia", "horarios", "asistencia", "calificaciones", "libro-calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines", "boletines-actas", "reportes", "comunicados", "convivencia", "ficha-alumno", "auditoria", "estado-sistema"],
+  admin: ["mi-perfil", "dashboard", "institucion", "usuarios", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "programas", "actividades", "entregas", "documentos", "documentacion", "ia", "horarios", "asistencia", "calificaciones", "libro-calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines", "boletines-actas", "reportes", "inteligencia-institucional", "comunicados", "convivencia", "ficha-alumno", "importar", "auditoria", "logs", "estado-sistema"],
+  directivo: ["mi-perfil", "dashboard", "institucion", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "programas", "actividades", "entregas", "documentos", "documentacion", "ia", "horarios", "asistencia", "calificaciones", "libro-calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines", "boletines-actas", "reportes", "inteligencia-institucional", "comunicados", "convivencia", "ficha-alumno", "auditoria", "estado-sistema"],
   secretaria: ["mi-perfil", "secretaria", "institucion", "usuarios", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "documentacion", "asistencia", "calificaciones", "libro-calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines", "boletines-actas", "reportes", "comunicados", "convivencia", "ficha-alumno", "estado-sistema"],
   docente: ["mi-perfil", "mi-docente", "cursos", "materias", "programas", "actividades", "entregas", "documentos", "ia", "asistencia", "calificaciones", "libro-calificaciones", "reportes", "comunicados", "ficha-alumno"],
   preceptor: ["mi-perfil", "mi-preceptor", "alumnos", "familias", "asignaciones", "cursos", "documentos", "documentacion", "ia", "asistencia", "libres-materia", "reportes", "comunicados"],
@@ -204,6 +205,7 @@ function adaGetModuleLabel(moduleName) {
     "planillas-secretaria": "Planillas Secretaría",
     "libres-materia": "Libres por materia",
     reportes: "Reportes",
+    "inteligencia-institucional": "Inteligencia institucional",
     "cierres-academicos": "Cierres académicos",
     "boletines-actas": "Boletines y actas",
     comunicados: "Comunicados",
@@ -251,6 +253,7 @@ function adaModuleToHref(moduleName, rol) {
     "planillas-secretaria": "planillas-secretaria.html",
     "libres-materia": "libres-materia.html",
     reportes: "reportes.html",
+    "inteligencia-institucional": "inteligencia-institucional.html",
     "cierres-academicos": "cierres-academicos.html",
     "boletines-actas": "boletines-actas.html",
     comunicados: "comunicados.html",
@@ -517,5 +520,6 @@ window.adaGetSessionAndProfile = adaGetSessionAndProfile;
 window.obtenerSesionPerfil = obtenerSesionPerfil;
 window.adaHideUnauthorizedModules = adaHideUnauthorizedModules;
 window.adaInjectAccountAccess = adaInjectAccountAccess;
+window.adaExportCurrentViewToPdf = adaExportCurrentViewToPdf;
 window.ADA_ROLE_HOME = ADA_ROLE_HOME;
 window.ADA_ROLE_MODULES = ADA_ROLE_MODULES;
