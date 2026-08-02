@@ -77,7 +77,16 @@
           <div><label for="historialDesde">Desde</label><input type="date" id="historialDesde"></div>
           <div><label for="historialHasta">Hasta</label><input type="date" id="historialHasta"></div>
         </div>
-        <div class="ada-action-row"><button class="btn-primary attendance-search" id="btnBuscarHistorial" type="button">Buscar historial</button><button class="btn-secondary" id="btnExportarHistorialPdf" type="button">Exportar historial a PDF</button></div>
+        <div class="attendance-actions-row">
+          <button class="btn-primary attendance-search" id="btnBuscarHistorial" type="button">Buscar historial</button>
+          <button class="btn-secondary" id="btnExportarHistorial" type="button">Exportar informe PDF</button>
+        </div>
+        <section class="attendance-summary attendance-history-summary" aria-label="Resumen del historial">
+          <article><strong id="historialTotal">0</strong><span>Registros</span></article>
+          <article><strong id="historialPresentes">0</strong><span>Presentes</span></article>
+          <article><strong id="historialAusencias">0</strong><span>Ausencias</span></article>
+          <article><strong id="historialPorcentaje">0%</strong><span>Asistencia</span></article>
+        </section>
         <div id="tablaHistorial" class="table-wrap"></div>
       </section>
     </section>
@@ -108,7 +117,10 @@
       <section class="panel-card">
         <h2>Alertas de asistencia</h2>
         <p class="helper-text">Las alertas se calculan únicamente con los registros que el perfil tiene permitido consultar.</p>
-        <div class="ada-action-row"><button class="btn-primary" id="btnCalcularAlertas" type="button">Calcular alertas</button><button class="btn-secondary" id="btnExportarAlertasPdf" type="button">Exportar alertas a PDF</button></div>
+        <div class="attendance-actions-row">
+          <button class="btn-primary" id="btnCalcularAlertas" type="button">Calcular alertas</button>
+          <button class="btn-secondary" id="btnExportarAlertas" type="button">Exportar alertas PDF</button>
+        </div>
         <div id="resultadoAlertas"></div>
       </section>
     </section>
