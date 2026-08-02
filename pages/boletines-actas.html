@@ -1,2 +1,105 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Boletines y actas - ADA Cloud</title><link rel="stylesheet" href="../assets/css/style.css"><link rel="stylesheet" href="../assets/css/bloque31-cierres.css"></head><body class="module-page role-loading"><main class="module-shell cierre-shell"><a href="dashboard.html" class="back-link">← Volver al panel</a><section class="module-view"><div class="cierre-hero"><div>
-<h1>Boletines y actas</h1><p class="cierre-subtitle">Consulta y exportación de boletines, actas, estados académicos y resultados por alumno.</p></div><div class="hero-badges"><span>👨‍👩‍👧 Familia</span><span>🎓 Alumno</span><span>🏫 Secretaría</span></div></div><div id="mensajeBoletines" class="form-message">Cargando módulo...</div><section class="toolbar-card"><div class="header-grid"><label>Curso<select id="boletinCurso"></select></label><label>Alumno<select id="boletinAlumno"></select></label><label>Instancia<select id="boletinInstancia"><option value="">Todas</option><option value="primer_bimestre">Primer bimestre</option><option value="primer_cuatrimestre">Primer cuatrimestre</option><option value="tercer_bimestre">Tercer bimestre</option><option value="segundo_cuatrimestre">Segundo cuatrimestre</option><option value="diciembre">Diciembre</option><option value="febrero">Febrero</option><option value="anual">Anual</option></select></label><button id="btnBuscarBoletines" type="button" class="btn-primary">Buscar</button></div><div class="ada-action-row"><button id="btnExportarBoletin" type="button" class="btn-secondary">Exportar Excel</button></div></section><div class="tabs"><button class="tab active" data-tab="tab-boletines" type="button">Boletines</button><button class="tab" data-tab="tab-actas" type="button">Actas</button><button class="tab" data-tab="tab-estados" type="button">Estados académicos</button></div><section id="tab-boletines" class="tab-panel active"><div class="panel-card"><h2>Boletines</h2><div class="table-wrap"><table class="ada-table"><thead><tr><th>Alumno</th><th>Curso</th><th>Instancia</th><th>Promedio</th><th>Estado</th><th>Fecha</th></tr></thead><tbody id="tablaBoletines"></tbody></table></div></div></section><section id="tab-actas" class="tab-panel"><div class="panel-card"><h2>Actas</h2><div class="table-wrap"><table class="ada-table"><thead><tr><th>Curso</th><th>Materia</th><th>Instancia</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="tablaActas"></tbody></table></div></div></section><section id="tab-estados" class="tab-panel"><div class="panel-card"><h2>Estados académicos</h2><div class="table-wrap"><table class="ada-table"><thead><tr><th>Alumno</th><th>Materia</th><th>Estado</th><th>Instancia</th><th>Nota final</th><th>Observación</th></tr></thead><tbody id="tablaEstados"></tbody></table></div></div></section></section></main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../assets/js/supabase-config.js"></script><script src="../assets/js/ada-security.js"></script><script src="../assets/js/boletines-actas.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boletines y actas - ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque31-cierres.css">
+</head>
+<body class="module-page role-loading">
+  <main class="module-shell cierre-shell">
+    <a href="dashboard.html" class="back-link">← Volver al panel</a>
+    <section class="module-view">
+      <div class="cierre-hero">
+        <div>
+          <h1>Boletines y actas</h1>
+          <p class="cierre-subtitle">Consulta institucional de boletines emitidos, actas y estados académicos.</p>
+        </div>
+        <div class="hero-badges">
+          <span>🏫 Gestión académica</span>
+          <span>📄 Documentación oficial</span>
+        </div>
+      </div>
+
+      <div id="mensajeBoletines" class="form-message">Cargando información...</div>
+
+      <section id="resumenBoletinesActas" class="summary-grid" aria-label="Resumen de resultados"></section>
+
+      <section class="toolbar-card">
+        <div class="header-grid">
+          <label>Curso<select id="boletinCurso"></select></label>
+          <label>Alumno<select id="boletinAlumno"></select></label>
+          <label>Instancia
+            <select id="boletinInstancia">
+              <option value="">Todas</option>
+              <option value="primer_bimestre">Primer bimestre</option>
+              <option value="segundo_bimestre">Segundo bimestre</option>
+              <option value="tercer_bimestre">Tercer bimestre</option>
+              <option value="cuarto_bimestre">Cuarto bimestre</option>
+              <option value="primer_cuatrimestre">Primer cuatrimestre</option>
+              <option value="segundo_cuatrimestre">Segundo cuatrimestre</option>
+              <option value="diciembre">Diciembre</option>
+              <option value="febrero">Febrero</option>
+              <option value="anual">Anual</option>
+            </select>
+          </label>
+          <button id="btnBuscarBoletines" type="button" class="btn-primary">Aplicar filtros</button>
+        </div>
+        <div class="ada-action-row">
+          <button id="btnExportarBoletin" type="button" class="btn-secondary">Generar PDF de la vista</button>
+          <button id="btnExportarBoletinCsv" type="button" class="btn-secondary">Exportar CSV</button>
+        </div>
+      </section>
+
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="tab-boletines" type="button">Boletines</button>
+        <button class="tab" data-tab="tab-actas" type="button">Actas</button>
+        <button class="tab" data-tab="tab-estados" type="button">Estados académicos</button>
+      </div>
+
+      <section id="tab-boletines" class="tab-panel active">
+        <div class="panel-card">
+          <h2>Boletines</h2>
+          <div class="table-wrap">
+            <table class="ada-table">
+              <thead><tr><th>Alumno</th><th>Curso</th><th>Instancia</th><th>Promedio</th><th>Estado</th><th>Fecha</th></tr></thead>
+              <tbody id="tablaBoletines"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-actas" class="tab-panel">
+        <div class="panel-card">
+          <h2>Actas</h2>
+          <div class="table-wrap">
+            <table class="ada-table">
+              <thead><tr><th>Curso</th><th>Materia</th><th>Instancia</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
+              <tbody id="tablaActas"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-estados" class="tab-panel">
+        <div class="panel-card">
+          <h2>Estados académicos</h2>
+          <div class="table-wrap">
+            <table class="ada-table">
+              <thead><tr><th>Alumno</th><th>Materia</th><th>Estado</th><th>Instancia</th><th>Nota final</th><th>Observación</th></tr></thead>
+              <tbody id="tablaEstados"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/ada-security.js"></script>
+  <script src="../assets/js/ada-export.js"></script>
+  <script src="../assets/js/boletines-actas.js"></script>
+</body>
+</html>
