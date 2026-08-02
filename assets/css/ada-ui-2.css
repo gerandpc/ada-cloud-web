@@ -1,0 +1,139 @@
+/* ADA UI 2.0 — identidad visual maestra */
+:root{
+  --ada-bg:#f5f3ff;--ada-bg-2:#eef5ff;--ada-ink:#11172b;--ada-muted:#66718c;
+  --ada-violet:#6d3df5;--ada-violet-2:#8d5cff;--ada-blue:#4768e8;--ada-cyan:#16c9d2;
+  --ada-glass:rgba(255,255,255,.76);--ada-glass-strong:rgba(255,255,255,.91);
+  --ada-line:rgba(111,76,245,.18);--ada-shadow:0 24px 65px rgba(55,42,123,.16);
+  --ada-radius:24px;--ada-sidebar:270px;
+}
+html[data-theme="dark"],body.ada-dark{
+  --ada-bg:#070a1c;--ada-bg-2:#111633;--ada-ink:#f7f7ff;--ada-muted:#aeb7d5;
+  --ada-glass:rgba(15,19,48,.76);--ada-glass-strong:rgba(15,19,48,.92);
+  --ada-line:rgba(159,117,255,.25);--ada-shadow:0 28px 80px rgba(0,0,0,.42);
+}
+*{box-sizing:border-box}
+html{min-height:100%;background:var(--ada-bg)}
+body.ada-ui2{min-height:100vh;margin:0;color:var(--ada-ink)!important;background:
+ radial-gradient(circle at 15% 15%,rgba(178,137,255,.25),transparent 33%),
+ radial-gradient(circle at 88% 20%,rgba(71,180,255,.20),transparent 34%),
+ linear-gradient(135deg,var(--ada-bg),var(--ada-bg-2))!important;
+ font-family:Inter,Segoe UI,system-ui,-apple-system,sans-serif!important;overflow-x:hidden}
+body.ada-ui2::before,body.ada-ui2::after{content:"";position:fixed;z-index:-2;pointer-events:none;border-radius:50%;filter:blur(12px);opacity:.65}
+body.ada-ui2::before{width:56vw;height:56vw;left:8vw;top:-24vw;border:2px solid rgba(137,86,255,.22);box-shadow:0 0 65px rgba(137,86,255,.22);animation:adaOrbitA 18s ease-in-out infinite alternate}
+body.ada-ui2::after{width:48vw;height:48vw;right:-16vw;bottom:-22vw;border:2px solid rgba(58,174,255,.20);box-shadow:0 0 70px rgba(58,174,255,.22);animation:adaOrbitB 22s ease-in-out infinite alternate}
+@keyframes adaOrbitA{to{transform:translate(16vw,11vh) rotate(18deg) scale(1.12)}}
+@keyframes adaOrbitB{to{transform:translate(-18vw,-9vh) rotate(-20deg) scale(.94)}}
+.ada-ui2-aurora{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.ada-ui2-aurora span{position:absolute;width:46vw;height:4px;border-radius:100%;background:linear-gradient(90deg,transparent,rgba(142,88,255,.72),rgba(73,205,255,.58),transparent);filter:blur(2px);box-shadow:0 0 26px rgba(125,81,255,.55);animation:adaSweep 10s ease-in-out infinite alternate}
+.ada-ui2-aurora span:nth-child(1){top:18%;left:-8%;transform:rotate(-12deg)}
+.ada-ui2-aurora span:nth-child(2){top:57%;right:-10%;animation-delay:-3s;transform:rotate(12deg)}
+.ada-ui2-aurora span:nth-child(3){bottom:12%;left:24%;animation-delay:-6s;transform:rotate(-5deg)}
+@keyframes adaSweep{0%{translate:-12vw 0;opacity:.15}45%{opacity:.8}100%{translate:26vw 8vh;opacity:.25}}
+
+/* Layout maestro */
+body.ada-ui2 .sidebar,body.ada-ui2 .ada-role-sidebar{position:fixed!important;inset:0 auto 0 0!important;width:var(--ada-sidebar)!important;height:100vh!important;padding:22px 14px!important;background:linear-gradient(180deg,rgba(14,16,43,.98),rgba(8,10,28,.98))!important;border-right:1px solid rgba(150,111,255,.22)!important;box-shadow:18px 0 50px rgba(18,16,58,.18)!important;color:#fff!important;overflow-y:auto!important;z-index:100!important}
+body.ada-ui2 .sidebar-logo{display:flex!important;align-items:center!important;gap:12px!important;padding:8px 10px 20px!important;margin-bottom:12px!important;border-bottom:1px solid rgba(255,255,255,.12)!important}
+body.ada-ui2 .sidebar-logo h2{font-size:0!important;width:48px!important;height:48px!important;flex:0 0 48px!important;border-radius:50%!important;background:url('../img/ada-logo.jpg') center/cover no-repeat!important;box-shadow:0 0 0 2px rgba(154,103,255,.55),0 0 24px rgba(123,75,255,.55)!important}
+body.ada-ui2 .sidebar-logo span{font-size:14px!important;font-weight:800!important;letter-spacing:.02em!important;color:#fff!important}
+body.ada-ui2 .sidebar-nav{display:grid!important;gap:9px!important}
+body.ada-ui2 .sidebar-link,body.ada-ui2 .sidebar-section-button,body.ada-ui2 .sidebar-submenu a{font:inherit!important;text-decoration:none!important;color:rgba(255,255,255,.86)!important;border:1px solid transparent!important;border-radius:15px!important;background:rgba(255,255,255,.055)!important;transition:.22s ease!important}
+body.ada-ui2 .sidebar-link,body.ada-ui2 .sidebar-section-button{min-height:44px!important;padding:0 14px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;font-weight:800!important;text-transform:none!important;letter-spacing:0!important}
+body.ada-ui2 .sidebar-link:hover,body.ada-ui2 .sidebar-section-button:hover,body.ada-ui2 .sidebar-submenu a:hover{background:rgba(124,82,255,.18)!important;border-color:rgba(163,125,255,.35)!important;transform:translateX(3px)!important}
+body.ada-ui2 .sidebar-link.active,body.ada-ui2 .sidebar-link[aria-current="page"],body.ada-ui2 .sidebar-link[data-home-link]{background:linear-gradient(135deg,#743cf5,#526de8)!important;color:#fff!important;box-shadow:0 10px 28px rgba(103,66,239,.34)!important}
+body.ada-ui2 .sidebar-submenu{padding:7px 0 2px 12px!important;display:none}
+body.ada-ui2 .sidebar-section.is-open .sidebar-submenu{display:grid!important;gap:6px!important}
+body.ada-ui2 .sidebar-submenu a{padding:10px 12px!important;font-size:13px!important}
+body.ada-ui2 .sidebar-logout{width:100%!important;margin-top:15px!important;min-height:44px!important;border-radius:15px!important;border:1px solid rgba(255,255,255,.2)!important;background:rgba(255,255,255,.06)!important;color:#fff!important;font-weight:800!important}
+body.ada-ui2 .sidebar-logout:hover{background:rgba(255,73,145,.14)!important;border-color:rgba(255,111,166,.35)!important}
+body.ada-ui2 .module-shell{margin-left:var(--ada-sidebar)!important;min-height:100vh!important;padding:34px clamp(22px,4vw,68px) 70px!important;width:calc(100% - var(--ada-sidebar))!important;background:transparent!important;color:var(--ada-ink)!important}
+body.ada-ui2 .module-view{width:min(1280px,100%)!important;margin:0 auto!important;padding:0!important;background:transparent!important;color:var(--ada-ink)!important}
+
+/* Barra maestra */
+.ada-ui2-topbar{min-height:66px;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:12px 16px 12px 20px;margin:0 0 18px;border:1px solid var(--ada-line);border-radius:20px;background:var(--ada-glass-strong);box-shadow:var(--ada-shadow);backdrop-filter:blur(22px)}
+.ada-ui2-brand{display:flex;align-items:center;gap:12px;font-weight:900;color:var(--ada-ink)}
+.ada-ui2-brand img{width:38px;height:38px;border-radius:50%;box-shadow:0 0 0 2px rgba(136,83,255,.36),0 0 20px rgba(123,74,255,.35)}
+.ada-ui2-top-actions{display:flex;align-items:center;gap:9px}
+.ada-ui2-theme{width:42px;height:42px;border-radius:13px;border:1px solid var(--ada-line);background:rgba(121,84,246,.08);color:var(--ada-ink);font-size:18px;cursor:pointer}
+
+/* Unificación total de superficies */
+body.ada-ui2 :is(.module-view,.panel-card,.role-card,.portal-card,.dashboard-card,.card,.section-card,.form-card,.table-card,.settings-card,.report-card,.stat-card,.kpi-card,.data-card,.access-card,.role-section-grid>section,.portal-section-grid>section){color:var(--ada-ink)!important}
+body.ada-ui2 :is(.panel-card,.role-card,.portal-card,.dashboard-card,.card,.section-card,.form-card,.table-card,.settings-card,.report-card,.stat-card,.kpi-card,.data-card,.access-card){background:var(--ada-glass)!important;border:1px solid var(--ada-line)!important;border-radius:var(--ada-radius)!important;box-shadow:var(--ada-shadow)!important;backdrop-filter:blur(20px)!important}
+body.ada-ui2 :is(.panel-card,.dashboard-card,.card,.section-card,.form-card,.table-card,.settings-card,.report-card,.data-card){padding:22px!important}
+body.ada-ui2 :is(.role-card,.portal-card,.stat-card,.kpi-card){min-height:112px!important;padding:18px!important;position:relative!important;overflow:hidden!important}
+body.ada-ui2 :is(.role-card,.portal-card,.stat-card,.kpi-card)::after{content:"";position:absolute;width:90px;height:90px;right:-28px;bottom:-34px;border-radius:50%;background:linear-gradient(135deg,rgba(132,78,255,.13),rgba(65,188,255,.12))}
+body.ada-ui2 :is(.role-card,.portal-card,.stat-card,.kpi-card) strong{color:var(--ada-violet)!important;font-size:30px!important}
+body.ada-ui2 :is(.role-card,.portal-card,.stat-card,.kpi-card) span{color:var(--ada-muted)!important;font-weight:700!important}
+body.ada-ui2 :is(.role-grid,.portal-grid,.stats-grid,.kpi-grid){gap:14px!important}
+body.ada-ui2 :is(.role-section-grid,.portal-section-grid,.dashboard-grid,.content-grid){gap:18px!important}
+
+/* Hero único — elimina colores por rol */
+body.ada-ui2 :is(.role-hero,.portal-hero,.dashboard-hero,.page-hero,.welcome-card,.hero-card){position:relative!important;overflow:hidden!important;padding:30px!important;border-radius:26px!important;border:1px solid rgba(183,147,255,.3)!important;background:linear-gradient(120deg,rgba(108,55,245,.96),rgba(73,102,232,.92) 48%,rgba(27,195,210,.82))!important;color:#fff!important;box-shadow:0 24px 60px rgba(88,62,214,.28)!important}
+body.ada-ui2 :is(.role-hero,.portal-hero,.dashboard-hero,.page-hero,.welcome-card,.hero-card)::after{content:"";position:absolute;width:240px;height:240px;right:-65px;top:-85px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.30),rgba(255,255,255,0) 66%);animation:adaHeroFloat 7s ease-in-out infinite alternate}
+@keyframes adaHeroFloat{to{transform:translate(-40px,45px) scale(1.14)}}
+body.ada-ui2 :is(.role-hero,.portal-hero,.dashboard-hero,.page-hero,.welcome-card,.hero-card) :is(h1,h2,h3,p,strong,span){color:#fff!important}
+body.ada-ui2 :is(.role-hero,.portal-hero,.dashboard-hero,.page-hero,.welcome-card,.hero-card) h1{font-size:clamp(28px,4vw,46px)!important;line-height:1.05!important;margin:.15em 0!important}
+body.ada-ui2 .quick-actions,body.ada-ui2 .portal-actions{position:relative;z-index:1;display:flex!important;flex-wrap:wrap!important;gap:10px!important;margin-top:18px!important}
+
+/* Tipografía */
+body.ada-ui2 h1,body.ada-ui2 h2,body.ada-ui2 h3{color:var(--ada-ink)!important;letter-spacing:-.025em!important}
+body.ada-ui2 h1{font-size:clamp(30px,4vw,48px)!important}
+body.ada-ui2 h2{font-size:clamp(22px,2.6vw,31px)!important}
+body.ada-ui2 p,body.ada-ui2 small,body.ada-ui2 label{color:var(--ada-muted)!important}
+body.ada-ui2 .eyebrow{display:inline-flex!important;align-items:center!important;min-height:28px!important;padding:4px 12px!important;border-radius:999px!important;background:rgba(116,61,245,.12)!important;color:var(--ada-violet)!important;font-weight:900!important;letter-spacing:.08em!important;text-transform:uppercase!important}
+body.ada-ui2 .back-link{display:inline-flex!important;align-items:center!important;gap:7px!important;margin:0 0 16px!important;padding:9px 14px!important;border-radius:999px!important;background:var(--ada-glass)!important;border:1px solid var(--ada-line)!important;color:var(--ada-violet)!important;text-decoration:none!important;font-weight:800!important;box-shadow:0 10px 28px rgba(79,51,167,.10)!important}
+
+/* Botones globales */
+body.ada-ui2 :is(button,.btn,.btn-primary,.btn-secondary,.primary-button,.secondary-button,input[type="submit"],input[type="button"]){min-height:42px!important;border-radius:14px!important;padding:10px 17px!important;font-weight:850!important;transition:.22s ease!important;cursor:pointer!important}
+body.ada-ui2 :is(.btn-primary,.primary-button,button.primary,input[type="submit"]){color:#fff!important;border:1px solid transparent!important;background:linear-gradient(135deg,#743cf5,#526de8)!important;box-shadow:0 12px 28px rgba(103,66,239,.28)!important}
+body.ada-ui2 :is(.btn-secondary,.secondary-button,button:not(.sidebar-section-button):not(.sidebar-logout):not(.ada-ui2-theme):not(.primary)){color:var(--ada-violet)!important;border:1px solid rgba(124,79,245,.28)!important;background:var(--ada-glass-strong)!important}
+body.ada-ui2 :is(button,.btn,.btn-primary,.btn-secondary,.primary-button,.secondary-button):hover{transform:translateY(-2px)!important;filter:saturate(1.08)!important}
+
+/* Formularios */
+body.ada-ui2 :is(input,select,textarea){width:100%;min-height:44px;border-radius:14px!important;border:1px solid rgba(113,83,201,.22)!important;background:rgba(255,255,255,.64)!important;color:var(--ada-ink)!important;padding:11px 13px!important;outline:none!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.6)!important}
+html[data-theme="dark"] body.ada-ui2 :is(input,select,textarea){background:rgba(8,12,34,.66)!important}
+body.ada-ui2 :is(input,select,textarea):focus{border-color:rgba(124,78,255,.65)!important;box-shadow:0 0 0 4px rgba(124,78,255,.12)!important}
+body.ada-ui2 label{font-weight:800!important}
+
+/* Tablas */
+body.ada-ui2 .table-wrap,body.ada-ui2 .ada-table-scroll{overflow:auto!important;border-radius:18px!important;border:1px solid var(--ada-line)!important;background:var(--ada-glass)!important;box-shadow:0 15px 38px rgba(47,42,116,.10)!important}
+body.ada-ui2 table{width:100%!important;border-collapse:separate!important;border-spacing:0!important;background:transparent!important;color:var(--ada-ink)!important}
+body.ada-ui2 thead th{position:sticky!important;top:0!important;background:linear-gradient(135deg,rgba(114,61,245,.94),rgba(74,103,232,.94))!important;color:#fff!important;padding:13px!important;border:0!important}
+body.ada-ui2 tbody td{padding:12px 13px!important;border-bottom:1px solid var(--ada-line)!important;color:var(--ada-ink)!important;background:transparent!important}
+body.ada-ui2 tbody tr:hover td{background:rgba(120,79,245,.07)!important}
+
+/* Status y switcher */
+body.ada-ui2 .ada-product-switcher{display:flex!important;align-items:center!important;gap:9px!important;min-height:62px!important;padding:10px 12px 10px 18px!important;margin:0 0 18px!important;border:1px solid var(--ada-line)!important;border-radius:20px!important;background:var(--ada-glass-strong)!important;box-shadow:var(--ada-shadow)!important;backdrop-filter:blur(20px)!important}
+body.ada-ui2 .ada-product-switcher strong{margin-right:auto!important;color:var(--ada-ink)!important}
+body.ada-ui2 .ada-product-switcher a{padding:9px 13px!important;border-radius:12px!important;text-decoration:none!important;color:var(--ada-violet)!important;border:1px solid var(--ada-line)!important;font-weight:800!important}
+body.ada-ui2 .ada-product-switcher a.active{background:linear-gradient(135deg,#743cf5,#526de8)!important;color:#fff!important}
+body.ada-ui2 .ada-portal-status,body.ada-ui2 :is(.notice,.alert,.message,.empty-state,.ada-empty-state){border-radius:15px!important;border:1px solid var(--ada-line)!important;background:var(--ada-glass)!important;color:var(--ada-muted)!important;padding:12px 14px!important}
+
+/* Perfil superior heredado roto */
+body.ada-ui2 .ada-account-access{top:18px!important;right:74px!important;color:var(--ada-violet)!important;z-index:150!important}
+
+/* Utilidades flotantes: ayuda intacta, un solo logo ADA */
+body.ada-ui2 .ada-final-utilities{position:fixed!important;inset:0!important;pointer-events:none!important;z-index:500!important}
+body.ada-ui2 .ada-final-utilities>a{pointer-events:auto!important;position:absolute!important;text-decoration:none!important}
+body.ada-ui2 .ada-final-utilities .ada-help-link,body.ada-ui2 .ada-final-utilities>a:first-child{left:16px!important;bottom:16px!important;width:40px!important;height:40px!important;border-radius:50%!important;display:grid!important;place-items:center!important;background:#fff!important;color:#6f3df5!important;border:1px solid rgba(111,61,245,.28)!important;box-shadow:0 10px 28px rgba(54,35,126,.2)!important;font-weight:900!important}
+body.ada-ui2 .ada-final-utilities .ada-brand-orb,body.ada-ui2 .ada-final-utilities>a:last-child{right:24px!important;bottom:22px!important;width:78px!important;height:78px!important;border-radius:50%!important;display:grid!important;place-items:center!important;background:rgba(10,12,34,.96)!important;border:2px solid rgba(164,111,255,.85)!important;box-shadow:0 0 0 8px rgba(118,73,255,.11),0 0 30px rgba(122,72,255,.78)!important;animation:adaBrandPulse 2.9s ease-in-out infinite!important;overflow:visible!important;font-size:0!important}
+body.ada-ui2 .ada-final-utilities .ada-brand-orb::before,body.ada-ui2 .ada-final-utilities>a:last-child::before{content:"";position:absolute;inset:-12px;border-radius:50%;border:2px solid transparent;border-top-color:#b48cff;border-right-color:#5f76ff;animation:adaSpin 3.4s linear infinite}
+body.ada-ui2 .ada-final-utilities img{width:64px!important;height:64px!important;border-radius:50%!important;object-fit:cover!important;display:block!important}
+@keyframes adaBrandPulse{50%{transform:translateY(-5px) scale(1.04);box-shadow:0 0 0 12px rgba(118,73,255,.08),0 0 42px rgba(122,72,255,.95)}}
+@keyframes adaSpin{to{transform:rotate(360deg)}}
+
+/* Responsive */
+@media(max-width:980px){
+ :root{--ada-sidebar:230px}
+ body.ada-ui2 .module-shell{padding:24px 18px 70px!important}
+ body.ada-ui2 :is(.role-section-grid,.portal-section-grid,.dashboard-grid,.content-grid){grid-template-columns:1fr!important}
+}
+@media(max-width:760px){
+ body.ada-ui2 .sidebar,body.ada-ui2 .ada-role-sidebar{position:relative!important;width:100%!important;height:auto!important;inset:auto!important}
+ body.ada-ui2 .module-shell{margin-left:0!important;width:100%!important;padding:18px 12px 78px!important}
+ body.ada-ui2 .ada-product-switcher{flex-wrap:wrap!important}
+ body.ada-ui2 :is(.role-grid,.portal-grid,.stats-grid,.kpi-grid){grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ body.ada-ui2 :is(.role-hero,.portal-hero,.dashboard-hero,.page-hero,.welcome-card,.hero-card){padding:22px!important}
+}
+@media(max-width:480px){body.ada-ui2 :is(.role-grid,.portal-grid,.stats-grid,.kpi-grid){grid-template-columns:1fr!important}.ada-ui2-topbar{padding:10px 12px}.ada-ui2-brand span{display:none}}
+@media(prefers-reduced-motion:reduce){body.ada-ui2 *,body.ada-ui2::before,body.ada-ui2::after{animation:none!important;transition:none!important}}
+@media print{.ada-ui2-aurora,.ada-ui2-topbar,.sidebar,.ada-role-sidebar,.ada-final-utilities{display:none!important}body.ada-ui2 .module-shell{margin:0!important;width:100%!important;padding:0!important}}
