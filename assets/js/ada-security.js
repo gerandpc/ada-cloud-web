@@ -547,6 +547,20 @@ function adaLoadFinalRuntime() {
     link.dataset.adaFinal = "1";
     document.head.appendChild(link);
   }
+  if (!document.querySelector('link[data-ada-theme-11="1"]')) {
+    const themeLink = document.createElement("link");
+    themeLink.rel = "stylesheet";
+    themeLink.href = "../assets/css/ada-theme-11.css";
+    themeLink.dataset.adaTheme11 = "1";
+    document.head.appendChild(themeLink);
+  }
+  if (!document.querySelector('script[data-ada-theme-11="1"]')) {
+    const themeScript = document.createElement("script");
+    themeScript.src = "../assets/js/ada-theme-11.js";
+    themeScript.defer = true;
+    themeScript.dataset.adaTheme11 = "1";
+    document.head.appendChild(themeScript);
+  }
   if (!document.querySelector('script[data-ada-final="1"]')) {
     const script = document.createElement("script");
     script.src = "../assets/js/ada-final.js";
