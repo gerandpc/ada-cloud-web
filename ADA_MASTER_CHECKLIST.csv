@@ -1,0 +1,15 @@
+Prioridad,Área,Incidencia,Estado,Archivo o módulo
+Crítica,Seguridad,Verificar RLS por tabla y vista,Pendiente,Supabase
+Crítica,Privacidad,Confirmar aislamiento por institución y asignación,Pendiente,Supabase
+Alta,Interfaz,Eliminar botón PDF global,Terminado,assets/js/ada-security.js
+Alta,Analítica,Centro de Inteligencia Institucional,Terminado,pages/inteligencia-institucional.html
+Alta,Analítica,Ausentismo por curso,Terminado,assets/js/inteligencia-institucional.js
+Alta,Analítica,Rendimiento por materia,Terminado,assets/js/inteligencia-institucional.js
+Alta,Analítica,Alertas de trayectoria,Terminado,assets/js/inteligencia-institucional.js
+Alta,Analítica,Informe ejecutivo contextual,Terminado,assets/js/inteligencia-institucional.js
+Media,Analítica,Comparación interanual,Mejorable,Centro de Inteligencia
+Media,IA,Consultas en lenguaje natural,Pendiente,Centro de Inteligencia
+Alta,Flujos,Prueba integral de programas,Pendiente,Programas
+Alta,Flujos,Prueba integral de actividades y entregas,Pendiente,Actividades y entregas
+Alta,Flujos,Prueba integral de calificaciones y boletines,Pendiente,Calificaciones y boletines
+Alta,Flujos,Prueba integral de asistencia y justificaciones,Pendiente,Asistencia
