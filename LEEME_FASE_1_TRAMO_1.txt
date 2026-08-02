@@ -1,0 +1,12 @@
+FASE 1 - TRAMO 1
+
+REEMPLAZAR:
+assets/js/actividades.js
+assets/js/entregas.js
+assets/js/documentacion.js
+pages/manuscritos.html
+
+Cambios:
+- Eliminación de mensajes internos con referencias a bloques y archivos SQL.
+- Mensajes de error aptos para producción.
+- Eliminación del aspecto de pantalla placeholder en Manuscritos.
