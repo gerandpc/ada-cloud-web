@@ -9,8 +9,18 @@ function qs(id) {
   return document.getElementById(id);
 }
 
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  }[char]));
+}
+
 function optionHtml(items, placeholder = "Seleccionar") {
-  return `<option value="">${placeholder}</option>` + items.map(item => `<option value="${item.id}">${item.nombre}</option>`).join("");
+  return `<option value="">${escapeHtml(placeholder)}</option>` + items.map(item => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.nombre)}</option>`).join("");
 }
 
 function renderTable(containerId, headers, rows) {
@@ -22,7 +32,7 @@ function renderTable(containerId, headers, rows) {
 
   container.innerHTML = `
     <table class="ada-table">
-      <thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead>
+      <thead><tr>${headers.map(h => `<th>${escapeHtml(h)}</th>`).join("")}</tr></thead>
       <tbody>${rows.join("")}</tbody>
     </table>
   `;
@@ -56,7 +66,7 @@ async function cargarDatos() {
   for (const res of [nivelesRes, aniosRes, divisionesRes, modalidadesRes, cursosRes]) {
     if (res.error) {
       console.error(res.error);
-      alert("Error al cargar estructura académica: " + res.error.message);
+      alert("No fue posible cargar la estructura académica. Volvé a intentarlo o verificá tu conexión.");
       return;
     }
   }
@@ -103,29 +113,29 @@ function sugerirNombreCurso() {
 
 function renderizarTablas() {
   renderTable("tablaNiveles", ["Nombre", "Orden", "Descripción", "Estado"], niveles.map(n => `
-    <tr><td>${n.nombre}</td><td>${n.orden ?? "-"}</td><td>${n.descripcion || "-"}</td><td>${n.activo ? "<span class='status-ok'>Activo</span>" : "<span class='status-off'>Inactivo</span>"}</td></tr>
+    <tr><td>${escapeHtml(n.nombre)}</td><td>${escapeHtml(n.orden ?? "-")}</td><td>${escapeHtml(n.descripcion || "-")}</td><td>${n.activo ? "<span class='status-ok'>Activo</span>" : "<span class='status-off'>Inactivo</span>"}</td></tr>
   `));
 
   renderTable("tablaAnios", ["Nivel", "Año / grado", "Número", "Descripción"], anios.map(a => `
-    <tr><td>${a.niveles?.nombre || "-"}</td><td>${a.nombre}</td><td>${a.numero ?? "-"}</td><td>${a.descripcion || "-"}</td></tr>
+    <tr><td>${escapeHtml(a.niveles?.nombre || "-")}</td><td>${escapeHtml(a.nombre)}</td><td>${escapeHtml(a.numero ?? "-")}</td><td>${escapeHtml(a.descripcion || "-")}</td></tr>
   `));
 
   renderTable("tablaDivisiones", ["División", "Descripción", "Estado"], divisiones.map(d => `
-    <tr><td><span class="inline-badge">${d.nombre}</span></td><td>${d.descripcion || "-"}</td><td>${d.activo ? "<span class='status-ok'>Activa</span>" : "<span class='status-off'>Inactiva</span>"}</td></tr>
+    <tr><td><span class="inline-badge">${escapeHtml(d.nombre)}</span></td><td>${escapeHtml(d.descripcion || "-")}</td><td>${d.activo ? "<span class='status-ok'>Activa</span>" : "<span class='status-off'>Inactiva</span>"}</td></tr>
   `));
 
   renderTable("tablaModalidades", ["Modalidad", "Descripción", "Estado"], modalidades.map(m => `
-    <tr><td>${m.nombre}</td><td>${m.descripcion || "-"}</td><td>${m.activo ? "<span class='status-ok'>Activa</span>" : "<span class='status-off'>Inactiva</span>"}</td></tr>
+    <tr><td>${escapeHtml(m.nombre)}</td><td>${escapeHtml(m.descripcion || "-")}</td><td>${m.activo ? "<span class='status-ok'>Activa</span>" : "<span class='status-off'>Inactiva</span>"}</td></tr>
   `));
 
   renderTable("tablaCursos", ["Curso", "Nivel", "Año", "División", "Modalidad", "Turno"], cursos.map(c => `
     <tr>
-      <td><strong>${c.nombre}</strong></td>
-      <td>${c.niveles?.nombre || "-"}</td>
-      <td>${c.anios_grados?.nombre || "-"}</td>
-      <td>${c.divisiones?.nombre || "-"}</td>
-      <td>${c.modalidades?.nombre || "-"}</td>
-      <td>${c.turno || "-"}</td>
+      <td><strong>${escapeHtml(c.nombre)}</strong></td>
+      <td>${escapeHtml(c.niveles?.nombre || "-")}</td>
+      <td>${escapeHtml(c.anios_grados?.nombre || "-")}</td>
+      <td>${escapeHtml(c.divisiones?.nombre || "-")}</td>
+      <td>${escapeHtml(c.modalidades?.nombre || "-")}</td>
+      <td>${escapeHtml(c.turno || "-")}</td>
     </tr>
   `));
 }
@@ -134,7 +144,7 @@ async function insertar(tabla, payload, msgId) {
   qs(msgId).textContent = "Guardando...";
   const { error } = await supabaseClient.from(tabla).insert(payload);
   if (error) {
-    qs(msgId).textContent = "Error: " + error.message;
+    qs(msgId).textContent = "No fue posible guardar el registro. Verificá los datos e intentá nuevamente.";
     console.error(error);
     return;
   }

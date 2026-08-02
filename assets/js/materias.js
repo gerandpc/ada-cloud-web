@@ -5,8 +5,18 @@ function materiaQs(id) {
   return document.getElementById(id);
 }
 
+function materiaEscape(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  }[char]));
+}
+
 function materiaOptionHtml(items, placeholder = "Seleccionar") {
-  return `<option value="">${placeholder}</option>` + items.map(item => `<option value="${item.id}">${item.nombre}</option>`).join("");
+  return `<option value="">${materiaEscape(placeholder)}</option>` + items.map(item => `<option value="${materiaEscape(item.id)}">${materiaEscape(item.nombre)}</option>`).join("");
 }
 
 async function cargarMaterias() {
@@ -29,7 +39,7 @@ async function cargarMaterias() {
   } catch (error) {
     console.warn("Carga de materias detenida:", error.message);
     if (materiaQs("msgMateria") && !window.ADA_ACCESS_DENIED) {
-      materiaQs("msgMateria").textContent = "Error al cargar materias: " + error.message;
+      materiaQs("msgMateria").textContent = "No fue posible cargar las materias. Volvé a intentarlo o verificá tu conexión.";
     }
   }
 }
@@ -57,11 +67,11 @@ function renderizarMaterias() {
       <tbody>
         ${materias.map(m => `
           <tr>
-            <td><strong>${m.nombre || "-"}</strong></td>
-            <td>${m.cursos?.nombre || "-"}</td>
-            <td>${m.carga_horaria_semanal ?? m.carga_horaria ?? "-"}</td>
-            <td>${m.tipo || "-"}</td>
-            <td>${m.descripcion || "-"}</td>
+            <td><strong>${materiaEscape(m.nombre || "-")}</strong></td>
+            <td>${materiaEscape(m.cursos?.nombre || "-")}</td>
+            <td>${materiaEscape(m.carga_horaria_semanal ?? m.carga_horaria ?? "-")}</td>
+            <td>${materiaEscape(m.tipo || "-")}</td>
+            <td>${materiaEscape(m.descripcion || "-")}</td>
           </tr>
         `).join("")}
       </tbody>
@@ -87,7 +97,7 @@ async function guardarMateria(event) {
   const { error } = await supabaseClient.from("materias").insert(payload);
 
   if (error) {
-    materiaQs("msgMateria").textContent = "Error: " + error.message;
+    materiaQs("msgMateria").textContent = "No fue posible guardar la materia. Verificá los datos e intentá nuevamente.";
     return;
   }
 
