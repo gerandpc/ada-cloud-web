@@ -1,114 +1,98 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ADA Cloud Web | Portal de acceso</title>
-  <link rel="stylesheet" href="assets/css/style.css">
-  <link rel="stylesheet" href="assets/css/bloque23-ui-refresh.css">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#f7f5ff">
+  <title>Ada | Iniciar sesión</title>
+  <link rel="icon" type="image/jpeg" href="assets/img/ada-logo.jpg">
   <link rel="stylesheet" href="assets/css/portal-acceso.css">
 </head>
-<body class="ada-access-body">
-  <main class="ada-access">
-    <section class="ada-access-hero" aria-labelledby="adaPortalTitle">
-      <div class="ada-access-brand">
-        <span class="ada-brand-mark">ADA</span>
-        <span class="ada-brand-subtitle">Cloud Web</span>
+<body>
+  <div class="ada-scene" aria-hidden="true">
+    <div class="ada-aurora ada-aurora--one"></div>
+    <div class="ada-aurora ada-aurora--two"></div>
+    <div class="ada-streak ada-streak--one"></div>
+    <div class="ada-streak ada-streak--two"></div>
+    <div class="ada-streak ada-streak--three"></div>
+    <div class="ada-stars"></div>
+  </div>
+
+  <header class="ada-topbar">
+    <a class="ada-mini-brand" href="index.html" aria-label="Ada, inicio">
+      <img src="assets/img/ada-logo.jpg" alt="Logo de Ada">
+      <span>Ada</span>
+    </a>
+
+    <button class="ada-theme-toggle" id="themeToggle" type="button" aria-label="Cambiar modo de color" aria-pressed="false">
+      <span class="ada-theme-icon ada-theme-icon--sun" aria-hidden="true">☀</span>
+      <span class="ada-theme-label" id="themeLabel">Claro</span>
+      <span class="ada-theme-icon ada-theme-icon--moon" aria-hidden="true">☾</span>
+    </button>
+  </header>
+
+  <main class="ada-login-shell">
+    <section class="ada-login-card" aria-labelledby="adaTitle">
+      <div class="ada-logo-wrap">
+        <div class="ada-logo-halo" aria-hidden="true"></div>
+        <img class="ada-logo" src="assets/img/ada-logo.jpg" alt="Logo de Ada">
       </div>
 
-      <div class="ada-access-copy">
-        <p class="ada-eyebrow">Plataforma escolar inteligente</p>
-        <h1 id="adaPortalTitle">Elegí tu espacio de trabajo</h1>
-        <p>
-          Cada usuario ingresa a su propio entorno: gestión institucional, docencia,
-          preceptoría, familia o estudiante, con navegación y permisos según su rol.
-        </p>
+      <div class="ada-heading">
+        <h1 id="adaTitle">Ada</h1>
+        <p class="ada-tagline"><span aria-hidden="true">✦</span> Ada. Empowering every mind.</p>
       </div>
-    </section>
 
-    <section class="ada-role-grid" aria-label="Accesos por rol">
-      <button class="ada-role-card role-admin" type="button" data-role="admin" data-title="Administrador" data-description="Configuración general, usuarios, seguridad y control institucional.">
-        <span class="role-icon">⚙️</span>
-        <span class="role-name">Administrador</span>
-        <span class="role-description">Configuración y control general</span>
-      </button>
-
-      <button class="ada-role-card role-directivo" type="button" data-role="directivo" data-title="Directivo" data-description="Gestión institucional, reportes, seguimiento y conducción escolar.">
-        <span class="role-icon">🏫</span>
-        <span class="role-name">Directivo</span>
-        <span class="role-description">Gestión institucional</span>
-      </button>
-
-      <button class="ada-role-card role-secretaria" type="button" data-role="secretaria" data-title="Secretaría" data-description="Usuarios, legajos, cursos, materias, importaciones y administración escolar.">
-        <span class="role-icon">🗂️</span>
-        <span class="role-name">Secretaría</span>
-        <span class="role-description">Administración escolar</span>
-      </button>
-
-      <button class="ada-role-card role-docente" type="button" data-role="docente" data-title="Docente" data-description="Clases, asistencia, materias, alumnos, documentos y seguimiento pedagógico.">
-        <span class="role-icon">👩‍🏫</span>
-        <span class="role-name">Docente</span>
-        <span class="role-description">Clases y seguimiento</span>
-      </button>
-
-      <button class="ada-role-card role-preceptor" type="button" data-role="preceptor" data-title="Preceptoría" data-description="Asistencia, alertas, cursos, comunicaciones y acompañamiento cotidiano.">
-        <span class="role-icon">📋</span>
-        <span class="role-name">Preceptoría</span>
-        <span class="role-description">Asistencia y alertas</span>
-      </button>
-
-      <button class="ada-role-card role-familia" type="button" data-role="familia" data-title="Familia" data-description="Seguimiento escolar, comunicados, asistencia, documentos y trayectoria del estudiante.">
-        <span class="role-icon">👨‍👩‍👧</span>
-        <span class="role-name">Familia</span>
-        <span class="role-description">Seguimiento familiar</span>
-      </button>
-
-      <button class="ada-role-card role-alumno" type="button" data-role="alumno" data-title="Alumno" data-description="Materias, asistencia, documentos habilitados y acompañamiento académico.">
-        <span class="role-icon">🎒</span>
-        <span class="role-name">Alumno</span>
-        <span class="role-description">Mi trayectoria escolar</span>
-      </button>
-    </section>
-
-    <footer class="ada-access-footer">
-      <span>ADA Cloud Web</span>
-      <span>Acceso seguro por perfil institucional · <a href="pages/estado-sistema.html">Estado del servicio</a></span>
-    </footer>
-  </main>
-
-  <div class="ada-login-modal" id="adaLoginModal" aria-hidden="true">
-    <div class="ada-modal-backdrop" data-close-modal></div>
-
-    <section class="ada-modal-card" role="dialog" aria-modal="true" aria-labelledby="modalRoleTitle">
-      <button class="ada-modal-close" type="button" data-close-modal aria-label="Cerrar ventana de ingreso">×</button>
-
-      <div class="ada-modal-role-badge" id="modalRoleIcon">ADA</div>
-      <p class="ada-modal-eyebrow">Ingreso seguro</p>
-      <h2 id="modalRoleTitle">Ingreso ADA</h2>
-      <p id="modalRoleDescription" class="ada-modal-description">
-        Ingresá con tus credenciales institucionales.
-      </p>
-
-      <form id="portalLoginForm" class="ada-modal-form">
-        <input type="hidden" id="selectedRole" value="">
-
-        <label for="portalEmail">Correo electrónico</label>
-        <input type="email" id="portalEmail" autocomplete="username" required placeholder="usuario@correo.com">
-
-        <label for="portalPassword">Contraseña</label>
-        <input type="password" id="portalPassword" autocomplete="current-password" required placeholder="Contraseña">
-
-        <button type="submit" id="portalLoginButton">Ingresar a ADA</button>
-
-        <div class="ada-login-tools">
-          <button type="button" class="ada-link-button" id="portalResetPassword">Olvidé mi contraseña</button>
-          <span class="ada-service-status" id="adaServiceStatus">Comprobando servicio...</span>
+      <form id="portalLoginForm" class="ada-login-form" novalidate>
+        <div class="ada-field">
+          <label for="portalEmail">Usuario</label>
+          <div class="ada-input-wrap">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21a8 8 0 0 0-16 0M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/></svg>
+            <input type="email" id="portalEmail" autocomplete="username" inputmode="email" placeholder="usuario@correo.com" required>
+          </div>
         </div>
+
+        <div class="ada-field">
+          <label for="portalPassword">Contraseña</label>
+          <div class="ada-input-wrap">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 10V8a6 6 0 0 1 12 0v2M5 10h14v11H5z"/></svg>
+            <input type="password" id="portalPassword" autocomplete="current-password" placeholder="Ingresá tu contraseña" required>
+            <button class="ada-password-toggle" id="passwordToggle" type="button" aria-label="Mostrar contraseña" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="ada-login-options">
+          <label class="ada-check">
+            <input type="checkbox" id="rememberUser">
+            <span aria-hidden="true"></span>
+            Recordarme
+          </label>
+          <button class="ada-text-button" type="button" id="portalResetPassword">¿Olvidaste tu contraseña?</button>
+        </div>
+
+        <button class="ada-submit" type="submit" id="portalLoginButton">
+          <span>Iniciar sesión</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+
+        <p id="portalLoginMessage" class="ada-message" aria-live="polite"></p>
       </form>
 
-      <p id="portalLoginMessage" class="ada-modal-message" aria-live="polite"></p>
+      <div class="ada-status" id="adaServiceStatus" role="status">
+        <span class="ada-status-dot" aria-hidden="true"></span>
+        <span>Comprobando servicio...</span>
+      </div>
+
+      <footer class="ada-card-footer">
+        <a href="pages/estado-sistema.html">Estado del servicio</a>
+        <span>Acceso institucional seguro</span>
+      </footer>
     </section>
-  </div>
+  </main>
+
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/js/supabase-config.js"></script>
