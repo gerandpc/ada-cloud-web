@@ -13,7 +13,7 @@
     <a href="dashboard.html" class="back-link">← Volver al panel</a>
     <section class="module-view">
 <h1>Reportes y exportaciones</h1>
-      <p>Reportes iniciales de asistencia, seguimiento, usuarios, documentos y estructura institucional.</p>
+      <p>Consultá indicadores académicos e institucionales y exportá cada informe en CSV o PDF.</p>
 
       <div class="reports-grid">
         <div class="report-stat"><strong id="statUsuarios">0</strong><span>Usuarios</span></div>
@@ -25,9 +25,9 @@
       <div class="report-tabs">
         <button class="report-tab active" data-tab="asistencia">Asistencia</button>
         <button class="report-tab" data-tab="seguimiento">Seguimiento</button>
-        <button class="report-tab" data-tab="usuarios">Usuarios</button>
-        <button class="report-tab" data-tab="documentos">Documentos</button>
-        <button class="report-tab" data-tab="estructura">Estructura académica</button>
+        <button class="report-tab" data-tab="usuarios" data-report-scope="institucional">Usuarios</button>
+        <button class="report-tab" data-tab="documentos" data-report-scope="institucional">Documentos</button>
+        <button class="report-tab" data-tab="estructura" data-report-scope="institucional">Estructura académica</button>
       </div>
 
       <section id="tab-asistencia" class="report-section active">
@@ -42,6 +42,7 @@
           <div class="report-actions">
             <button class="btn-primary" id="btnReporteAsistencia">Generar reporte</button>
             <button class="btn-secondary" id="btnExportAsistencia">Exportar CSV</button>
+            <button class="btn-secondary" id="btnPDFAsistencia">Generar PDF</button>
           </div>
           <div id="resumenAsistencia" class="report-box"></div>
           <div id="tablaAsistencia" class="table-wrap"></div>
@@ -60,39 +61,43 @@
           <div class="report-actions">
             <button class="btn-primary" id="btnReporteSeguimiento">Generar reporte</button>
             <button class="btn-secondary" id="btnExportSeguimiento">Exportar CSV</button>
+            <button class="btn-secondary" id="btnPDFSeguimiento">Generar PDF</button>
           </div>
           <div id="tablaSeguimiento" class="table-wrap"></div>
         </section>
       </section>
 
-      <section id="tab-usuarios" class="report-section">
+      <section id="tab-usuarios" class="report-section" data-report-scope="institucional">
         <section class="panel-card">
           <h2>Reporte de usuarios</h2>
           <div class="report-actions">
             <button class="btn-primary" id="btnReporteUsuarios">Generar reporte</button>
             <button class="btn-secondary" id="btnExportUsuarios">Exportar CSV</button>
+            <button class="btn-secondary" id="btnPDFUsuarios">Generar PDF</button>
           </div>
           <div id="tablaUsuariosReporte" class="table-wrap"></div>
         </section>
       </section>
 
-      <section id="tab-documentos" class="report-section">
+      <section id="tab-documentos" class="report-section" data-report-scope="institucional">
         <section class="panel-card">
           <h2>Reporte de documentos</h2>
           <div class="report-actions">
             <button class="btn-primary" id="btnReporteDocumentos">Generar reporte</button>
             <button class="btn-secondary" id="btnExportDocumentos">Exportar CSV</button>
+            <button class="btn-secondary" id="btnPDFDocumentos">Generar PDF</button>
           </div>
           <div id="tablaDocumentosReporte" class="table-wrap"></div>
         </section>
       </section>
 
-      <section id="tab-estructura" class="report-section">
+      <section id="tab-estructura" class="report-section" data-report-scope="institucional">
         <section class="panel-card">
           <h2>Reporte de estructura académica</h2>
           <div class="report-actions">
             <button class="btn-primary" id="btnReporteEstructura">Generar reporte</button>
             <button class="btn-secondary" id="btnExportEstructura">Exportar CSV</button>
+            <button class="btn-secondary" id="btnPDFEstructura">Generar PDF</button>
           </div>
           <div id="tablaEstructuraReporte" class="table-wrap"></div>
         </section>
