@@ -228,7 +228,7 @@ function adaGetModuleLabel(moduleName) {
     ayuda: "Ayuda",
     acerca: "Acerca de ADA",
     "qa-final": "Control de calidad",
-    "qa-academica": "QA Gestión Académica"
+    "qa-academica": "ADA Test Center"
   };
   return labels[moduleName] || moduleName;
 }
