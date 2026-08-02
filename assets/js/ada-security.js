@@ -547,19 +547,29 @@ function adaLoadFinalRuntime() {
     link.dataset.adaFinal = "1";
     document.head.appendChild(link);
   }
-  if (!document.querySelector('link[data-ada-theme-11="1"]')) {
-    const themeLink = document.createElement("link");
-    themeLink.rel = "stylesheet";
-    themeLink.href = "../assets/css/ada-theme-11.css?v=1.1.2";
-    themeLink.dataset.adaTheme11 = "1";
-    document.head.appendChild(themeLink);
-  }
-  if (!document.querySelector('script[data-ada-theme-11="1"]')) {
-    const themeScript = document.createElement("script");
-    themeScript.src = "../assets/js/ada-theme-11.js?v=1.1.2";
-    themeScript.defer = true;
-    themeScript.dataset.adaTheme11 = "1";
-    document.head.appendChild(themeScript);
+  // ADA UI 2 administra el tema global. El runtime 1.1 usaba otra clave y otro
+  // atributo HTML; cargar ambos invertía o aplicaba parcialmente el modo claro/oscuro.
+  const hasUi2 = Boolean(
+    document.querySelector('link[href*="ada-ui-2.css"]') ||
+    document.querySelector('script[src*="ada-ui-2.js"]')
+  );
+  if (hasUi2) {
+    document.querySelectorAll('[data-ada-theme-11="1"], link[href*="ada-theme-11.css"], script[src*="ada-theme-11.js"]').forEach((node) => node.remove());
+  } else {
+    if (!document.querySelector('link[data-ada-theme-11="1"]')) {
+      const themeLink = document.createElement("link");
+      themeLink.rel = "stylesheet";
+      themeLink.href = "../assets/css/ada-theme-11.css?v=1.1.3";
+      themeLink.dataset.adaTheme11 = "1";
+      document.head.appendChild(themeLink);
+    }
+    if (!document.querySelector('script[data-ada-theme-11="1"]')) {
+      const themeScript = document.createElement("script");
+      themeScript.src = "../assets/js/ada-theme-11.js?v=1.1.3";
+      themeScript.defer = true;
+      themeScript.dataset.adaTheme11 = "1";
+      document.head.appendChild(themeScript);
+    }
   }
   if (!document.querySelector('script[data-ada-final="1"]')) {
     const script = document.createElement("script");
