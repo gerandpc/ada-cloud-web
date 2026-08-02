@@ -72,7 +72,10 @@ const ADA_PAGE_ACCESS = {
   "permisos.html": ["admin", "directivo"],
   "logs.html": ["admin"],
   "estado-sistema.html": ["admin", "directivo", "secretaria"],
-  "mi-perfil.html": ["admin", "directivo", "secretaria", "docente", "preceptor", "familia", "alumno"]
+  "mi-perfil.html": ["admin", "directivo", "secretaria", "docente", "preceptor", "familia", "alumno"],
+  "ayuda.html": ["admin", "directivo", "secretaria", "docente", "preceptor", "familia", "alumno"],
+  "acerca.html": ["admin", "directivo", "secretaria", "docente", "preceptor", "familia", "alumno"],
+  "qa-final.html": ["admin", "directivo"]
 };
 
 const ADA_ROLE_HOME = {
@@ -86,13 +89,13 @@ const ADA_ROLE_HOME = {
 };
 
 const ADA_ROLE_MODULES = {
-  admin: ["mi-perfil", "dashboard", "institucion", "usuarios", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "programas", "actividades", "entregas", "documentos", "documentacion", "ia", "horarios", "asistencia", "calificaciones", "libro-calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines", "boletines-actas", "reportes", "inteligencia-institucional", "comunicados", "convivencia", "ficha-alumno", "importar", "auditoria", "permisos", "logs", "estado-sistema"],
-  directivo: ["mi-perfil", "dashboard", "institucion", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "programas", "actividades", "entregas", "documentos", "documentacion", "ia", "horarios", "asistencia", "calificaciones", "libro-calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines", "boletines-actas", "reportes", "inteligencia-institucional", "comunicados", "convivencia", "ficha-alumno", "auditoria", "estado-sistema"],
-  secretaria: ["mi-perfil", "secretaria", "institucion", "usuarios", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "documentacion", "horarios", "asistencia", "calificaciones", "libro-calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines", "boletines-actas", "reportes", "comunicados", "convivencia", "ficha-alumno", "estado-sistema"],
-  docente: ["mi-perfil", "mi-docente", "cursos", "materias", "programas", "actividades", "entregas", "documentos", "ia", "asistencia", "calificaciones", "libro-calificaciones", "reportes", "comunicados", "ficha-alumno"],
-  preceptor: ["mi-perfil", "mi-preceptor", "alumnos", "familias", "cursos", "documentos", "documentacion", "ia", "asistencia", "libres-materia", "reportes", "comunicados", "convivencia", "ficha-alumno"],
-  familia: ["mi-perfil", "mi-familia", "programas", "boletines", "documentos", "documentacion", "ia", "comunicados"],
-  alumno: ["mi-perfil", "mi-alumno", "programas", "actividades", "entregas", "boletines", "documentos", "documentacion", "ia", "comunicados"]
+  admin: ["mi-perfil", "dashboard", "institucion", "usuarios", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "programas", "actividades", "entregas", "documentos", "documentacion", "ia", "horarios", "asistencia", "calificaciones", "libro-calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines", "boletines-actas", "reportes", "inteligencia-institucional", "comunicados", "convivencia", "ficha-alumno", "importar", "auditoria", "permisos", "logs", "estado-sistema", "ayuda", "acerca", "qa-final"],
+  directivo: ["mi-perfil", "dashboard", "institucion", "directivos", "secretaria", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "programas", "actividades", "entregas", "documentos", "documentacion", "ia", "horarios", "asistencia", "calificaciones", "libro-calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines", "boletines-actas", "reportes", "inteligencia-institucional", "comunicados", "convivencia", "ficha-alumno", "auditoria", "estado-sistema", "ayuda", "acerca", "qa-final"],
+  secretaria: ["mi-perfil", "secretaria", "institucion", "usuarios", "docentes", "preceptoria", "alumnos", "familias", "asignaciones", "cursos", "materias", "documentos", "documentacion", "horarios", "asistencia", "calificaciones", "libro-calificaciones", "planillas-secretaria", "libres-materia", "cierres-academicos", "boletines", "boletines-actas", "reportes", "comunicados", "convivencia", "ficha-alumno", "estado-sistema", "ayuda", "acerca"],
+  docente: ["mi-perfil", "mi-docente", "cursos", "materias", "programas", "actividades", "entregas", "documentos", "ia", "asistencia", "calificaciones", "libro-calificaciones", "reportes", "comunicados", "ficha-alumno", "ayuda", "acerca"],
+  preceptor: ["mi-perfil", "mi-preceptor", "alumnos", "familias", "cursos", "documentos", "documentacion", "ia", "asistencia", "libres-materia", "reportes", "comunicados", "convivencia", "ficha-alumno", "ayuda", "acerca"],
+  familia: ["mi-perfil", "mi-familia", "programas", "boletines", "documentos", "documentacion", "ia", "comunicados", "ayuda", "acerca"],
+  alumno: ["mi-perfil", "mi-alumno", "programas", "actividades", "entregas", "boletines", "documentos", "documentacion", "ia", "comunicados", "ayuda", "acerca"]
 };
 
 function adaCurrentPageName() {
@@ -218,7 +221,10 @@ function adaGetModuleLabel(moduleName) {
     permisos: "Permisos y accesos",
     logs: "Logs",
     "estado-sistema": "Estado del sistema",
-    "mi-perfil": "Mi perfil"
+    "mi-perfil": "Mi perfil",
+    ayuda: "Ayuda",
+    acerca: "Acerca de ADA",
+    "qa-final": "Control de calidad"
   };
   return labels[moduleName] || moduleName;
 }
@@ -267,7 +273,10 @@ function adaModuleToHref(moduleName, rol) {
     permisos: "permisos.html",
     logs: "logs.html",
     "estado-sistema": "estado-sistema.html",
-    "mi-perfil": "mi-perfil.html"
+    "mi-perfil": "mi-perfil.html",
+    ayuda: "ayuda.html",
+    acerca: "acerca.html",
+    "qa-final": "qa-final.html"
   };
   return homeByModule[moduleName] || (ADA_ROLE_HOME[rol] || "dashboard.html");
 }
@@ -325,7 +334,7 @@ function adaInjectRoleSidebar(perfil) {
     { title: "Inicio", modules: allowed.filter(m => m.startsWith("mi-") || m === "dashboard") },
     { title: "Trabajo diario", modules: allowed.filter(m => ["programas", "actividades", "entregas", "asistencia", "calificaciones", "libro-calificaciones", "libres-materia", "cierres-academicos", "boletines", "boletines-actas", "alumnos", "cursos", "materias", "documentos", "documentacion", "comunicados"].includes(m)) },
     { title: "Gestión", modules: allowed.filter(m => ["institucion", "usuarios", "planillas-secretaria", "directivos", "secretaria", "docentes", "preceptoria", "familias", "asignaciones", "importar"].includes(m)) },
-    { title: "Herramientas ADA", modules: allowed.filter(m => ["ia", "cierres-academicos", "boletines-actas", "reportes", "horarios", "auditoria", "permisos", "logs", "estado-sistema"].includes(m)) }
+    { title: "Herramientas ADA", modules: allowed.filter(m => ["ia", "cierres-academicos", "boletines-actas", "reportes", "horarios", "auditoria", "permisos", "logs", "estado-sistema", "qa-final", "ayuda", "acerca"].includes(m)) }
   ].filter(g => g.modules.length > 0);
 
   const sidebar = document.createElement("aside");
@@ -518,3 +527,22 @@ window.adaInjectAccountAccess = adaInjectAccountAccess;
 window.ADA_ROLE_HOME = ADA_ROLE_HOME;
 window.ADA_ROLE_MODULES = ADA_ROLE_MODULES;
 window.ADA_PAGE_ACCESS = ADA_PAGE_ACCESS;
+function adaLoadFinalRuntime() {
+  if (!document.querySelector('link[data-ada-final="1"]')) {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "../assets/css/ada-final.css";
+    link.dataset.adaFinal = "1";
+    document.head.appendChild(link);
+  }
+  if (!document.querySelector('script[data-ada-final="1"]')) {
+    const script = document.createElement("script");
+    script.src = "../assets/js/ada-final.js";
+    script.defer = true;
+    script.dataset.adaFinal = "1";
+    document.head.appendChild(script);
+  }
+}
+
+adaLoadFinalRuntime();
+
