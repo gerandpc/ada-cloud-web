@@ -406,5 +406,46 @@
     ["qaFilterStatus","qaFilterSuite","qaSearch"].forEach(id=>$(id).addEventListener(id==="qaSearch"?"input":"change",renderResults));
   }
 
-  document.addEventListener("DOMContentLoaded",()=>{renderSuites();bind();renderResults();renderWorkflowCards();renderHistory();});
+  async function initTestCenter(){
+    try {
+      if (typeof window.adaRequirePageAccess !== "function") {
+        throw new Error("No se pudo inicializar el control de acceso de ADA.");
+      }
+
+      const context = await window.adaRequirePageAccess(["admin", "directivo"]);
+      if (!context) return;
+
+      state.context = context;
+      renderSuites();
+      bind();
+      renderResults();
+      renderWorkflowCards();
+      renderHistory();
+    } catch (error) {
+      console.error("[ADA TEST CENTER] Error de inicialización:", error);
+      document.body.classList.remove("role-loading");
+      document.body.classList.add("ada-page-ready");
+
+      const shell = document.querySelector(".qa-center-shell");
+      if (shell) {
+        shell.innerHTML = `
+          <section class="panel-card access-denied-card">
+            <p class="eyebrow">ADA Test Center</p>
+            <h1>No se pudo iniciar el control automático</h1>
+            <p>La sesión o los permisos no pudieron verificarse correctamente.</p>
+            <p class="helper-text">Actualizá la página. Si el problema continúa, cerrá sesión y volvé a ingresar como Administrador o Directivo.</p>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:18px;">
+              <button class="btn-primary" type="button" onclick="window.location.reload()">Reintentar</button>
+              <a class="btn-secondary" href="dashboard.html">Volver al inicio</a>
+            </div>
+          </section>`;
+      }
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initTestCenter, { once: true });
+  } else {
+    initTestCenter();
+  }
 })();
