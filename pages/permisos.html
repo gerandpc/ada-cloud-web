@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Permisos y accesos - ADA Cloud</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque23-ui-refresh.css">
+  <link rel="stylesheet" href="../assets/css/permisos.css">
+</head>
+<body class="module-page role-loading">
+  <main class="module-shell">
+    <a href="dashboard.html" class="back-link">← Volver al panel</a>
+    <section class="module-view">
+      <p class="eyebrow">Seguridad institucional</p>
+      <h1>Permisos y accesos</h1>
+      <p>Consulta de la matriz efectiva de páginas y módulos habilitados para cada rol.</p>
+
+      <section class="panel-card permission-toolbar">
+        <div><label for="permissionSearch">Buscar página o módulo</label><input id="permissionSearch" type="search" placeholder="Ej. programas, asistencia, usuarios"></div>
+        <div><label for="permissionRole">Rol</label><select id="permissionRole"><option value="">Todos</option></select></div>
+        <button class="btn-secondary" id="permissionExportCsv" type="button">Exportar CSV</button>
+        <button class="btn-primary" id="permissionExportPdf" type="button">Exportar matriz PDF</button>
+      </section>
+
+      <section class="permission-summary" id="permissionSummary"></section>
+      <p id="permissionMessage" class="module-message"></p>
+
+      <section class="panel-card table-wrap">
+        <table class="data-table permission-table">
+          <thead><tr><th>Página</th><th>Módulo</th><th>Admin</th><th>Directivo</th><th>Secretaría</th><th>Docente</th><th>Preceptor</th><th>Alumno</th><th>Familia</th></tr></thead>
+          <tbody id="permissionTableBody"><tr><td colspan="9" class="empty-cell">Cargando matriz…</td></tr></tbody>
+        </table>
+      </section>
+
+      <section class="panel-card permission-note">
+        <h2>Alcance de esta matriz</h2>
+        <p>La pantalla refleja los permisos declarados en el frontend. La protección definitiva de los datos debe mantenerse también mediante políticas RLS en Supabase.</p>
+      </section>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/ada-security.js"></script>
+  <script src="../assets/js/permisos.js"></script>
+  <script src="../assets/js/sidebar.js"></script>
+</body>
+</html>
