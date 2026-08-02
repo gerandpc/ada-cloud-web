@@ -23,13 +23,80 @@ const roleDescriptions = {
   familia: "Familias o responsables asociados a estudiantes."
 };
 
+function crearCelda(texto, className = "") {
+  const td = document.createElement("td");
+  if (className) td.className = className;
+  td.textContent = texto == null || texto === "" ? "-" : String(texto);
+  return td;
+}
+
+function crearBadge(texto) {
+  const span = document.createElement("span");
+  span.className = "badge";
+  span.textContent = texto || "-";
+  return span;
+}
+
+function crearEstado(activo) {
+  const span = document.createElement("span");
+  span.className = activo ? "status-ok" : "status-off";
+  span.textContent = activo ? "Activo" : "Inactivo";
+  return span;
+}
+
+function renderUsuarios(data) {
+  tablaUsuarios.replaceChildren();
+
+  const table = document.createElement("table");
+  table.className = "ada-table";
+
+  const thead = document.createElement("thead");
+  const headRow = document.createElement("tr");
+  ["Nombre", "Email", "Rol", "Estado", "Creado"].forEach((label) => {
+    const th = document.createElement("th");
+    th.textContent = label;
+    headRow.appendChild(th);
+  });
+  thead.appendChild(headRow);
+
+  const tbody = document.createElement("tbody");
+  data.forEach((user) => {
+    const tr = document.createElement("tr");
+    const nombreCompleto = [user.apellido, user.nombre].filter(Boolean).join(", ");
+    tr.appendChild(crearCelda(nombreCompleto));
+    tr.appendChild(crearCelda(user.email));
+
+    const rolTd = document.createElement("td");
+    rolTd.appendChild(crearBadge(user.rol));
+    tr.appendChild(rolTd);
+
+    const estadoTd = document.createElement("td");
+    estadoTd.appendChild(crearEstado(Boolean(user.activo)));
+    tr.appendChild(estadoTd);
+
+    const fecha = user.creado_en
+      ? new Date(user.creado_en).toLocaleDateString("es-AR")
+      : "-";
+    tr.appendChild(crearCelda(fecha));
+    tbody.appendChild(tr);
+  });
+
+  table.append(thead, tbody);
+  tablaUsuarios.appendChild(table);
+}
+
 async function cargarUsuariosPorRol() {
   const contexto = await obtenerSesionPerfil();
   if (!contexto) return;
 
-  tituloModulo.textContent = roleLabels[pageRole] || "Usuarios";
-  descripcionModulo.textContent = roleDescriptions[pageRole] || "Usuarios registrados en ADA Cloud.";
+  if (!Object.prototype.hasOwnProperty.call(roleLabels, pageRole)) {
+    mensajeUsuarios.textContent = "No se pudo determinar el tipo de listado solicitado.";
+    tablaUsuarios.replaceChildren();
+    return;
+  }
 
+  tituloModulo.textContent = roleLabels[pageRole];
+  descripcionModulo.textContent = roleDescriptions[pageRole];
   mensajeUsuarios.textContent = "Cargando usuarios...";
 
   const { data, error } = await supabaseClient
@@ -39,43 +106,20 @@ async function cargarUsuariosPorRol() {
     .order("apellido", { ascending: true });
 
   if (error) {
-    mensajeUsuarios.textContent = "Error al cargar usuarios: " + error.message;
-    console.error(error);
+    mensajeUsuarios.textContent = "No fue posible cargar el listado.";
+    tablaUsuarios.replaceChildren();
+    console.error("Error al cargar usuarios por rol", error);
     return;
   }
 
   if (!data || data.length === 0) {
     mensajeUsuarios.textContent = "No hay usuarios cargados para este rol.";
-    tablaUsuarios.innerHTML = "";
+    tablaUsuarios.replaceChildren();
     return;
   }
 
-  mensajeUsuarios.textContent = `${data.length} usuario/s encontrados.`;
-
-  tablaUsuarios.innerHTML = `
-    <table class="ada-table">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Email</th>
-          <th>Rol</th>
-          <th>Estado</th>
-          <th>Creado</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${data.map((user) => `
-          <tr>
-            <td>${user.apellido || ""}, ${user.nombre || ""}</td>
-            <td>${user.email || ""}</td>
-            <td><span class="badge">${user.rol}</span></td>
-            <td>${user.activo ? '<span class="status-ok">Activo</span>' : '<span class="status-off">Inactivo</span>'}</td>
-            <td>${user.creado_en ? new Date(user.creado_en).toLocaleDateString("es-AR") : "-"}</td>
-          </tr>
-        `).join("")}
-      </tbody>
-    </table>
-  `;
+  mensajeUsuarios.textContent = `${data.length} usuario${data.length === 1 ? "" : "s"} encontrado${data.length === 1 ? "" : "s"}.`;
+  renderUsuarios(data);
 }
 
 cargarUsuariosPorRol();
