@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ADA Demo Dataset</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/bloque23-ui-refresh.css">
+  <link rel="stylesheet" href="../assets/css/demo-dataset.css">
+</head>
+<body class="module-page role-loading">
+  <main class="module-shell">
+    <a href="dashboard.html" class="back-link">← Mi inicio</a>
+    <section class="module-view demo-shell">
+      <header class="demo-heading">
+        <div><p class="eyebrow">Administración y calidad</p><h1>ADA Demo Dataset</h1>
+        <p>Genera un conjunto controlado de registros académicos para ejecutar el Test Center sin cargar datos manualmente.</p></div>
+        <span id="demoStatusBadge" class="demo-badge neutral">Verificando</span>
+      </header>
+
+      <section class="demo-grid">
+        <article class="panel-card demo-card">
+          <h2>Dataset académico</h2>
+          <p>Utiliza el primer curso, materia, docente, alumno y período activos disponibles. Los registros se identifican y pueden eliminarse sin afectar datos reales.</p>
+          <label>Etiqueta de la ejecución
+            <input id="demoLabel" maxlength="80" value="ADA Demo Dataset">
+          </label>
+          <div class="demo-actions">
+            <button id="demoGenerate" class="btn-primary" type="button">Generar datos demo</button>
+            <button id="demoDelete" class="btn-secondary danger" type="button">Eliminar datos demo</button>
+          </div>
+          <p id="demoMessage" class="helper-text" aria-live="polite"></p>
+        </article>
+
+        <article class="panel-card demo-card">
+          <h2>Estado actual</h2>
+          <dl class="demo-status-list">
+            <div><dt>Ejecución</dt><dd id="demoRun">—</dd></div>
+            <div><dt>Estado</dt><dd id="demoState">—</dd></div>
+            <div><dt>Registros identificados</dt><dd id="demoCount">0</dd></div>
+            <div><dt>Creado</dt><dd id="demoCreated">—</dd></div>
+          </dl>
+          <a class="btn-secondary demo-test-link" href="qa-academica.html">Abrir ADA Test Center</a>
+        </article>
+      </section>
+
+      <section class="panel-card">
+        <div class="demo-results-heading"><div><p class="eyebrow">Resultado</p><h2>Detalle de la generación</h2></div></div>
+        <div class="demo-result-columns">
+          <div><h3>Generados correctamente</h3><ul id="demoOk"><li>Sin ejecución.</li></ul></div>
+          <div><h3>Advertencias</h3><ul id="demoWarnings"><li>Sin ejecución.</li></ul></div>
+        </div>
+      </section>
+
+      <aside class="demo-note"><strong>Importante:</strong> este módulo no crea usuarios de Authentication. Usa perfiles y estructura académica ya existentes. La eliminación actúa únicamente sobre los identificadores registrados por esta herramienta.</aside>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/ada-security.js"></script>
+  <script src="../assets/js/demo-dataset.js"></script>
+</body>
+</html>

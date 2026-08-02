@@ -39,6 +39,7 @@
           <button class="btn-primary" id="qaRunAll" type="button">▶ Ejecutar todos los tests</button>
           <button class="btn-secondary" id="qaStop" type="button" disabled>Detener</button>
           <button class="btn-secondary" id="qaClear" type="button">Limpiar</button>
+          <a class="btn-secondary" href="demo-dataset.html">Gestionar datos demo</a>
         </div>
         <div class="qa-export-actions">
           <button class="btn-secondary" id="qaExportJson" type="button" disabled>Descargar JSON</button>
@@ -54,7 +55,7 @@
             <button id="qaToggleSuites" type="button" class="qa-link-button">Seleccionar todas</button>
           </div>
           <div id="qaSuites" class="qa-suite-list"></div>
-          <p class="helper-text">Las pruebas son de solo lectura: no crean, modifican ni eliminan registros.</p>
+          <p class="helper-text">Las pruebas son de solo lectura. Para certificar flujos con datos reales, generá primero un dataset controlado desde “Gestionar datos demo”.</p>
         </aside>
 
         <section class="panel-card qa-results-panel">
