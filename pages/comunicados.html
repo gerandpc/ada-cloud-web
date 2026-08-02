@@ -114,7 +114,7 @@
             <h2>Recomendaciones</h2>
             <div class="comms-card">
               <h3>Destinatarios</h3>
-              <p>Podés elegir roles, cursos o ambas opciones. Si elegís curso, lo verán alumnos del curso, familias vinculadas y docentes asociados por materias.</p>
+              <p id="ayudaDestinatarios">Podés elegir roles, cursos o ambas opciones. Si elegís curso, lo verán alumnos del curso, familias vinculadas y docentes asociados por materias.</p>
             </div>
             <div class="comms-card">
               <h3>Prioridad</h3>
@@ -126,7 +126,7 @@
 
       <section id="tab-gestion" class="comms-section">
         <section class="panel-card">
-          <h2>Todos los comunicados</h2>
+          <div class="section-heading-actions"><h2>Todos los comunicados</h2><button id="btnExportarComunicados" class="btn-secondary" type="button">Exportar listado PDF</button></div>
           <div class="comms-toolbar">
             <input type="search" id="filtroGestion" placeholder="Buscar comunicado">
             <select id="filtroEstadoGestion">
@@ -146,6 +146,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../assets/js/supabase-config.js"></script>
   <script src="../assets/js/ada-security.js"></script>
+  <script src="../assets/js/ada-export.js"></script>
   <script src="../assets/js/comunicados.js"></script>
   <script src="../assets/js/ui-effects.js"></script>
 </body>
