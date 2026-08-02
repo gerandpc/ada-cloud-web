@@ -1,0 +1,36 @@
+Modulo,Administrador,Directivo,Secretaria,Docente,Preceptor,Alumno,Familia
+Dashboard institucional,SI,SI,NO,NO,NO,NO,NO
+Institucion,SI,SI,SI,NO,NO,NO,NO
+Usuarios,SI,NO,SI,NO,NO,NO,NO
+Directivos,SI,SI,NO,NO,NO,NO,NO
+Secretaria,SI,SI,SI,NO,NO,NO,NO
+Docentes,SI,SI,SI,NO,NO,NO,NO
+Preceptoria,SI,SI,SI,NO,SI,NO,NO
+Alumnos,SI,SI,SI,NO,SI,NO,NO
+Familias,SI,SI,SI,NO,SI,NO,NO
+Cursos,SI,SI,SI,SI,SI,NO,NO
+Materias,SI,SI,SI,SI,NO,NO,NO
+Asignaciones,SI,SI,SI,NO,SI,NO,NO
+Programas,SI,SI,NO,SI,NO,SI,SI
+Actividades,SI,SI,NO,SI,NO,SI,NO
+Entregas,SI,SI,NO,SI,NO,SI,NO
+Documentos,SI,SI,SI,SI,SI,SI,SI
+Documentacion familiar,SI,SI,SI,NO,SI,SI,SI
+IA,SI,SI,SI,SI,SI,SI,SI
+Horarios,SI,SI,SI,NO,NO,NO,NO
+Asistencia,SI,SI,SI,SI,SI,NO,NO
+Calificaciones,SI,SI,SI,SI,NO,NO,NO
+Libro de calificaciones,SI,SI,SI,SI,NO,NO,NO
+Planillas Secretaria,SI,SI,SI,NO,NO,NO,NO
+Libres por materia,SI,SI,SI,NO,SI,NO,NO
+Cierres academicos,SI,SI,SI,NO,NO,NO,NO
+Boletines,SI,SI,SI,NO,NO,SI,SI
+Boletines y actas,SI,SI,SI,NO,NO,SI,SI
+Reportes,SI,SI,SI,SI,SI,NO,NO
+Comunicados,SI,SI,SI,SI,SI,SI,SI
+Convivencia,SI,SI,SI,NO,SI,NO,NO
+Ficha integral,SI,SI,SI,SI,SI,NO,NO
+Auditoria,SI,SI,NO,NO,NO,NO,NO
+Logs,SI,NO,NO,NO,NO,NO,NO
+Estado del sistema,SI,SI,SI,NO,NO,NO,NO
+Mi perfil,SI,SI,SI,SI,SI,SI,SI
