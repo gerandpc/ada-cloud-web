@@ -39,7 +39,20 @@ function b27SelectTab(tab){ document.querySelectorAll(".b27-tab").forEach(b=>b.c
 async function b27SignedUrl(path){ if(!path) return ""; const { data, error } = await supabaseClient.storage.from(B27_STORAGE_BUCKET).createSignedUrl(path, 60*60); if(error){ console.warn("No se pudo generar enlace firmado", error); return ""; } return data?.signedUrl || ""; }
 async function b27AttachSignedUrls(){ await Promise.all((b27Programas||[]).map(async p=>{ if(p.archivo_path) p.archivo_signed_url = await b27SignedUrl(p.archivo_path); })); await Promise.all((b27Recursos||[]).map(async r=>{ if(r.archivo_path) r.archivo_signed_url = await b27SignedUrl(r.archivo_path); })); }
 async function b27UploadFile(file, folder, ownerId){ if(!file) return null; const validation=b27ValidateFile(file); if(validation) throw new Error(validation); const safe=b27SafeName(file.name); const path=`${folder}/${ownerId}/${Date.now()}_${safe}`; const { error } = await supabaseClient.storage.from(B27_STORAGE_BUCKET).upload(path, file, { cacheControl:"3600", upsert:false, contentType:file.type || "application/octet-stream" }); if(error) throw error; return { archivo_path:path, archivo_nombre:file.name, archivo_tipo:file.type || null, archivo_tamano:file.size }; }
-function b27FileLink(item, label="Ver archivo"){ if(item?.archivo_signed_url) return `<a class="b27-file-link" href="${b27Escape(item.archivo_signed_url)}" target="_blank" rel="noopener">📎 ${b27Escape(item.archivo_nombre || label)}</a>`; if(item?.url_externa) return `<a class="b27-file-link" href="${b27Escape(item.url_externa)}" target="_blank" rel="noopener">🔗 Abrir enlace</a>`; return ""; }
+function b27SafeExternalUrl(value){
+  if(!value) return "";
+  try{
+    const url = new URL(String(value), window.location.origin);
+    return ["http:", "https:"].includes(url.protocol) ? url.href : "";
+  }catch(_){ return ""; }
+}
+function b27FileLink(item, label="Ver archivo"){
+  const signed = b27SafeExternalUrl(item?.archivo_signed_url);
+  if(signed) return `<a class="b27-file-link" href="${b27Escape(signed)}" target="_blank" rel="noopener noreferrer">📎 ${b27Escape(item.archivo_nombre || label)}</a>`;
+  const external = b27SafeExternalUrl(item?.url_externa);
+  if(external) return `<a class="b27-file-link" href="${b27Escape(external)}" target="_blank" rel="noopener noreferrer">🔗 Abrir enlace</a>`;
+  return "";
+}
 
 function b27Tabs(){ document.querySelectorAll(".b27-tab").forEach(btn=>btn.addEventListener("click",()=>b27SelectTab(btn.dataset.tab))); }
 function b27ApplyRole(){
@@ -73,24 +86,30 @@ async function b27LoadAll(){
   if(b27Rol === "docente") progQuery = progQuery.eq("creado_por", b27Perfil.id);
   if(["alumno","familia"].includes(b27Rol)) progQuery = progQuery.eq("estado", "aprobado");
 
-  const [progRes, recRes] = await Promise.all([
-    progQuery,
-    supabaseClient.from("programa_recursos").select("*, programas_materia(id,titulo,materia_id,curso_id,estado,creado_por), creador:profiles!programa_recursos_creado_por_fkey(id,nombre,apellido,email)").order("creado_en", {ascending:false}).limit(700)
-  ]);
+  const progRes = await progQuery;
   if(progRes.error) throw progRes.error;
-  if(recRes.error) throw recRes.error;
   b27Programas = progRes.data || [];
-  b27Recursos = recRes.data || [];
 
-  const permitidos = new Set(b27Programas.map(p=>p.id));
-  b27Recursos = b27Recursos.filter(r => permitidos.has(r.programa_id));
+  const programaIds = b27Programas.map(p => p.id).filter(Boolean);
+  if(programaIds.length){
+    const recRes = await supabaseClient
+      .from("programa_recursos")
+      .select("*, programas_materia(id,titulo,materia_id,curso_id,estado,creado_por), creador:profiles!programa_recursos_creado_por_fkey(id,nombre,apellido,email)")
+      .in("programa_id", programaIds)
+      .order("creado_en", {ascending:false})
+      .limit(700);
+    if(recRes.error) throw recRes.error;
+    b27Recursos = recRes.data || [];
+  }else{
+    b27Recursos = [];
+  }
+
   await b27AttachSignedUrls();
   b27RenderProgramas(b27Programas);
   b27RenderRecursos();
   b27RenderFuentesIA();
   b27UpdateKpis();
 }
-
 function b27Historial(p){
   const versions = b27Programas.filter(x => x.id !== p.id && x.curso_id===p.curso_id && x.materia_id===p.materia_id && Number(x.anio_lectivo)===Number(p.anio_lectivo)).sort((a,b)=>b27VersionNumber(b.version)-b27VersionNumber(a.version));
   if(!versions.length) return "";
@@ -223,13 +242,24 @@ async function b27SubmitPrograma(ev){
       ...upload
     };
     if(!payload.curso_id || !payload.materia_id || !payload.titulo || !payload.contenidos) throw new Error("Completá curso, materia, título y contenidos.");
+    const wasEditing = !!b27EditId;
+    if(!wasEditing){
+      const duplicate = b27Programas.some(p =>
+        p.creado_por === b27Perfil.id &&
+        p.curso_id === payload.curso_id &&
+        p.materia_id === payload.materia_id &&
+        Number(p.anio_lectivo) === Number(payload.anio_lectivo) &&
+        String(p.version || "1.0") === String(payload.version || "1.0")
+      );
+      if(duplicate) throw new Error("Ya existe un programa con el mismo curso, materia, año y versión.");
+    }
     let res;
-    if(b27EditId) res = await supabaseClient.from("programas_materia").update(payload).eq("id",b27EditId).eq("creado_por",b27Perfil.id).in("estado",["borrador","observado"]);
+    if(wasEditing) res = await supabaseClient.from("programas_materia").update(payload).eq("id",b27EditId).eq("creado_por",b27Perfil.id).in("estado",["borrador","observado"]);
     else res = await supabaseClient.from("programas_materia").insert({...payload,creado_por:b27Perfil.id});
     if(res.error) throw res.error;
     const sent = payload.estado === "pendiente";
     b27ResetForm();
-    b27Msg("msgPrograma",sent ? "Programa guardado y enviado a revisión." : (b27EditId ? "Cambios guardados." : "Programa guardado como borrador."),true);
+    b27Msg("msgPrograma",sent ? "Programa guardado y enviado a revisión." : (wasEditing ? "Cambios guardados." : "Programa guardado como borrador."),true);
     await b27LoadAll();
     b27SelectTab("listado");
   }catch(err){ b27Msg("msgPrograma", err.message || "No se pudo guardar el programa.", false); }
