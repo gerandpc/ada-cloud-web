@@ -1,12 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Documentos habilitados - ADA Cloud</title>
   <link rel="stylesheet" href="../assets/css/style.css">
   <link rel="stylesheet" href="../assets/css/bloque23-ui-refresh.css">
-  
   <link rel="stylesheet" href="../assets/css/bloque11-storage.css">
   <link rel="stylesheet" href="../assets/css/bloques12-13.css">
 </head>
@@ -15,20 +14,26 @@
     <a href="dashboard.html" class="back-link">← Volver al panel</a>
 
     <section class="module-view">
-<h1>Documentos habilitados</h1>
-      <p>Vista de documentos respetando permisos por rol, curso, materia y vínculos escolares.</p>
+      <h1>Documentos habilitados</h1>
+      <p>Materiales y documentos disponibles según el perfil, el curso, la materia y los vínculos escolares.</p>
 
       <section class="panel-card">
-        <h2>Mis documentos disponibles</h2>
-        <p class="helper-text">Esta vista usa permisos finos. Cada usuario debería ver solo lo que corresponde.</p>
-        <div id="tablaDocumentos" class="table-wrap"></div>
+        <div class="section-heading-row">
+          <div>
+            <h2>Mis documentos disponibles</h2>
+            <p class="helper-text">El listado muestra únicamente los documentos autorizados para la cuenta actual.</p>
+          </div>
+          <button id="btnExportarDocumentos" type="button" class="btn-secondary no-export">Exportar listado a PDF</button>
+        </div>
+        <div id="tablaDocumentos" class="table-wrap" aria-live="polite"></div>
       </section>
     </section>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../assets/js/supabase-config.js"></script>
- <script src="../assets/js/ada-security.js"></script>
+  <script src="../assets/js/ada-security.js"></script>
+  <script src="../assets/js/ada-export.js"></script>
   <script src="../assets/js/documentos-permisos.js"></script>
   <script src="../assets/js/ui-effects.js"></script>
 </body>
