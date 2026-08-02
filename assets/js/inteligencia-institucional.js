@@ -61,7 +61,37 @@ function intelCompute(){
   intelEl('tablaAlertasAlumnos').innerHTML=alerts.length?`<table class="intel-table"><thead><tr><th>Estudiante</th><th>Ausentismo</th><th>Promedio</th><th>Nivel</th></tr></thead><tbody>${alerts.slice(0,15).map(x=>`<tr><td>${intelText(intelProfileName(x.profile))}</td><td>${(x.absentee*100).toFixed(1)}%</td><td>${x.avg===null?'—':x.avg.toFixed(2)}</td><td><span class="intel-pill ${x.score>=6?'high':''}">${x.score>=6?'Alto':'Medio'}</span></td></tr>`).join('')}</tbody></table>`:'<div class="intel-empty">No se detectaron alertas con la información disponible.</div>';
 
   const load={};intelState.docenteMaterias.forEach(r=>{const id=r.docente_id||'sin';const label=r.profiles?intelProfileName(r.profiles):r.docente||'Docente';load[id]??={label,value:0};load[id].value++});intelRenderBars('graficoCargaDocente',Object.values(load).sort((a,b)=>b.value-a.value),{suffix:''});
-  return{attendancePct,avg,alerts,subjects,programs,approved,uniqueStudents,avgLoad};
+  const metrics={attendancePct,avg,alerts,subjects,programs,approved,uniqueStudents,avgLoad};intelRenderScore(metrics);intelRenderEvolution();return metrics;
+}
+
+
+function intelClamp(n,min=0,max=100){return Math.max(min,Math.min(max,n))}
+function intelScore(metrics){
+  const attendance=metrics.attendancePct===null?50:metrics.attendancePct;
+  const grade=metrics.avg===null?50:intelClamp((metrics.avg/10)*100);
+  const programs=metrics.programs.length?intelClamp((metrics.approved/metrics.programs.length)*100):50;
+  const riskPenalty=Math.min(35,metrics.alerts.length*2);
+  return Math.round(intelClamp(attendance*.35+grade*.35+programs*.30-riskPenalty));
+}
+function intelRenderScore(metrics){
+  const score=intelScore(metrics),card=intelEl('intelScoreCard');
+  const level=score>=80?'alto':score>=60?'medio':'bajo';
+  intelSet('intelScore',`${score}/100`);intelSet('intelScoreLabel',score>=80?'Estado institucional favorable':score>=60?'Estado institucional con aspectos a fortalecer':'Estado institucional prioritario');
+  if(card)card.dataset.level=level;
+}
+function intelRenderEvolution(){
+  const box=intelEl('evolucionInstitucional');if(!box)return;
+  const dated=[...intelState.asistencia,...intelState.calificaciones].filter(r=>r.fecha||r.creado_en||r.created_at);
+  if(!dated.length){box.innerHTML='<div class="intel-empty">No hay registros fechados suficientes para comparar períodos.</div>';return}
+  const now=new Date(),cut=new Date(now);cut.setDate(cut.getDate()-30);
+  const prev=new Date(cut);prev.setDate(prev.getDate()-30);
+  const dateOf=r=>new Date(r.fecha||r.creado_en||r.created_at);
+  const currentA=intelState.asistencia.filter(r=>dateOf(r)>=cut),previousA=intelState.asistencia.filter(r=>dateOf(r)>=prev&&dateOf(r)<cut);
+  const currentG=intelState.calificaciones.filter(r=>dateOf(r)>=cut),previousG=intelState.calificaciones.filter(r=>dateOf(r)>=prev&&dateOf(r)<cut);
+  const attendancePct=rows=>rows.length?(rows.filter(intelIsPresent).length/rows.length)*100:null;
+  const gradeAvg=rows=>{const v=rows.map(intelGradeValue).filter(x=>x!==null);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null};
+  const trend=(cur,prev,suffix='')=>cur===null?'—':`${cur.toFixed(1)}${suffix}${prev===null?'':` (${cur-prev>=0?'+':''}${(cur-prev).toFixed(1)})`}`;
+  box.innerHTML=`<div class="intel-trend-item"><small>Asistencia últimos 30 días</small><strong>${trend(attendancePct(currentA),attendancePct(previousA),'%')}</strong></div><div class="intel-trend-item"><small>Promedio últimos 30 días</small><strong>${trend(gradeAvg(currentG),gradeAvg(previousG))}</strong></div><div class="intel-trend-item"><small>Registros recientes</small><strong>${currentA.length+currentG.length}</strong></div>`;
 }
 
 async function intelLoad(){
