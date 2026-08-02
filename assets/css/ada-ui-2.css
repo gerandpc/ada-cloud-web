@@ -307,3 +307,138 @@ html:not([data-theme="dark"]) body.ada-ui2 :is(.panel-card,.module-card,.role-ca
 @media(max-width:560px){
  body.ada-ui2 .dashboard-grid,body.ada-ui2 .directivo-kpis,body.ada-ui2 .secretaria-kpis{grid-template-columns:1fr!important}
 }
+
+/* ============================================================
+   ADA UI 2.2 — corrección estructural definitiva de portales
+   Evita el doble desplazamiento generado por body flex + margin.
+   ============================================================ */
+:root{--ada-live-sidebar:270px;--ada-layout-gap:clamp(18px,2.2vw,38px);--ada-layout-max:1440px}
+
+/* El sidebar es fixed: el body NO debe reservar otra columna flex. */
+body.ada-ui2.ada-with-sidebar,
+body.ada-ui2.dashboard-body.ada-with-sidebar{
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  padding:0!important;
+  overflow-x:hidden!important;
+}
+
+body.ada-ui2 .sidebar,
+body.ada-ui2 .ada-role-sidebar{
+  width:var(--ada-live-sidebar)!important;
+  max-width:var(--ada-live-sidebar)!important;
+  flex:none!important;
+}
+
+/* Un único desplazamiento, calculado con el ancho real del sidebar. */
+body.ada-ui2.ada-with-sidebar > .module-shell,
+body.ada-ui2.ada-with-sidebar > .dashboard-main,
+body.ada-ui2.ada-with-sidebar main.module-shell,
+body.ada-ui2.ada-with-sidebar main.dashboard-main{
+  position:relative!important;
+  inset:auto!important;
+  float:none!important;
+  transform:none!important;
+  margin:0 0 0 var(--ada-live-sidebar)!important;
+  width:calc(100% - var(--ada-live-sidebar))!important;
+  max-width:none!important;
+  min-width:0!important;
+  min-height:100vh!important;
+  padding:clamp(24px,3vw,46px) var(--ada-layout-gap) 76px!important;
+  overflow:visible!important;
+}
+
+/* El contenido se centra dentro del espacio útil, nunca bajo el menú. */
+body.ada-ui2 .module-shell > *,
+body.ada-ui2 .dashboard-main > *{
+  box-sizing:border-box!important;
+  max-width:var(--ada-layout-max)!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+body.ada-ui2 .module-view,
+body.ada-ui2 .secretaria-shell,
+body.ada-ui2 .dashboard-group,
+body.ada-ui2 .dashboard-header,
+body.ada-ui2 .ada-ui2-topbar{
+  position:relative!important;
+  left:auto!important;
+  right:auto!important;
+  translate:none!important;
+  transform:none!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:var(--ada-layout-max)!important;
+}
+
+/* Corrige estructuras antiguas que conservaban offsets o anchos propios. */
+body.ada-ui2 :is(
+ .role-portal,.portal-main,.role-main,.portal-shell,.dashboard-shell,
+ .docente-shell,.alumno-shell,.familia-shell,.preceptor-shell,
+ .secretaria-shell,.institutional-suite,.ada-institutional-suite
+){
+  position:relative!important;
+  inset:auto!important;
+  left:auto!important;
+  right:auto!important;
+  transform:none!important;
+  translate:none!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+  width:100%!important;
+  max-width:var(--ada-layout-max)!important;
+  min-width:0!important;
+}
+
+/* Ninguna grilla puede forzar el ancho y salir debajo del sidebar. */
+body.ada-ui2 :is(
+ .role-grid,.portal-grid,.stats-grid,.kpi-grid,.dashboard-grid,
+ .role-section-grid,.portal-section-grid,.content-grid,.directivo-kpis,
+ .directivo-board,.secretaria-kpis,.secretaria-grid,.secretaria-actions-grid,
+ .alumno-kpis,.familia-kpis,.alumno-main-grid,.familia-main-grid
+){
+  max-width:100%!important;
+  min-width:0!important;
+}
+body.ada-ui2 :is(
+ .role-grid,.portal-grid,.stats-grid,.kpi-grid,.dashboard-grid,
+ .role-section-grid,.portal-section-grid,.content-grid,.directivo-kpis,
+ .directivo-board,.secretaria-kpis,.secretaria-grid,.secretaria-actions-grid,
+ .alumno-kpis,.familia-kpis,.alumno-main-grid,.familia-main-grid
+)>*{min-width:0!important;max-width:100%!important}
+
+/* Portales: mismo ritmo y ancho, sin bloques pegados al borde. */
+body.ada-ui2 :is(.role-hero,.portal-hero,.secretaria-hero){
+  margin-left:0!important;
+  margin-right:0!important;
+  width:100%!important;
+}
+body.ada-ui2 .back-link{margin-left:0!important}
+
+/* Escritorios medianos: sidebar compacto y contenido aún utilizable. */
+@media (min-width:901px) and (max-width:1180px){
+  :root{--ada-live-sidebar:230px;--ada-layout-gap:20px}
+  body.ada-ui2 .dashboard-grid,
+  body.ada-ui2 .directivo-kpis,
+  body.ada-ui2 .secretaria-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+
+/* Móvil/tablet: sidebar overlay; el contenido recupera todo el ancho. */
+@media (max-width:900px){
+  :root{--ada-live-sidebar:0px;--ada-layout-gap:clamp(12px,4vw,22px)}
+  body.ada-ui2.ada-with-sidebar > .module-shell,
+  body.ada-ui2.ada-with-sidebar > .dashboard-main,
+  body.ada-ui2.ada-with-sidebar main.module-shell,
+  body.ada-ui2.ada-with-sidebar main.dashboard-main{
+    margin-left:0!important;
+    width:100%!important;
+    padding-left:var(--ada-layout-gap)!important;
+    padding-right:var(--ada-layout-gap)!important;
+  }
+  body.ada-ui2 .sidebar,
+  body.ada-ui2 .ada-role-sidebar{
+    width:min(86vw,330px)!important;
+    max-width:min(86vw,330px)!important;
+  }
+}
