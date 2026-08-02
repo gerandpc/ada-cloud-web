@@ -13,7 +13,7 @@ function bbTable(headers, rows) {
 }
 function bbInitTabs(){ document.querySelectorAll(".b25-tab").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll(".b25-tab").forEach(b=>b.classList.remove("active"));document.querySelectorAll(".b25-section").forEach(s=>s.classList.remove("active"));btn.classList.add("active");bb(`tab-${btn.dataset.tab}`)?.classList.add("active");})); }
 function bbApplyRoleMode(){ document.querySelectorAll("[data-b25-boletin-manage]").forEach(el => el.style.display = BB_CAN_MANAGE.includes(bbRol) ? "" : "none"); }
-function bbSetupError(error){ ["vistaPreviaBoletin","tablaBoletines"].forEach(id=>{const el=bb(id); if(el) el.innerHTML = `<p class="form-message is-error">No se pudo cargar Boletines. Ejecutá docs/sql/ada_bloque_25_calificaciones_boletines.sql. Detalle: ${error.message}</p>`;}); }
+function bbSetupError(error){ ["vistaPreviaBoletin","tablaBoletines"].forEach(id=>{const el=bb(id); if(el) el.innerHTML = `<p class="form-message is-error">No se pudo cargar la información de boletines. ${bbEscape(error.message)}</p>`;}); }
 
 async function bbLoadBase(){
   const [periodosRes, cursosRes, alumnosRes] = await Promise.all([
@@ -52,7 +52,8 @@ async function bbLoadBoletines(){
   bbBoletines = res.data || []; renderBoletines(bbBoletines);
 }
 function renderBoletines(rows){
-  bb("tablaBoletines").innerHTML = bbTable(["Alumno","Curso","Período","Promedio","Estado","Emitido"], rows.map(b=>`<tr><td>${bbEscape(b.alumno?.apellido || "")}, ${bbEscape(b.alumno?.nombre || "")}</td><td>${bbEscape(b.cursos?.nombre || "-")}</td><td>${bbEscape(b.periodos_academicos?.nombre || "-")}</td><td><span class="b25-pill ${Number(b.promedio_general)>=7 ? "ok" : "warn"}">${b.promedio_general ?? "-"}</span></td><td>${bbEscape(b.estado || "borrador")}</td><td>${b.emitido_en ? new Date(b.emitido_en).toLocaleDateString() : "-"}</td></tr>`));
+  bb("tablaBoletines").innerHTML = bbTable(["Alumno","Curso","Período","Promedio","Estado","Emitido","Documento"], rows.map(b=>`<tr><td>${bbEscape(b.alumno?.apellido || "")}, ${bbEscape(b.alumno?.nombre || "")}</td><td>${bbEscape(b.cursos?.nombre || "-")}</td><td>${bbEscape(b.periodos_academicos?.nombre || "-")}</td><td><span class="b25-pill ${Number(b.promedio_general)>=7 ? "ok" : "warn"}">${b.promedio_general ?? "-"}</span></td><td>${bbEscape(b.estado || "borrador")}</td><td>${b.emitido_en ? new Date(b.emitido_en).toLocaleDateString() : "-"}</td><td><button type="button" class="btn-mini" data-exportar-boletin="${bbEscape(b.id)}">Exportar PDF</button></td></tr>`));
+  bb("tablaBoletines").querySelectorAll("[data-exportar-boletin]").forEach(btn=>btn.addEventListener("click",()=>exportarBoletinPdf(btn.dataset.exportarBoletin)));
 }
 async function generarBoletin(e){
   e.preventDefault();
@@ -82,3 +83,21 @@ bb("formBoletin")?.addEventListener("submit", generarBoletin);
 bb("btnBuscarBoletines")?.addEventListener("click", filtrarBoletines);
 bb("btnLimpiarBoletines")?.addEventListener("click", ()=>{bb("filtroBoletinAlumno").value="";bb("filtroBoletinPeriodo").value="";renderBoletines(bbBoletines);});
 iniciarBoletines();
+
+async function exportarBoletinPdf(id){
+  if(!window.ADAExport)return;
+  const boletin=bbBoletines.find(b=>String(b.id)===String(id));
+  if(!boletin)return;
+  const {data,error}=await supabaseClient.from("boletin_detalles").select("promedio_materia,estado,observacion,materias(nombre)").eq("boletin_id",id).order("materia_id");
+  if(error){alert("No se pudo generar el boletín: "+error.message);return;}
+  const alumno=`${boletin.alumno?.apellido||""}, ${boletin.alumno?.nombre||""}`.trim();
+  const encabezado=`<table><tr><th>Alumno</th><td>${bbEscape(alumno)}</td><th>Curso</th><td>${bbEscape(boletin.cursos?.nombre||"-")}</td></tr><tr><th>Período</th><td>${bbEscape(boletin.periodos_academicos?.nombre||"-")}</td><th>Promedio general</th><td>${bbEscape(boletin.promedio_general??"-")}</td></tr><tr><th>Estado</th><td>${bbEscape(boletin.estado||"-")}</td><th>Fecha de emisión</th><td>${boletin.emitido_en?new Date(boletin.emitido_en).toLocaleDateString():"-"}</td></tr></table>`;
+  const detalle=bbTable(["Materia","Promedio","Estado","Observación"],(data||[]).map(d=>`<tr><td>${bbEscape(d.materias?.nombre||"-")}</td><td>${bbEscape(d.promedio_materia??"-")}</td><td>${bbEscape(d.estado||"-")}</td><td>${bbEscape(d.observacion||"-")}</td></tr>`));
+  window.ADAExport.openDocument(`Boletín · ${alumno}`,encabezado+detalle);
+}
+function exportarListadoBoletines(){
+  const tabla=bb("tablaBoletines");
+  if(!window.ADAExport||!tabla||(tabla.textContent||"").trim().length===0){alert("No hay boletines para exportar.");return;}
+  window.ADAExport.openDocument("Listado de boletines emitidos",window.ADAExport.cloneClean(tabla));
+}
+bb("btnExportarListadoBoletines")?.addEventListener("click",exportarListadoBoletines);

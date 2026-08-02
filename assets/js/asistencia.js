@@ -457,3 +457,29 @@ qs("btnBuscarHistorial")?.addEventListener("click", buscarHistorial);
 qs("formSeguimiento")?.addEventListener("submit", guardarSeguimiento);
 qs("btnCalcularAlertas")?.addEventListener("click", calcularAlertas);
 cargarBase();
+
+function exportarHistorialPdf() {
+  const tabla = qs("tablaHistorial");
+  if (!window.ADAExport || !tabla || !(tabla.textContent || "").trim()) {
+    mostrarMensaje("msgCargaAlumnos", "Buscá un historial antes de exportar.", "error");
+    return;
+  }
+  const curso = qs("historialCurso")?.selectedOptions?.[0]?.textContent || "Todos los cursos";
+  const alumno = qs("historialAlumno")?.selectedOptions?.[0]?.textContent || "Todos los alumnos";
+  const desde = qs("historialDesde")?.value || "-";
+  const hasta = qs("historialHasta")?.value || "-";
+  const meta = `<table><tr><th>Curso</th><td>${escapeHtml(curso)}</td><th>Alumno</th><td>${escapeHtml(alumno)}</td></tr><tr><th>Desde</th><td>${escapeHtml(desde)}</td><th>Hasta</th><td>${escapeHtml(hasta)}</td></tr></table>`;
+  window.ADAExport.openDocument("Historial de asistencia", meta + window.ADAExport.cloneClean(tabla));
+}
+
+function exportarAlertasPdf() {
+  const bloque = qs("resultadoAlertas");
+  if (!window.ADAExport || !bloque || !(bloque.textContent || "").trim()) {
+    mostrarMensaje("msgCargaAlumnos", "Calculá las alertas antes de exportar.", "error");
+    return;
+  }
+  window.ADAExport.openDocument("Alertas de asistencia", window.ADAExport.cloneClean(bloque));
+}
+
+qs("btnExportarHistorialPdf")?.addEventListener("click", exportarHistorialPdf);
+qs("btnExportarAlertasPdf")?.addEventListener("click", exportarAlertasPdf);

@@ -9,10 +9,7 @@
     "familias.html": { title:"Listado de familias", selectors:["#tablaUsuarios"] },
     "cursos.html": { title:"Estructura de cursos", selectors:["#tablaNiveles","#tablaAnios","#tablaDivisiones","#tablaModalidades","#tablaCursos"] },
     "materias.html": { title:"Listado de materias", selectors:["#tablaMaterias"] },
-    "asistencia.html": { title:"Informe de asistencia", selectors:["#tablaHistorial","#resultadoAlertas"] },
-    "calificaciones.html": { title:"Libro de calificaciones", selectors:["#tablaPrimer","#tablaSegundo","#tablaDiciembre","#tablaFebrero","#tablaFormalDocente"] },
-    "reportes.html": { title:"Reporte institucional", selectors:["#resumenAsistencia","#tablaAsistencia","#tablaSeguimiento","#tablaUsuariosReporte","#tablaDocumentosReporte","#tablaEstructuraReporte"] },
-    "boletines.html": { title:"Boletines", selectors:["#vistaPreviaBoletin","#tablaBoletines"] }
+    "reportes.html": { title:"Reporte institucional", selectors:["#resumenAsistencia","#tablaAsistencia","#tablaSeguimiento","#tablaUsuariosReporte","#tablaDocumentosReporte","#tablaEstructuraReporte"] }
   };
 
   function esc(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));}
@@ -53,6 +50,6 @@
     const body=`<table>${row('Título',programa.titulo)}${row('Curso',programa.cursos?.nombre)}${row('Materia',programa.materias?.nombre)}${row('Año lectivo',programa.anio_lectivo)}${row('Versión',programa.version)}${row('Estado',programa.estado)}${row('Fundamentación',programa.fundamentacion)}${row('Objetivos',programa.objetivos)}${row('Contenidos',programa.contenidos)}${row('Metodología y evaluación',programa.evaluacion)}${row('Observaciones',programa.observaciones)}</table>`;
     openDocument(programa.titulo||'Programa de materia',body);
   }
-  window.ADAExport={openDocument,exportMapped,programa};
+  window.ADAExport={openDocument,exportMapped,programa,escapeHtml:esc,cloneClean};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',inject);else inject();
 })();
