@@ -44,7 +44,15 @@ async function testResources(){
 async function testRuntime(){
  window.ADA_PAGE_ACCESS&&Object.keys(window.ADA_PAGE_ACCESS).length>20?ok("Mapa de permisos","Cargado","Permisos"):fail("Mapa de permisos","No disponible o incompleto","Permisos");
  window.ADA_PDF?.create?ok("Motor PDF","Disponible","Exportaciones"):fail("Motor PDF","No cargado","Exportaciones");
- window.ADAReports?.generate?ok("ADA Reports","Disponible","Exportaciones"):warn("ADA Reports","No está cargado en esta página; verificar Centro de Informes","Exportaciones");
+ try{
+  const page=await fetchText("centro-informes.html");
+  if(!/ada-reports\.js/i.test(page))throw new Error("centro-informes.html no carga ada-reports.js");
+  const script=await fetchText("../assets/js/ada-reports.js");
+  if(!/(window\.ADAReports|ADAReports\s*=)/.test(script))throw new Error("ada-reports.js no expone ADAReports");
+  ok("ADA Reports","Centro de Informes y motor de reportes disponibles","Exportaciones");
+ }catch(e){
+  fail("ADA Reports",e.message||"No disponible","Exportaciones");
+ }
  navigator.onLine?ok("Conectividad del navegador","En línea","Conectividad"):warn("Conectividad del navegador","Sin conexión","Conectividad");
 }
 function render(){
