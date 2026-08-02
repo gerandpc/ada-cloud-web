@@ -228,6 +228,10 @@
     document.querySelectorAll('[data-ada-report]').forEach(btn=>btn.addEventListener('click',()=>generate(btn.dataset.adaReport)));
   }
 
-  window.ADA_REPORTS={loadData,generate,executive,pedagogical,supervision,teacher,studentOrFamily};
+  const reportsApi={loadData,generate,executive,pedagogical,supervision,teacher,studentOrFamily};
+  window.ADA_REPORTS=reportsApi;
+  window.ADAReports=reportsApi;
+  window.ADA=window.ADA||{};
+  window.ADA.reports=reportsApi;
   document.addEventListener('DOMContentLoaded',initCenter);
 })();
