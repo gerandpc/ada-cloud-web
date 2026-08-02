@@ -3,6 +3,7 @@
 
   const MODULES = [
     { page: "programas.html", label: "Programas", icon: "📘", roles: ["admin", "directivo", "docente", "alumno", "familia"] },
+    { page: "planificaciones.html", label: "Planificaciones", icon: "🗓️", roles: ["admin", "directivo", "docente", "alumno", "familia"] },
     { page: "actividades.html", label: "Actividades", icon: "📝", roles: ["admin", "directivo", "docente", "alumno"] },
     { page: "entregas.html", label: "Entregas", icon: "📤", roles: ["admin", "directivo", "docente", "alumno"] },
     { page: "asistencia.html", label: "Asistencia", icon: "📅", roles: ["admin", "directivo", "secretaria", "docente", "preceptor"] },
